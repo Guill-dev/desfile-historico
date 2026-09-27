@@ -1,0 +1,28 @@
+.cabecera {
+  border-radius: 0 0 var(--r-xl) var(--r-xl);
+}
+
+.contenido {
+  display: grid;
+  gap: var(--e-3);
+  padding-top: calc(var(--alto-header) + clamp(32px, 5vw, 64px));
+  padding-bottom: clamp(40px, 5vw, 64px);
+}
+
+.volver {
+  justify-self: start;
+  margin-bottom: var(--e-2);
+  font-weight: 600;
+  font-size: var(--t-s);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.volver:hover {
+  text-decoration: underline;
+}
+
+.titulo {
+  font-size: clamp(2.5rem, 1.4rem + 4.5vw, 5.5rem);
+  max-width: 16ch;
+}

@@ -1,0 +1,28 @@
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--e-3) var(--e-4);
+  margin-bottom: clamp(24px, 3vw, 40px);
+}
+
+.textos {
+  display: grid;
+  gap: 10px;
+}
+
+.titulo {
+  font-size: var(--t-h2);
+}
+
+.intro {
+  max-width: var(--ancho-texto);
+}
+
+.accion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-3);
+}

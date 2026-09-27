@@ -1,0 +1,53 @@
+.vitrina {
+  --ancho-item: clamp(260px, 28vw, 360px);
+}
+
+.pieza {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: var(--r-xl);
+  text-decoration: none;
+}
+
+.foto {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s var(--ease-salida);
+}
+
+.pieza:hover .foto {
+  transform: scale(1.04);
+}
+
+.ficha {
+  position: absolute;
+  inset: auto 0 0;
+  display: grid;
+  gap: 6px;
+  padding: 24px;
+  background: linear-gradient(transparent, rgb(12 31 20 / 0.9));
+}
+
+.ficha b {
+  font-weight: 700;
+  font-size: 1.1875rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.chip {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  padding: 6px 10px;
+  border-radius: var(--r-s);
+  background: var(--c-rojo);
+  color: var(--c-blanco);
+  font-weight: 700;
+  font-size: var(--t-xs);
+  text-transform: uppercase;
+}

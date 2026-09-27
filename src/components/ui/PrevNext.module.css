@@ -1,0 +1,33 @@
+.nav {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--e-4);
+  margin-top: var(--e-6);
+  padding-top: var(--e-4);
+  border-top: 2px solid var(--linea);
+}
+
+.enlace {
+  display: grid;
+  gap: var(--e-2);
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color var(--dur-corta);
+}
+
+.enlace:hover {
+  color: var(--acento);
+}
+
+.derecha {
+  text-align: right;
+}
+
+.rotulo {
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: var(--t-xs);
+  letter-spacing: 0.1em;
+  color: var(--texto-suave);
+}

@@ -1,0 +1,50 @@
+.pasos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.paso {
+  display: grid;
+  gap: 14px;
+  padding-top: 18px;
+  border-top: 2px solid currentColor;
+  text-decoration: none;
+}
+
+.numero {
+  font-size: clamp(3rem, 2rem + 3vw, 4.5rem);
+  line-height: 0.9;
+}
+
+.titulo {
+  font-size: var(--t-h3);
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.foto {
+  border-radius: var(--r-l);
+  transition: border-radius var(--dur-media) var(--ease-salida);
+}
+
+.paso:hover .foto {
+  border-radius: 60px;
+}
+
+/* En móvil, la muestra se desliza con el dedo */
+@media (max-width: 899px) {
+  .pasos {
+    grid-auto-flow: column;
+    grid-template-columns: none;
+    grid-auto-columns: 78%;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .pasos > li {
+    scroll-snap-align: start;
+  }
+}

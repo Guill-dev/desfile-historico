@@ -1,0 +1,43 @@
+/* Sube sobre el último bloque para que sus esquinas redondeadas muestren el color de ese bloque. */
+.footer {
+  position: relative;
+  margin-top: calc(-1 * var(--r-xl));
+  padding-top: clamp(56px, 7vw, 96px);
+  border-radius: var(--r-xl) var(--r-xl) 0 0;
+}
+
+.lista {
+  margin-top: var(--e-4);
+  border-top: 1px solid var(--linea);
+}
+
+.lista a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-3);
+  padding-block: clamp(16px, 2vw, 24px);
+  border-bottom: 1px solid var(--linea);
+  font-weight: 700;
+  font-size: clamp(1.625rem, 1rem + 2.6vw, 3rem);
+  line-height: 1;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    color var(--dur-corta),
+    padding var(--dur-media) var(--ease-salida);
+}
+
+.lista a:hover {
+  color: var(--acento);
+  padding-left: 12px;
+}
+
+.pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-4);
+  padding-block: var(--e-6) var(--e-5);
+}

@@ -1,0 +1,15 @@
+/* Toma el color del texto del tema en el que está, así funciona sobre verde, papel o noche. */
+.placeholder {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: var(--e-3);
+  background: color-mix(in srgb, currentColor 14%, transparent);
+}
+
+.etiqueta {
+  font-family: var(--f-mono);
+  font-size: var(--t-xs);
+  text-align: center;
+  opacity: 0.8;
+}

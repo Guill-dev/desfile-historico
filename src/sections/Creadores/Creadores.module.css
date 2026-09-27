@@ -1,0 +1,21 @@
+.persona {
+  display: grid;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.retrato {
+  border-radius: var(--r-l);
+  transition: border-radius var(--dur-media) var(--ease-salida);
+}
+
+.persona:hover .retrato {
+  border-radius: 80px;
+}
+
+.nombre {
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+}

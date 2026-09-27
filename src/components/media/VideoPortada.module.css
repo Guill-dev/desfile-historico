@@ -1,0 +1,41 @@
+/* El video se muestra COMPLETO, con su forma real: nunca se recorta ni se hace zoom */
+.video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: var(--proporcion, 16 / 9); /* reserva el espacio mientras carga */
+  object-fit: contain;
+  background: #000;
+}
+
+/*
+ * Botón redondo de pausa, abajo a la derecha de lo que se ve en pantalla.
+ * --alto-visible y --margen-portada los define la portada (sections/Inicio/Inicio.module.css).
+ */
+.boton {
+  --tam: 48px;
+  position: absolute;
+  top: calc(var(--alto-visible, 100%) - var(--tam) - var(--margen-portada, 32px));
+  right: var(--gutter);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: var(--tam);
+  height: var(--tam);
+  border-radius: 50%;
+  background: var(--c-blanco);
+  color: var(--c-noche);
+  font-size: 13px;
+  font-weight: 700;
+  transition: transform var(--dur-corta) var(--ease-salida);
+}
+
+.boton:hover {
+  transform: scale(1.08);
+}
+
+@media (max-width: 899px) {
+  .boton {
+    --tam: 40px;
+  }
+}

@@ -1,0 +1,58 @@
+/*
+ * TOKENS DE DISEÑO — identidad del Desfile Histórico de Gualmatán.
+ * Colores tomados de la bandera de Gualmatán (verde, blanco, rojo).
+ * Todo el sitio lee colores, tipos y espacios desde aquí.
+ */
+:root {
+  /* Bandera */
+  --c-verde: #078930;
+  --c-rojo: #da121a;
+  --c-blanco: #ffffff;
+
+  /* Derivados de la bandera */
+  --c-verde-oscuro: #06702a; /* texto verde sobre fondos claros (contraste AA) */
+  --c-verde-claro: #8fd3a4; /* rótulos sobre fondos oscuros */
+  --c-rojo-hondo: #b00e15; /* hover de botones rojos */
+  --c-noche: #0c1f14; /* superficie oscura: verde casi negro */
+  --c-papel: #f7f5f0; /* blanco cálido para lectura larga */
+
+  /* Tipografía */
+  --f-display: 'Rubik', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-texto: 'Rubik', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  --t-xs: 0.75rem;
+  --t-s: 0.9375rem;
+  --t-m: 1.0625rem;
+  --t-l: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+  --t-h3: 1.1875rem;
+  --t-h2: clamp(1.75rem, 1.2rem + 2.2vw, 2.75rem);
+  --t-xl: clamp(2.5rem, 1.2rem + 5.5vw, 7rem);
+  --t-hero: clamp(2.75rem, 1rem + 7vw, 7.375rem);
+
+  /* Formas */
+  --r-xl: 36px;
+  --r-l: 24px;
+  --r-m: 12px;
+  --r-s: 8px;
+
+  /* Espacio */
+  --e-1: 0.25rem;
+  --e-2: 0.5rem;
+  --e-3: 1rem;
+  --e-4: 1.5rem;
+  --e-5: 2.5rem;
+  --e-6: 4rem;
+  --e-7: 7rem;
+
+  --gutter: clamp(16px, 4vw, 48px);
+  --ancho-max: 1240px;
+  --ancho-texto: 62ch;
+  --alto-header: 84px;
+
+  /* Movimiento */
+  --ease-salida: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-corta: 250ms;
+  --dur-media: 600ms;
+  --dur-larga: 1000ms;
+}

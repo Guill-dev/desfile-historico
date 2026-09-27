@@ -1,0 +1,30 @@
+.flechas {
+  display: flex;
+  gap: 10px;
+}
+
+.flechas button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  font-size: 18px;
+  transition:
+    background var(--dur-corta),
+    color var(--dur-corta),
+    border-color var(--dur-corta);
+}
+
+.flechas button:hover {
+  background: var(--hover-fondo);
+  border-color: var(--hover-fondo);
+  color: var(--hover-texto);
+}
+
+@media (max-width: 899px) {
+  .flechas {
+    display: none;
+  }
+}

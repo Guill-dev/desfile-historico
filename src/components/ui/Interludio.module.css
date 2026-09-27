@@ -1,0 +1,5 @@
+.frase {
+  max-width: 13ch;
+  padding-block: clamp(24px, 4vw, 56px) clamp(40px, 6vw, 88px);
+  font-size: var(--t-xl);
+}

@@ -1,0 +1,44 @@
+.linea {
+  display: grid;
+  gap: clamp(40px, 5vw, 72px);
+}
+
+.paso {
+  display: grid;
+  gap: 16px;
+  padding-top: 20px;
+  border-top: 2px solid currentColor;
+}
+
+.numero {
+  font-size: clamp(3.5rem, 2rem + 4vw, 6rem);
+  line-height: 0.85;
+}
+
+.texto {
+  display: grid;
+  align-content: start;
+  gap: var(--e-2);
+}
+
+.texto p {
+  max-width: 52ch;
+}
+
+.titulo {
+  font-size: clamp(1.25rem, 1rem + 1vw, 1.625rem);
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.foto {
+  border-radius: var(--r-l);
+}
+
+@media (min-width: 768px) {
+  .paso {
+    grid-template-columns: 7rem minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 32px;
+  }
+}

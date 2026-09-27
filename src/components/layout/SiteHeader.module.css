@@ -1,0 +1,78 @@
+.header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 40;
+  background: var(--c-noche);
+  color: var(--c-blanco);
+  transition: transform var(--dur-media) var(--ease-salida);
+}
+
+.oculta {
+  transform: translateY(-100%);
+}
+
+/* Si alguien navega con teclado, la barra siempre se muestra */
+.header:focus-within {
+  transform: none;
+}
+
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--e-4);
+  min-height: var(--alto-header);
+}
+
+.marca {
+  text-decoration: none;
+}
+
+.nav ul {
+  display: flex;
+  gap: 28px;
+}
+
+.enlace {
+  padding-bottom: 3px;
+  font-weight: 700;
+  font-size: var(--t-s);
+  text-transform: uppercase;
+  text-decoration: none;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat;
+  transition: background-size 0.35s var(--ease-salida);
+}
+
+.enlace:hover,
+.enlace:global(.active) {
+  background-size: 100% 2px;
+}
+
+.botonMenu {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--c-blanco);
+}
+
+.lineas {
+  display: grid;
+  gap: 5px;
+}
+
+.lineas i {
+  display: block;
+  width: 36px;
+  height: 3px;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+@media (max-width: 899px) {
+  .nav {
+    display: none;
+  }
+}

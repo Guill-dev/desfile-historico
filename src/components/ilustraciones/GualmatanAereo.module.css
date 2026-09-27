@@ -1,0 +1,124 @@
+.aereo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #cfe6ee;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.leyenda {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  padding: 6px 10px;
+  border-radius: var(--r-s);
+  background: rgb(255 255 255 / 0.75);
+  color: #34423c;
+}
+
+/* Paralaje: cada capa se desplaza según su profundidad (--k) */
+.paralaje {
+  transform: translate(calc(var(--px, 0) * var(--k) * 1px), calc(var(--py, 0) * var(--k) * 0.5px));
+  transition: transform 0.9s var(--ease-salida);
+}
+
+/* Entrada escalonada al aparecer en pantalla */
+.capa {
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 1.2s var(--ease-salida) calc(var(--i) * 140ms),
+    transform 1.6s var(--ease-salida) calc(var(--i) * 140ms);
+}
+
+.aereo[data-visto] .capa {
+  opacity: 1;
+  transform: none;
+}
+
+.nube {
+  animation: deriva linear infinite;
+}
+
+@keyframes deriva {
+  from {
+    transform: translateX(-320px);
+  }
+  to {
+    transform: translateX(1400px);
+  }
+}
+
+.bandada {
+  animation: vuelo 38s linear infinite;
+}
+
+@keyframes vuelo {
+  from {
+    transform: translate(-120px, 190px);
+  }
+  to {
+    transform: translate(1320px, 80px);
+  }
+}
+
+.ave {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: aleteo 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes aleteo {
+  to {
+    transform: scaleY(0.35);
+  }
+}
+
+.persona {
+  animation: saltito 2.6s ease-in-out infinite;
+}
+
+@keyframes saltito {
+  50% {
+    transform: translateY(-2.5px);
+  }
+}
+
+.bandera {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: ondear 2.6s ease-in-out infinite;
+}
+
+@keyframes ondear {
+  50% {
+    transform: skewY(5deg) scaleX(0.93);
+  }
+}
+
+/* Fuera de pantalla, todo quieto (ahorra batería) */
+.aereo:not([data-en-vista]) * {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .capa {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .paralaje {
+    transform: none;
+  }
+
+  .aereo * {
+    animation: none !important;
+  }
+}

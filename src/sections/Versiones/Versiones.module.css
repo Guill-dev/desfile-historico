@@ -1,0 +1,53 @@
+/* Línea de tiempo: un riel continuo con un punto rojo por año */
+.linea {
+  --ancho-item: clamp(250px, 30vw, 380px);
+  padding-top: 10px;
+}
+
+.edicion {
+  position: relative;
+  padding-top: 30px;
+}
+
+.edicion::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: -24px;
+  height: 2px;
+  background: var(--texto);
+}
+
+.edicion::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--c-rojo);
+  transition: transform var(--dur-corta) var(--ease-salida);
+}
+
+.edicion:hover::after {
+  transform: scale(1.4);
+}
+
+.enlace {
+  display: grid;
+  gap: 14px;
+  text-decoration: none;
+}
+
+.anio {
+  font-size: clamp(3.5rem, 2rem + 4vw, 5.75rem);
+  line-height: 0.85;
+  letter-spacing: -0.02em;
+  color: var(--c-verde);
+}
+
+.foto {
+  border-radius: var(--r-l);
+}

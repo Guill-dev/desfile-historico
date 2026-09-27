@@ -1,0 +1,30 @@
+/*
+ * Pista de carrusel horizontal. Uso: className={carrusel.pista} en un <ul>/<ol>.
+ * El ancho de cada tarjeta se ajusta con la variable --ancho-item.
+ */
+.pista {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: var(--ancho-item, clamp(240px, 26vw, 330px));
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding: 0;
+  list-style: none;
+}
+
+.pista::-webkit-scrollbar {
+  display: none;
+}
+
+.pista > li {
+  scroll-snap-align: start;
+}
+
+@media (max-width: 899px) {
+  .pista {
+    grid-auto-columns: 78%;
+    gap: 16px;
+  }
+}

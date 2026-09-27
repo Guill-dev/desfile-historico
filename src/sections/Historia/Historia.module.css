@@ -1,0 +1,50 @@
+.historia {
+  padding-block: clamp(56px, 8vw, 104px) clamp(24px, 3vw, 40px);
+}
+
+/* La tarjeta oscura se monta sobre la ilustración */
+.grilla {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-items: center;
+}
+
+.imagen {
+  grid-column: 1 / 9;
+  grid-row: 1;
+  aspect-ratio: 3 / 2;
+  border-radius: var(--r-l);
+  overflow: hidden;
+}
+
+.tarjeta {
+  position: relative;
+  grid-column: 7 / 13;
+  grid-row: 1;
+  display: grid;
+  gap: 18px;
+  padding: clamp(28px, 3.5vw, 44px);
+  border-radius: var(--r-l);
+}
+
+.titulo {
+  font-size: var(--t-h2);
+}
+
+@media (max-width: 899px) {
+  .grilla {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Cuadrada en móvil: se ve la iglesia y el desfile completo en la plaza */
+  .imagen {
+    grid-column: 1;
+    aspect-ratio: 1 / 1;
+  }
+
+  .tarjeta {
+    grid-column: 1;
+    grid-row: 2;
+    margin: -40px 16px 0;
+  }
+}

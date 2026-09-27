@@ -1,0 +1,163 @@
+html {
+  scroll-padding-top: var(--alto-header);
+}
+
+/*
+ * TEMAS DE SECCIÓN. Cada bloque del sitio usa uno: define fondo, texto y
+ * los colores de interacción que heredan botones, líneas y rótulos.
+ */
+:root,
+.tema-verde {
+  --fondo: var(--c-verde);
+  --texto: var(--c-blanco);
+  --texto-suave: var(--c-blanco);
+  --linea: rgb(255 255 255 / 0.35);
+  --hover-fondo: var(--c-blanco);
+  --hover-texto: var(--c-verde-oscuro);
+  --acento: var(--c-blanco);
+}
+
+.tema-noche {
+  --fondo: var(--c-noche);
+  --texto: var(--c-blanco);
+  --texto-suave: var(--c-verde-claro);
+  --linea: rgb(255 255 255 / 0.18);
+  --hover-fondo: var(--c-blanco);
+  --hover-texto: var(--c-noche);
+  --acento: var(--c-rojo);
+}
+
+.tema-papel {
+  --fondo: var(--c-papel);
+  --texto: var(--c-noche);
+  --texto-suave: var(--c-verde-oscuro);
+  --linea: rgb(12 31 20 / 0.16);
+  --hover-fondo: var(--c-verde-oscuro);
+  --hover-texto: var(--c-blanco);
+  --acento: var(--c-rojo);
+}
+
+.tema-verde,
+.tema-noche,
+.tema-papel {
+  background: var(--fondo);
+  color: var(--texto);
+}
+
+body {
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: var(--f-texto);
+  font-size: var(--t-m);
+  line-height: 1.55;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--f-display);
+  font-weight: 700;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+}
+
+::selection {
+  background: var(--c-rojo);
+  color: var(--c-blanco);
+}
+
+:focus-visible {
+  outline: 2px solid var(--texto);
+  outline-offset: 3px;
+}
+
+/* Títulos grandes en mayúsculas */
+.display {
+  font-family: var(--f-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* Rótulos de archivo: años, números de pieza, capítulos */
+.mono {
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: var(--t-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.suave {
+  color: var(--texto-suave);
+}
+
+/* Contenedor estándar */
+.contenedor {
+  width: 100%;
+  max-width: var(--ancho-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Espaciado vertical estándar de cada bloque */
+.capitulo {
+  padding-block: clamp(56px, 7vw, 96px);
+}
+
+.cargando {
+  min-height: 70vh;
+  padding-top: calc(var(--alto-header) + var(--e-6));
+}
+
+/* Solo para lectores de pantalla */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: var(--e-2);
+  left: var(--e-2);
+  z-index: 100;
+  padding: var(--e-2) var(--e-3);
+  border-radius: var(--r-s);
+  background: var(--c-rojo);
+  color: var(--c-blanco);
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
