@@ -1,0 +1,36 @@
+.cuerpo {
+  display: grid;
+  gap: clamp(48px, 7vw, 96px);
+  padding-block: clamp(40px, 6vw, 80px) clamp(72px, 9vw, 120px);
+}
+
+.bloque {
+  display: grid;
+  gap: var(--e-4);
+}
+
+.cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--e-2) var(--e-4);
+  padding-top: var(--e-3);
+  border-top: 2px solid var(--texto);
+}
+
+.anio {
+  font-size: clamp(2.5rem, 1.6rem + 3vw, 4rem);
+  color: var(--c-verde-oscuro);
+}
+
+.enlace {
+  font-weight: 600;
+  font-size: var(--t-s);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.enlace:hover {
+  text-decoration: underline;
+}

@@ -2,6 +2,7 @@ import { Link } from 'react-router'
 import { capitulo, rotulo, textos } from '@/data/sitio'
 import { pasos } from '@/data/pasos'
 import { cx } from '@/utils/cx'
+import { tituloPagina } from '@/utils/titulo'
 import CabeceraPagina from '@/components/ui/CabeceraPagina'
 import LineaPasos from '@/components/pasos/LineaPasos'
 import styles from './PasosPagina.module.css'
@@ -12,6 +13,7 @@ const cap = capitulo('pasos')
 export default function PasosPagina() {
   return (
     <div className="tema-verde">
+      <title>{tituloPagina(cap.titulo)}</title>
       <CabeceraPagina kicker={rotulo(cap)} titulo={cap.encabezado} volver={{ to: '/', texto: 'Inicio' }}>
         <p className={styles.intro}>{textos.pasos}</p>
       </CabeceraPagina>

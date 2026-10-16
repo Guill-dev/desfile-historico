@@ -2,6 +2,7 @@ import { useParams } from 'react-router'
 import { seccionesMas } from '@/data/mas'
 import { paginasMas } from './paginas'
 import { cx } from '@/utils/cx'
+import { tituloPagina } from '@/utils/titulo'
 import CabeceraPagina from '@/components/ui/CabeceraPagina'
 import NoEncontrado from '@/pages/NoEncontrado/NoEncontrado'
 import f from '@/pages/ficha.module.css'
@@ -17,6 +18,7 @@ export default function MasSeccion() {
 
   return (
     <div className="tema-papel">
+      <title>{tituloPagina(seccion.titulo)}</title>
       <CabeceraPagina volver={{ to: { hash: '#mas' }, texto: 'Más' }} kicker="Más del archivo" titulo={seccion.titulo}>
         <p>{seccion.descripcion}</p>
       </CabeceraPagina>

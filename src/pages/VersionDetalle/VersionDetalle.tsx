@@ -2,7 +2,8 @@ import { Fragment } from 'react'
 import { useParams } from 'react-router'
 import { versiones } from '@/data/versiones'
 import { cx } from '@/utils/cx'
-import Media from '@/components/media/Media'
+import { tituloPagina } from '@/utils/titulo'
+import Galeria from '@/components/media/Galeria'
 import CabeceraPagina from '@/components/ui/CabeceraPagina'
 import PrevNext from '@/components/ui/PrevNext'
 import NoEncontrado from '@/pages/NoEncontrado/NoEncontrado'
@@ -21,6 +22,7 @@ export default function VersionDetalle() {
 
   return (
     <div className="tema-papel">
+      <title>{tituloPagina(`Edición ${version.anio}`)}</title>
       <CabeceraPagina
         volver={{ to: { pathname: '/', hash: '#versiones' }, texto: 'Versiones' }}
         kicker={`Edición · ${version.titulo}`}
@@ -30,7 +32,7 @@ export default function VersionDetalle() {
       <article className={cx('contenedor', f.ficha)}>
         <div className={f.cuerpo}>
           <div className={f.escenario}>
-            <Media media={version.portada} ratio="4 / 3" className={f.media} />
+            <Galeria medios={[version.portada]} variante="escenario" ratio="4 / 3" />
           </div>
 
           <div className={f.columna}>
@@ -62,9 +64,7 @@ export default function VersionDetalle() {
 
         <section className={f.bloqueAncho}>
           <h2>Galería {version.anio}</h2>
-          <div className={f.galeria}>
-            {version.galeria.map((m, n) => <Media key={n} media={m} ratio="4 / 3" className={f.media} />)}
-          </div>
+          <Galeria medios={version.galeria} />
         </section>
 
         <PrevNext

@@ -1,0 +1,77 @@
+.grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+  gap: var(--e-3);
+}
+
+.escenario {
+  display: grid;
+  gap: var(--e-3);
+}
+
+.tira {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: var(--e-2);
+}
+
+/* Cada foto es un botón: se puede abrir con mouse, dedo o teclado */
+.miniatura {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--r-l);
+  cursor: zoom-in;
+}
+
+.tira .miniatura {
+  border-radius: var(--r-m);
+}
+
+/* Sin "display" propio: la foto ya es block y el recuadro pendiente mantiene su texto centrado */
+.media {
+  width: 100%;
+  transition: transform 0.6s var(--ease-salida);
+}
+
+.miniatura:hover .media {
+  transform: scale(1.04);
+}
+
+.miniatura:focus-visible {
+  outline: 2px solid var(--texto);
+  outline-offset: 3px;
+}
+
+/* Ícono de ampliar: aparece al pasar el mouse (en pantallas táctiles siempre visible) */
+.ampliar {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgb(12 31 20 / 0.75);
+  color: var(--c-blanco);
+  font-size: 16px;
+  opacity: 0;
+  transition: opacity var(--dur-corta);
+}
+
+.miniatura:hover .ampliar,
+.miniatura:focus-visible .ampliar {
+  opacity: 1;
+}
+
+.tira .ampliar {
+  display: none;
+}
+
+@media (hover: none) {
+  .ampliar {
+    opacity: 1;
+  }
+}

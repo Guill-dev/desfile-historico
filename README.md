@@ -57,11 +57,11 @@ src/
     Recorrido/            La exposición (compone las secciones en orden)
     Pasos/                Página propia de los Pasos (son muchos)
     CreadorDetalle/ ObjetoDetalle/ VersionDetalle/   Fichas
-    Mas/                  /mas/:slug + registro de páginas propias
+    Mas/                  /mas/:slug + registro de páginas propias (secciones/GaleriaPagina: /mas/galeria)
     NoEncontrado/
   components/
     layout/               Layout, SiteHeader, MenuPantalla, SiteFooter (incluye "Más"), ScrollManager
-    media/                Media (imagen/video/audio/3D), MediaPlaceholder, ModelViewer
+    media/                Media (imagen/video/audio/3D), Galeria + Visor (fotos en grande), VideoPortada, MediaPlaceholder, ModelViewer
     ui/                   Boton, SectionHeader, CabeceraPagina, Flechas, Carrusel, Reveal, Interludio, PrevNext
     marca/                Bandera de Gualmatán + Marca (logo provisional)
     ilustraciones/        GualmatanAereo: el pueblo desde el aire, animado (SVG)
@@ -69,7 +69,7 @@ src/
   hooks/                  useInView, usePrefersReducedMotion, useMediaQuery, useCarrusel, useEstadoScroll
   types/                  contenido.ts (forma de cada dato), react-css.d.ts (variables CSS en style)
   styles/                 tokens.css (diseño), reset.css, base.css
-  utils/                  media.ts (formato multimedia + pendiente()), cx.ts
+  utils/                  media.ts (pendiente(), tieneArchivo()), titulo.ts (título de pestaña), cx.ts
   assets/                 Recursos de diseño importados desde código (texturas, íconos)
 ```
 

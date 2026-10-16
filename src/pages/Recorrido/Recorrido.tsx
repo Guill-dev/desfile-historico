@@ -1,3 +1,4 @@
+import { tituloPagina } from '@/utils/titulo'
 import Inicio from '@/sections/Inicio/Inicio'
 import Historia from '@/sections/Historia/Historia'
 import Pasos from '@/sections/Pasos/Pasos'
@@ -14,6 +15,7 @@ import Versiones from '@/sections/Versiones/Versiones'
 export default function Recorrido() {
   return (
     <>
+      <title>{tituloPagina()}</title>
       <Inicio />
       <Historia />
       <Pasos />

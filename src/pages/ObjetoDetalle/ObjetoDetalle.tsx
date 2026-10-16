@@ -2,7 +2,9 @@ import { useParams } from 'react-router'
 import { objetos } from '@/data/objetos'
 import { esPendiente } from '@/utils/media'
 import { cx } from '@/utils/cx'
+import { tituloPagina } from '@/utils/titulo'
 import Media from '@/components/media/Media'
+import Galeria from '@/components/media/Galeria'
 import CabeceraPagina from '@/components/ui/CabeceraPagina'
 import PrevNext from '@/components/ui/PrevNext'
 import NoEncontrado from '@/pages/NoEncontrado/NoEncontrado'
@@ -21,6 +23,7 @@ export default function ObjetoDetalle() {
 
   return (
     <div className="tema-papel">
+      <title>{tituloPagina(objeto.nombre)}</title>
       <CabeceraPagina
         volver={{ to: { pathname: '/', hash: '#objetos' }, texto: 'Objetos' }}
         kicker={`Nº ${String(i + 1).padStart(2, '0')} · ${objeto.epoca}`}
@@ -30,9 +33,16 @@ export default function ObjetoDetalle() {
       <article className={cx('contenedor', f.ficha)}>
         <div className={f.cuerpo}>
           <div className={f.escenario}>
-            <Media media={tieneModelo ? objeto.modelo3d : objeto.imagenes[0]} ratio="1 / 1" className={f.media} />
-            {/* Mientras no haya modelo, su placeholder deja claro qué falta */}
-            {!tieneModelo && <Media media={objeto.modelo3d} ratio="16 / 9" className={f.media} />}
+            {tieneModelo ? (
+              <Media media={objeto.modelo3d} ratio="1 / 1" className={f.media} />
+            ) : (
+              <>
+                {/* Foto principal + otras vistas; se abren en grande en el visor */}
+                <Galeria medios={objeto.imagenes} variante="escenario" ratio="1 / 1" />
+                {/* Mientras no haya modelo, su placeholder deja claro qué falta */}
+                <Media media={objeto.modelo3d} ratio="16 / 9" className={f.media} />
+              </>
+            )}
           </div>
 
           <div className={f.columna}>

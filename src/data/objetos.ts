@@ -17,6 +17,7 @@ export const objetos: Objeto[] = [1, 2, 3, 4, 5, 6].map((n) => ({
   descripcion: '[Descripción pendiente]',
   historia: '[Historia del objeto pendiente]',
   significado: '[Significado cultural pendiente]',
-  imagenes: [pendiente(`Fotografía del objeto ${n}`)],
+  // La primera es la principal (vitrina y ficha); las demás, otras vistas de la pieza
+  imagenes: [1, 2, 3].map((v) => pendiente(`Fotografía del objeto ${n} — vista ${v}`)),
   modelo3d: pendiente('Modelo 3D pendiente', 'modelo3d'),
 }))

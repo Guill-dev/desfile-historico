@@ -20,5 +20,5 @@ export const versiones: Version[] = anios.map((anio) => ({
   personajes: [{ personaje: '[Personaje]', interprete: '[Persona que lo representó]' }],
   cambios: ['[Cambio importante pendiente]'],
   destacados: ['[Elemento destacado pendiente]'],
-  galeria: [pendiente(`Galería ${anio}`)],
+  galeria: [1, 2, 3, 4, 5, 6].map((n) => pendiente(`Foto ${n} de la edición ${anio}`)),
 }))

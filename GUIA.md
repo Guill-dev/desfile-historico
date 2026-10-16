@@ -117,7 +117,8 @@ Para **cambiar el orden** o **quitar un bloque**, edita `src/pages/Recorrido/Rec
 | `/creadores/creador-1` | Ficha de una persona | `pages/CreadorDetalle/` |
 | `/objetos/objeto-1` | Ficha de un objeto (foto o 3D) | `pages/ObjetoDetalle/` |
 | `/versiones/2025` | Ficha de un año | `pages/VersionDetalle/` |
-| `/mas/historia`, `/mas/galeria`… | Secciones de "Más" | `pages/Mas/` |
+| `/mas/galeria` | Galería: todas las fotos de los años y los objetos, juntas | `pages/Mas/secciones/GaleriaPagina.tsx` |
+| `/mas/historia`, `/mas/contacto`… | Demás secciones de "Más" (por ahora "pendiente") | `pages/Mas/` |
 | cualquier dirección que no existe | "Esta pieza no está en el archivo" | `pages/NoEncontrado/` |
 
 Las fichas se crean **solas** a partir de los datos: si agregas un objeto en `objetos.ts`, su página aparece automáticamente.
@@ -145,18 +146,35 @@ Si el texto lleva un apóstrofo (`'`), usa comillas dobles: `"El 'caballo' blanc
 2. En el archivo de datos, cambia la foto pendiente por la real:
 
 ```js
-// ANTES
-imagenes: [pendiente('Fotografía del objeto 1')],
+// ANTES (3 fotos pendientes de ejemplo)
+imagenes: [1, 2, 3].map((v) => pendiente(`Fotografía del objeto ${n} — vista ${v}`)),
 
-// DESPUÉS
+// DESPUÉS (las fotos reales: la primera es la principal)
 imagenes: [
   { tipo: 'imagen', src: '/media/objetos/objeto-1/mascara.jpg', alt: 'Máscara de madera pintada a mano', credito: 'Foto: Juan Gómez' },
+  { tipo: 'imagen', src: '/media/objetos/objeto-1/mascara-perfil.jpg', alt: 'La máscara vista de perfil' },
 ],
 ```
 
+> Los nombres y créditos de este ejemplo son inventados, solo para mostrar el formato.
+
 - `src` → la ruta del archivo **empezando por `/media/`** (sin escribir `public`).
 - `alt` → una descripción corta de la foto (la leen los lectores de pantalla y aparece si la foto no carga).
-- `credito` → autor o archivo de procedencia (opcional).
+- `credito` → autor o archivo de procedencia (opcional). Aparece debajo de la foto cuando se ve en grande.
+
+### Galerías y visor de fotos 🖼️
+**Toda foto se puede tocar para verla en grande** en el visor: pantalla completa, flechas ← → (o deslizar con el dedo
+en el celular), contador "3 / 6" y cierre con ✕, con la tecla Escape o tocando fuera de la foto.
+
+No hay que configurar nada: las fotos que pongas en los datos aparecen solas en su galería.
+| Dónde se ve | De dónde salen las fotos |
+|---|---|
+| Ficha de un año → "Galería 2025" | `galeria` de ese año en `versiones.ts` |
+| Ficha de un objeto → foto grande + miniaturas | `imagenes` del objeto en `objetos.ts` (la primera es la principal) |
+| Ficha de una persona → retrato + miniaturas | `retrato` y `galeria` (opcional) en `creadores.ts` |
+| **Más → Galería** (`/mas/galeria`) | Todas las de los años y los objetos, juntas |
+
+El visor es `src/components/media/Visor.tsx` y la cuadrícula de fotos `src/components/media/Galeria.tsx`.
 
 ### Agregar un año, un objeto o un creador nuevo
 Copia uno de los bloques `{ ... }` existentes en su archivo de datos, pégalo y cambia sus valores.
@@ -345,8 +363,44 @@ npm run typecheck
 
 `npm run build` también los revisa y **no deja publicar** si hay alguno.
 
+### Un truco que ya usa el proyecto: el "type guard"
+En `src/utils/media.ts`, la función `tieneArchivo(media)` no solo responde sí o no: también le **asegura a TypeScript**
+que, si la respuesta es sí, `media.src` es un texto (y no `null`). Por eso, dentro de un `if (tieneArchivo(media)) { … }`
+se puede usar `media.src` sin que el editor se queje.
+
 ### Si quieres agregar un campo nuevo
 Ejemplo: que cada objeto tenga un `donante` opcional.
 1. En `src/types/contenido.ts`, dentro de `interface Objeto`, agrega: `donante?: string`
 2. En `src/data/objetos.ts`, ya puedes escribir `donante: 'Familia …'` en los objetos que lo tengan.
 3. Para mostrarlo, úsalo en `src/pages/ObjetoDetalle/ObjetoDetalle.tsx` (por ejemplo `{objeto.donante && <p>{objeto.donante}</p>}`).
+
+---
+
+## 12. Vista previa al compartir (WhatsApp, Facebook…) 📲
+
+Cuando alguien pega el enlace del sitio en WhatsApp, aparece una tarjeta con **imagen, título y descripción**.
+Eso lo controlan unas etiquetas especiales (Open Graph) en **`index.html`** y la imagen **`public/og-imagen.jpg`**.
+
+### Cambiar la imagen
+Reemplaza `public/og-imagen.jpg` por otra con el **mismo nombre**:
+- Tamaño **1200 × 630** (horizontal).
+- **Menos de 300 KB** (si pesa más, WhatsApp no la muestra). En squoosh.app puedes bajarle el peso.
+- Una buena foto del desfile suele funcionar mejor que un diseño: rostros, color, movimiento.
+- Deja lo importante en el centro: algunas apps recortan los bordes.
+
+### Cambiar el título o la descripción
+En `index.html`, las líneas `og:title` y `og:description`.
+
+### Al publicar el sitio (importante)
+WhatsApp necesita la **dirección completa** de la imagen. Esa dirección sale del archivo **`.env`** (`VITE_SITIO_URL`),
+que mientras trabajas en tu computador dice `http://localhost:5173`. Cuando el sitio tenga su dirección real:
+1. Crea un archivo **`.env.production`** en la carpeta del proyecto con una línea, por ejemplo:
+   `VITE_SITIO_URL=https://desfile-gualmatan.netlify.app` (tu dirección real, **sin** `/` al final).
+2. Vuelve a publicar. Para revisar cómo se ve la tarjeta, pega el enlace en https://www.opengraph.xyz.
+
+ℹ️ Por ahora **todos** los enlaces del sitio comparten la misma tarjeta (la del inicio). Más adelante se puede
+lograr una tarjeta distinta por página (por ejemplo, la foto de cada objeto) con un paso extra al publicar.
+
+### El título de la pestaña
+Cada página pone su propio título en la pestaña del navegador ("Edición 2025 · Desfile Histórico de Gualmatán")
+con la etiqueta `<title>` dentro de la página. La función que arma ese texto está en `src/utils/titulo.ts`.

@@ -1,10 +1,22 @@
 import { Suspense } from 'react'
 import { Outlet } from 'react-router'
+import { tituloPagina } from '@/utils/titulo'
 import SiteHeader from './SiteHeader'
 import SiteFooter from './SiteFooter'
 import ScrollManager from './ScrollManager'
 
-/** Marco común de todas las páginas. */
+/** Mientras carga una página: un aviso y el título general en la pestaña */
+const cargando = (
+  <p className="contenedor cargando mono">
+    <title>{tituloPagina()}</title>
+    Cargando…
+  </p>
+)
+
+/**
+ * Marco común de todas las páginas.
+ * Cada página pone su propio <title> (React 19 lo lleva solo al <head> del documento).
+ */
 export default function Layout() {
   return (
     <>
@@ -12,7 +24,7 @@ export default function Layout() {
       <ScrollManager />
       <SiteHeader />
       <main id="contenido">
-        <Suspense fallback={<p className="contenedor cargando mono">Cargando…</p>}>
+        <Suspense fallback={cargando}>
           <Outlet />
         </Suspense>
       </main>

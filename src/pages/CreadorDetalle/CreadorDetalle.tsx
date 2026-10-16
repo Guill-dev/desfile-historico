@@ -1,7 +1,8 @@
 import { useParams } from 'react-router'
 import { creadores } from '@/data/creadores'
 import { cx } from '@/utils/cx'
-import Media from '@/components/media/Media'
+import { tituloPagina } from '@/utils/titulo'
+import Galeria from '@/components/media/Galeria'
 import CabeceraPagina from '@/components/ui/CabeceraPagina'
 import PrevNext from '@/components/ui/PrevNext'
 import NoEncontrado from '@/pages/NoEncontrado/NoEncontrado'
@@ -19,6 +20,7 @@ export default function CreadorDetalle() {
 
   return (
     <div className="tema-papel">
+      <title>{tituloPagina(creador.nombre)}</title>
       <CabeceraPagina
         volver={{ to: { pathname: '/', hash: '#creadores' }, texto: 'Creadores' }}
         kicker={`${creador.rol} · ${creador.periodo}`}
@@ -28,7 +30,8 @@ export default function CreadorDetalle() {
       <article className={cx('contenedor', f.ficha)}>
         <div className={f.cuerpo}>
           <div className={f.escenario}>
-            <Media media={creador.retrato} ratio="3 / 4" className={f.media} />
+            {/* Retrato + fotos de su galería (si tiene); se abren en grande en el visor */}
+            <Galeria medios={[creador.retrato, ...(creador.galeria ?? [])]} variante="escenario" ratio="3 / 4" />
           </div>
 
           <div className={f.columna}>

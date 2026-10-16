@@ -6,10 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0c1f14" />
     <meta name="description" content="Desfile Histórico de Gualmatán, Nariño — una exposición digital sobre la memoria cultural del pueblo." />
+
+    <!--
+      Vista previa al compartir el enlace (WhatsApp, Facebook, X, Telegram…).
+      %VITE_SITIO_URL% se reemplaza al compilar por la dirección del sitio (archivo .env).
+      El título de la pestaña lo pone cada página con <title> (React 19).
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:site_name" content="Desfile Histórico de Gualmatán" />
+    <meta property="og:title" content="Desfile Histórico de Gualmatán" />
+    <meta property="og:description" content="Una exposición digital sobre la memoria cultural de Gualmatán, Nariño. Conoce la historia, los pasos, los objetos y las ediciones del desfile." />
+    <meta property="og:url" content="%VITE_SITIO_URL%/" />
+    <meta property="og:image" content="%VITE_SITIO_URL%/og-imagen.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Desfile Histórico de Gualmatán: ilustración del pueblo desde el aire con la iglesia de cúpulas rojas" />
+    <meta name="twitter:card" content="summary_large_image" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <title>Desfile Histórico de Gualmatán</title>
   </head>
   <body>
     <div id="root"></div>

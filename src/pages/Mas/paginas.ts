@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react'
+import { lazy, type ComponentType } from 'react'
 import type { SeccionMas } from '@/types/contenido'
 
 /** Lo que recibe la página propia de una sección de "Más" */
@@ -9,10 +9,11 @@ export interface PaginaMasProps {
 /**
  * Páginas propias de las secciones de "Más", por slug (ver data/mas.ts).
  * Si un slug no aparece aquí se muestra la plantilla genérica "en construcción".
+ * Cada una se carga solo cuando se visita (lazy).
  *
- * Para registrar una (se carga solo cuando se visita):
- *   import { lazy } from 'react'
- *   ...
- *   galeria: lazy(() => import('./secciones/Galeria')),
+ * Para registrar otra: crearla en ./secciones/ y añadir una línea, p. ej.
+ *   historia: lazy(() => import('./secciones/HistoriaPagina')),
  */
-export const paginasMas: Partial<Record<string, ComponentType<PaginaMasProps>>> = {}
+export const paginasMas: Partial<Record<string, ComponentType<PaginaMasProps>>> = {
+  galeria: lazy(() => import('./secciones/GaleriaPagina')),
+}
