@@ -9,12 +9,17 @@ Experiencia web tipo museo / archivo interactivo sobre el Desfile Histórico de 
 
 ```bash
 npm install
-npm run dev       # desarrollo en http://localhost:5173
-npm run build     # versión de producción en dist/
+npm run dev        # desarrollo en http://localhost:5173
+npm run typecheck  # revisa los tipos de TypeScript
+npm run build      # revisa los tipos y genera la versión de producción en dist/
 npm run lint
 ```
 
-Stack: Vite 8 · React 19 · React Router 8 · CSS Modules (sin librerías de UI).
+Stack: Vite 8 · React 19 · **TypeScript 6** (modo estricto) · React Router 8 · CSS Modules (sin librerías de UI).
+
+- Vite compila los `.ts` / `.tsx`; TypeScript solo **revisa** los tipos (`tsc -b`, antes de cada build).
+- Configuración: `tsconfig.json` → `tsconfig.app.json` (código del sitio) y `tsconfig.node.json` (`vite.config.ts`).
+- La forma de todo el contenido está en `src/types/contenido.ts`.
 
 ## Identidad visual
 
@@ -39,13 +44,13 @@ public/
   media/                  Fotos, video, audio y modelos 3D, organizados por sección
     inicio/ pasos/ creadores/ objetos/ versiones/ galeria/ archivo/ general/
 src/
-  main.jsx                Punto de entrada
+  main.tsx                Punto de entrada
   app/
-    router.jsx            Mapa de rutas del sitio
-    paginasDiferidas.js   Páginas que se cargan bajo demanda
+    router.tsx            Mapa de rutas del sitio
+    paginasDiferidas.ts   Páginas que se cargan bajo demanda
   data/                   ★ TODO EL CONTENIDO vive aquí (sin tocar componentes)
-    sitio.js              Nombre, lema, orden de capítulos, frases puente
-    pasos.js  creadores.js  objetos.js  versiones.js  mas.js
+    sitio.ts              Nombre, lema, orden de capítulos, frases puente
+    pasos.ts  creadores.ts  objetos.ts  versiones.ts  mas.ts
   sections/               Bloques del recorrido de inicio
     Inicio/ Historia/ Pasos/ Creadores/ Objetos/ Versiones/
   pages/                  Páginas completas
@@ -61,9 +66,10 @@ src/
     marca/                Bandera de Gualmatán + Marca (logo provisional)
     ilustraciones/        GualmatanAereo: el pueblo desde el aire, animado (SVG)
     pasos/                LineaPasos (lista completa en /pasos)
-  hooks/                  useInView, usePrefersReducedMotion, useCarrusel, useEstadoScroll
+  hooks/                  useInView, usePrefersReducedMotion, useMediaQuery, useCarrusel, useEstadoScroll
+  types/                  contenido.ts (forma de cada dato), react-css.d.ts (variables CSS en style)
   styles/                 tokens.css (diseño), reset.css, base.css
-  utils/                  media.js (formato multimedia + pendiente()), cx.js
+  utils/                  media.ts (formato multimedia + pendiente()), cx.ts
   assets/                 Recursos de diseño importados desde código (texturas, íconos)
 ```
 
@@ -90,10 +96,10 @@ src/
 
 ### Agregar contenido
 
-- **Un año nuevo:** añadir un objeto al arreglo en `src/data/versiones.js`.
-- **Un objeto:** añadirlo en `src/data/objetos.js`; fotos y modelo en `public/media/objetos/<id>/`.
-- **Modelo 3D:** poner `modelo3d: { tipo: 'modelo3d', src: '/media/objetos/<id>/modelo.glb', alt: '…' }`. El visor se implementa en un solo archivo: `src/components/media/ModelViewer.jsx`.
-- **Sección en "Más":** añadir una entrada en `src/data/mas.js` (aparece sola en menú y pie). Si necesita página propia, registrarla en `src/pages/Mas/paginas.js`.
+- **Un año nuevo:** añadir un objeto al arreglo en `src/data/versiones.ts`.
+- **Un objeto:** añadirlo en `src/data/objetos.ts`; fotos y modelo en `public/media/objetos/<id>/`.
+- **Modelo 3D:** poner `modelo3d: { tipo: 'modelo3d', src: '/media/objetos/<id>/modelo.glb', alt: '…' }`. El visor se implementa en un solo archivo: `src/components/media/ModelViewer.tsx`.
+- **Sección en "Más":** añadir una entrada en `src/data/mas.ts` (aparece sola en menú y pie). Si necesita página propia, registrarla en `src/pages/Mas/paginas.ts`.
 
 ## Publicación
 

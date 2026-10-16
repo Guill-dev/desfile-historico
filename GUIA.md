@@ -26,21 +26,21 @@ Para apagarlo: `Ctrl + C` en la terminal.
 
 | Quiero cambiar… | Archivo |
 |---|---|
-| El **nombre del sitio**, la **frase de portada** o el botón "Comenzar el recorrido" | `src/data/sitio.js` → `sitio` |
-| El **video o foto principal** de la portada | `src/data/sitio.js` → `portada` (ver sección 7) |
-| El texto de la tarjeta **"Conoce la historia"** | `src/data/sitio.js` → `textos.historia` |
-| La frase grande **"Cada año, el pueblo vuelve a contarla"** | `src/data/sitio.js` → `interludios` |
-| Los **títulos del menú** o los títulos grandes de cada bloque | `src/data/sitio.js` → `capitulos` |
-| La frase del **pie de página** | `src/data/sitio.js` → `textos.pie` |
-| Los **Pasos** (títulos, descripciones, fotos) | `src/data/pasos.js` |
-| La introducción de la página de Pasos | `src/data/sitio.js` → `textos.pasos` |
-| Los **Creadores** (nombre, período, rol, retrato, testimonios) | `src/data/creadores.js` |
-| Los **Objetos** (nombre, época, materiales, historia, fotos, 3D) | `src/data/objetos.js` |
-| Las **Versiones / años** del desfile | `src/data/versiones.js` |
-| Las secciones de **"Más"** (Historia, Galería, Contacto…) | `src/data/mas.js` |
+| El **nombre del sitio**, la **frase de portada** o el botón "Comenzar el recorrido" | `src/data/sitio.ts` → `sitio` |
+| El **video o foto principal** de la portada | `src/data/sitio.ts` → `portada` (ver sección 7) |
+| El texto de la tarjeta **"Conoce la historia"** | `src/data/sitio.ts` → `textos.historia` |
+| La frase grande **"Cada año, el pueblo vuelve a contarla"** | `src/data/sitio.ts` → `interludios` |
+| Los **títulos del menú** o los títulos grandes de cada bloque | `src/data/sitio.ts` → `capitulos` |
+| La frase del **pie de página** | `src/data/sitio.ts` → `textos.pie` |
+| Los **Pasos** (títulos, descripciones, fotos) | `src/data/pasos.ts` |
+| La introducción de la página de Pasos | `src/data/sitio.ts` → `textos.pasos` |
+| Los **Creadores** (nombre, período, rol, retrato, testimonios) | `src/data/creadores.ts` |
+| Los **Objetos** (nombre, época, materiales, historia, fotos, 3D) | `src/data/objetos.ts` |
+| Las **Versiones / años** del desfile | `src/data/versiones.ts` |
+| Las secciones de **"Más"** (Historia, Galería, Contacto…) | `src/data/mas.ts` |
 | Los **colores**, tipos de letra, tamaños, redondeos | `src/styles/tokens.css` |
-| El **orden de los bloques** de la página de inicio | `src/pages/Recorrido/Recorrido.jsx` |
-| La **ilustración animada** del pueblo | `src/components/ilustraciones/GualmatanAereo.jsx` |
+| El **orden de los bloques** de la página de inicio | `src/pages/Recorrido/Recorrido.tsx` |
+| La **ilustración animada** del pueblo | `src/components/ilustraciones/GualmatanAereo.tsx` |
 | La **bandera** o el logo de la barra superior | `src/components/marca/` |
 | La **barra superior** / el **menú** / el **pie** | `src/components/layout/` |
 
@@ -61,12 +61,15 @@ desfile historico/
 │
 ├── src/
 │   ├── data/                ← 📝 TODOS LOS TEXTOS E INFORMACIÓN
-│   │   ├── sitio.js         nombre, frase, portada/video, menú, textos sueltos
-│   │   ├── pasos.js
-│   │   ├── creadores.js
-│   │   ├── objetos.js
-│   │   ├── versiones.js
-│   │   └── mas.js
+│   │   ├── sitio.ts         nombre, frase, portada/video, menú, textos sueltos
+│   │   ├── pasos.ts
+│   │   ├── creadores.ts
+│   │   ├── objetos.ts
+│   │   ├── versiones.ts
+│   │   └── mas.ts
+│   │
+│   ├── types/               ← 🧩 LA FORMA DE CADA DATO (TypeScript, ver sección 11)
+│   │   └── contenido.ts     qué campos tiene un Paso, un Objeto, una Versión…
 │   │
 │   ├── sections/            los BLOQUES de la página de inicio (uno por carpeta)
 │   ├── pages/               las PÁGINAS completas (inicio, fichas, pasos…)
@@ -74,13 +77,16 @@ desfile historico/
 │   ├── styles/              colores, letras y estilos generales
 │   ├── hooks/  utils/  app/ funcionamiento interno (normalmente no se tocan)
 │
+├── tsconfig*.json           configuración de TypeScript (no hace falta tocarla)
 ├── GUIA.md                  esta guía
 └── README.md                resumen técnico
 ```
 
 Cada bloque o página es una carpeta con **dos archivos**:
-- `Nombre.jsx` → **qué** se muestra (estructura)
+- `Nombre.tsx` → **qué** se muestra (estructura). Es React + TypeScript.
 - `Nombre.module.css` → **cómo** se ve (tamaños, espacios, colores de ese bloque)
+
+Los archivos de datos y funciones terminan en **`.ts`**; los que dibujan pantalla (tienen etiquetas `< >`) en **`.tsx`**.
 
 ---
 
@@ -90,15 +96,15 @@ La página de inicio es un recorrido de arriba hacia abajo. Cada bloque vive en 
 
 | # | Lo que ves | Carpeta | Su información viene de |
 |---|---|---|---|
-| 1 | **Portada** oscura con el video, el título y el botón rojo | `sections/Inicio/` | `data/sitio.js` → `sitio` y `portada` |
-| 2 | **Conoce la historia**: la ilustración del pueblo + tarjeta oscura | `sections/Historia/` | `data/sitio.js` → `textos.historia` |
-| 3 | **Los pasos del desfile**: muestra de 3 + botón "Ver los N pasos" | `sections/Pasos/` | `data/pasos.js` |
-| 4 | **Quienes lo hicieron posible**: carrusel de retratos | `sections/Creadores/` | `data/creadores.js` |
-| 5 | **La colección**: vitrina oscura de objetos | `sections/Objetos/` | `data/objetos.js` |
-| 6 | **Cada año, el pueblo vuelve a contarla** + línea de años | `sections/Versiones/` | `data/versiones.js` |
-| — | **Más del archivo** + pie (aparece en todas las páginas) | `components/layout/SiteFooter.jsx` | `data/mas.js` |
+| 1 | **Portada** oscura con el video, el título y el botón rojo | `sections/Inicio/` | `data/sitio.ts` → `sitio` y `portada` |
+| 2 | **Conoce la historia**: la ilustración del pueblo + tarjeta oscura | `sections/Historia/` | `data/sitio.ts` → `textos.historia` |
+| 3 | **Los pasos del desfile**: muestra de 3 + botón "Ver los N pasos" | `sections/Pasos/` | `data/pasos.ts` |
+| 4 | **Quienes lo hicieron posible**: carrusel de retratos | `sections/Creadores/` | `data/creadores.ts` |
+| 5 | **La colección**: vitrina oscura de objetos | `sections/Objetos/` | `data/objetos.ts` |
+| 6 | **Cada año, el pueblo vuelve a contarla** + línea de años | `sections/Versiones/` | `data/versiones.ts` |
+| — | **Más del archivo** + pie (aparece en todas las páginas) | `components/layout/SiteFooter.tsx` | `data/mas.ts` |
 
-Para **cambiar el orden** o **quitar un bloque**, edita `src/pages/Recorrido/Recorrido.jsx`: es una lista con los bloques en orden.
+Para **cambiar el orden** o **quitar un bloque**, edita `src/pages/Recorrido/Recorrido.tsx`: es una lista con los bloques en orden.
 
 ---
 
@@ -114,7 +120,7 @@ Para **cambiar el orden** o **quitar un bloque**, edita `src/pages/Recorrido/Rec
 | `/mas/historia`, `/mas/galeria`… | Secciones de "Más" | `pages/Mas/` |
 | cualquier dirección que no existe | "Esta pieza no está en el archivo" | `pages/NoEncontrado/` |
 
-Las fichas se crean **solas** a partir de los datos: si agregas un objeto en `objetos.js`, su página aparece automáticamente.
+Las fichas se crean **solas** a partir de los datos: si agregas un objeto en `objetos.ts`, su página aparece automáticamente.
 
 ---
 
@@ -157,9 +163,9 @@ Copia uno de los bloques `{ ... }` existentes en su archivo de datos, pégalo y 
 Cada uno necesita un `id` distinto (para años, el `anio` hace de id). El sitio lo muestra solo.
 
 ### Modelos 3D (a futuro)
-Guarda el archivo `.glb` en `public/media/objetos/<id-del-objeto>/modelo.glb` y en `objetos.js` escribe:
+Guarda el archivo `.glb` en `public/media/objetos/<id-del-objeto>/modelo.glb` y en `objetos.ts` escribe:
 `modelo3d: { tipo: 'modelo3d', src: '/media/objetos/objeto-1/modelo.glb', alt: 'Modelo 3D de la máscara' }`.
-El visor 3D se activará en `src/components/media/ModelViewer.jsx` cuando tengamos los archivos.
+El visor 3D se activará en `src/components/media/ModelViewer.tsx` cuando tengamos los archivos.
 
 ---
 
@@ -192,7 +198,7 @@ public/media/inicio/desfile-poster.jpg    (opcional)
 ```
 
 ### Paso 3 — Decirle al sitio cuál es
-Abre **`src/data/sitio.js`**, busca `portada` y escribe las rutas:
+Abre **`src/data/sitio.ts`**, busca `portada` y escribe las rutas:
 
 ```js
 export const portada = {
@@ -235,7 +241,7 @@ Otros ajustes (en archivos de estilo):
 Deja `video: null` y pon la foto en `poster`. Se verá la foto a pantalla completa con el mismo velo oscuro.
 
 ### Si el video no aparece
-1. Revisa que el nombre en `sitio.js` sea **exactamente** igual al del archivo (mayúsculas, extensión `.mp4`).
+1. Revisa que el nombre en `sitio.ts` sea **exactamente** igual al del archivo (mayúsculas, extensión `.mp4`).
 2. Revisa que la ruta empiece por `/media/` y no por `public/`.
 3. Si es `.mov` o de iPhone, conviértelo a MP4 H.264 con HandBrake.
 4. Si tarda mucho en cargar, comprímelo más (menos de 10 MB).
@@ -266,7 +272,7 @@ Todo está en **`src/styles/tokens.css`**. Cambiar un valor ahí lo cambia en to
 - ✅ Fotos livianas: 1600–2000 px de ancho y menos de 500 KB (puedes comprimirlas en squoosh.app).
 - ✅ **No inventar datos históricos**: si algo no está confirmado, déjalo entre `[ ]`.
 - ⛔ No toques: `node_modules/`, `package-lock.json`, `dist/`. Se generan solos.
-- ⛔ En los `.jsx`, no borres las líneas `import ...` de arriba ni las etiquetas `< >` si no estás seguro.
+- ⛔ En los `.tsx`, no borres las líneas `import ...` de arriba ni las etiquetas `< >` si no estás seguro.
 
 ---
 
@@ -277,8 +283,70 @@ Todo está en **`src/styles/tokens.css`**. Cambiar un valor ahí lo cambia en to
 - Para revisar que todo esté bien antes de publicar:
 
 ```bash
+npm run typecheck
 npm run lint
 npm run build
 ```
 
-Si los dos terminan sin errores, el sitio está listo.
+Si los tres terminan sin errores, el sitio está listo.
+
+---
+
+## 11. TypeScript: qué es y cómo te ayuda
+
+El proyecto está escrito en **TypeScript**: es JavaScript con **tipos**, es decir, con una descripción de qué forma tiene cada dato.
+El navegador nunca ve TypeScript: Vite lo convierte a JavaScript. Los tipos sirven **mientras escribes**, para atrapar errores antes de que el sitio falle.
+
+### Dónde están los tipos
+Casi todo lo importante está en **`src/types/contenido.ts`**. Por ejemplo:
+
+```ts
+export interface Version {
+  anio: number          // número
+  titulo: string        // texto
+  resumen: string
+  portada: Media        // otro tipo definido en el mismo archivo
+  personajes: Personaje[]   // [] = una lista de Personaje
+  cambios: string[]         // lista de textos
+  destacados: string[]
+  galeria: Media[]
+}
+```
+
+Y en los datos se usa así: `export const versiones: Version[] = [...]` ("versiones es una lista de Version").
+
+### Cómo se lee
+| Escrito | Significa |
+|---|---|
+| `string` | texto: `'Hola'` |
+| `number` | número: `2025` |
+| `boolean` | `true` o `false` |
+| `string[]` | lista de textos: `['a', 'b']` |
+| `campo?: string` | el campo es **opcional** (puede no estar) |
+| `string \| null` | texto **o** vacío (`null`) |
+| `'imagen' \| 'video'` | solo se aceptan esos valores exactos |
+| `interface Props { … }` | lo que recibe un componente |
+
+### Qué errores atrapa
+Si en `versiones.ts` escribes `anio: '2025'` (con comillas, texto) en lugar de `2025`, o `titlo` en vez de `titulo`,
+el editor lo **subraya en rojo** y al pasar el mouse explica el problema. Ejemplos reales que ya atrapa:
+- Escribir `capitulo('creadore')` (con un error): solo acepta `'pasos' | 'creadores' | 'objetos' | 'versiones'`.
+- Poner `tipo: 'foto'` en un recurso: solo acepta `'imagen' | 'video' | 'audio' | 'modelo3d'`.
+- Olvidar un campo obligatorio de un objeto (por ejemplo `materiales`).
+
+💡 Para ver los errores mientras escribes, usa un editor con TypeScript, como **VS Code**: los muestra sin hacer nada más.
+
+### Ojo: `npm run dev` no se detiene por errores de tipos
+Mientras desarrollas, la página puede seguir funcionando aunque haya un error de tipos. Para revisarlos todos:
+
+```bash
+npm run typecheck
+```
+
+`npm run build` también los revisa y **no deja publicar** si hay alguno.
+
+### Si quieres agregar un campo nuevo
+Ejemplo: que cada objeto tenga un `donante` opcional.
+1. En `src/types/contenido.ts`, dentro de `interface Objeto`, agrega: `donante?: string`
+2. En `src/data/objetos.ts`, ya puedes escribir `donante: 'Familia …'` en los objetos que lo tengan.
+3. Para mostrarlo, úsalo en `src/pages/ObjetoDetalle/ObjetoDetalle.tsx` (por ejemplo `{objeto.donante && <p>{objeto.donante}</p>}`).

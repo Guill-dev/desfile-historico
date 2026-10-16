@@ -87,7 +87,7 @@
   object-fit: contain;
 }
 
-/* Sombra suave al lado izquierdo, detrás del título. Su fuerza sale de `oscuridad` en data/sitio.js */
+/* Sombra suave al lado izquierdo, detrás del título. Su fuerza sale de `oscuridad` en data/sitio.ts */
 .velo {
   position: absolute;
   inset: 0;
