@@ -4,6 +4,8 @@ Experiencia web tipo museo / archivo interactivo sobre el Desfile Histórico de 
 **El scroll es el recorrido**: la página principal es la exposición completa y cada pieza, persona o edición abre su propia ficha.
 
 > 📘 **¿Vas a cambiar textos, fotos o el video?** Lee [GUIA.md](GUIA.md): explica paso a paso dónde está cada cosa.
+>
+> 🗂️ **Base de datos de participantes (en diseño):** [docs/BASE-DE-DATOS.md](docs/BASE-DE-DATOS.md) · plantilla de recolección: `docs/plantillas/datos-desfile.xlsx`
 
 ## Ejecutar
 
