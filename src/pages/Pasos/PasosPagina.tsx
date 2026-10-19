@@ -1,16 +1,25 @@
-import { Link } from 'react-router'
 import { capitulo, rotulo, textos } from '@/data/sitio'
 import { pasos } from '@/data/pasos'
 import { cx } from '@/utils/cx'
 import { tituloPagina } from '@/utils/titulo'
+import { useSeccionActiva } from '@/hooks/useSeccionActiva'
 import CabeceraPagina from '@/components/ui/CabeceraPagina'
+import Indice, { type EntradaIndice } from '@/components/ui/Indice'
 import LineaPasos from '@/components/pasos/LineaPasos'
 import styles from './PasosPagina.module.css'
 
 const cap = capitulo('pasos')
 
+const entradas: EntradaIndice[] = pasos.map((p) => ({
+  id: p.id,
+  etiqueta: p.titulo,
+  numero: String(p.numero).padStart(2, '0'),
+}))
+
 /** Página propia de los Pasos: índice para saltar entre ellos + lista completa. */
 export default function PasosPagina() {
+  const activa = useSeccionActiva(entradas.map((e) => e.id))
+
   return (
     <div className="tema-verde">
       <title>{tituloPagina(cap.titulo)}</title>
@@ -19,19 +28,7 @@ export default function PasosPagina() {
       </CabeceraPagina>
 
       <div className={cx('contenedor', 'capitulo', styles.cuerpo)}>
-        <nav className={styles.indice} aria-label="Índice de pasos">
-          <p className="mono">Índice</p>
-          <ol role="list">
-            {pasos.map((p) => (
-              <li key={p.id}>
-                <Link to={{ hash: `#${p.id}` }}>
-                  <span className="mono">{String(p.numero).padStart(2, '0')}</span>
-                  {p.titulo}
-                </Link>
-              </li>
-            ))}
-          </ol>
-        </nav>
+        <Indice entradas={entradas} nombre="Índice de pasos" activa={activa} />
 
         <LineaPasos pasos={pasos} />
       </div>

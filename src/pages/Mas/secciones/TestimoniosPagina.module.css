@@ -1,0 +1,224 @@
+.descripcion {
+  max-width: var(--ancho-texto);
+  font-size: var(--t-l);
+}
+
+.cuerpo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(56px, 7vw, 96px);
+  padding-block: clamp(40px, 6vw, 80px) clamp(88px, 10vw, 140px);
+}
+
+.titulo {
+  font-size: var(--t-h2);
+}
+
+/* Comillas grandes antes de cada testimonio */
+.cita {
+  display: grid;
+  gap: var(--e-2);
+}
+
+.cita::before {
+  content: '“';
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 3.5rem;
+  line-height: 0.6;
+  height: 0.45em;
+  color: var(--acento);
+}
+
+/* ── Testimonio destacado: bloque verde con retrato ── */
+.destacado {
+  display: grid;
+  /* minmax(0, …): el recuadro de la grabación no puede ensanchar la columna más que la pantalla */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--e-5);
+  padding: clamp(24px, 4vw, 56px);
+  border-radius: var(--r-xl);
+}
+
+.retratoGrande {
+  border-radius: var(--r-l);
+  max-width: 15rem;
+}
+
+.destacadoTexto {
+  display: grid;
+  align-content: center;
+  gap: var(--e-4);
+}
+
+.citaGrande {
+  font-size: clamp(1.375rem, 1rem + 1.6vw, 2.375rem);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.citaGrande::before {
+  font-size: 5rem;
+}
+
+/* ── Cuadrícula de testimonios ── */
+.voces {
+  display: grid;
+  gap: var(--e-5);
+}
+
+.cabecera {
+  display: grid;
+  gap: var(--e-4);
+  padding-top: var(--e-3);
+  border-top: 2px solid currentColor;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-2);
+}
+
+.filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--linea);
+  border-radius: var(--r-m);
+  font-weight: 600;
+  font-size: var(--t-s);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background var(--dur-corta),
+    color var(--dur-corta),
+    border-color var(--dur-corta);
+}
+
+.filtro:hover {
+  border-color: var(--texto);
+}
+
+.filtro[aria-pressed='true'] {
+  background: var(--hover-fondo);
+  border-color: var(--hover-fondo);
+  color: var(--hover-texto);
+}
+
+.cantidad {
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: var(--t-xs);
+  opacity: 0.75;
+}
+
+.grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  gap: var(--e-3);
+}
+
+.grilla > li {
+  display: grid;
+}
+
+.tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--e-4);
+  padding: var(--e-4);
+  border: 1px solid var(--linea);
+  border-radius: var(--r-l);
+  background: var(--c-blanco);
+  scroll-margin-top: calc(var(--alto-header) + var(--e-3));
+}
+
+.tarjeta .cita {
+  font-size: var(--t-l);
+}
+
+/* El pie (quién lo dice) siempre abajo, aunque las tarjetas tengan textos de distinto largo */
+.tarjeta .pie {
+  margin-top: auto;
+}
+
+.grabacion {
+  width: 100%;
+  border-radius: var(--r-m);
+}
+
+/* ── Pie: quién lo cuenta ── */
+.pie {
+  display: grid;
+  gap: var(--e-2);
+}
+
+.autor {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+}
+
+.autor > div {
+  display: grid;
+  min-width: 0;
+}
+
+.avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+  font-weight: 700;
+  font-size: var(--t-s);
+}
+
+.nombre {
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.relacion {
+  font-size: var(--t-s);
+  color: var(--texto-suave);
+}
+
+.ediciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--e-1) var(--e-3);
+  font-weight: 600;
+}
+
+/* ── Invitación final ── */
+.invitacion {
+  display: grid;
+  gap: var(--e-3);
+  justify-items: start;
+  padding: clamp(28px, 5vw, 64px);
+  border-radius: var(--r-xl);
+}
+
+.invitacion p {
+  max-width: var(--ancho-texto);
+  font-size: var(--t-l);
+}
+
+@media (min-width: 800px) {
+  .conRetrato {
+    grid-template-columns: minmax(0, 20rem) minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .retratoGrande {
+    max-width: none;
+  }
+}

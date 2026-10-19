@@ -95,6 +95,78 @@ export interface Version {
   galeria: Media[]
 }
 
+/* ───────────── Página de Historia (/mas/historia) ───────────── */
+
+/** Un dato breve de la ficha de la historia: "Primera edición → [año]". */
+export interface DatoClave {
+  etiqueta: string
+  valor: string
+}
+
+/** Un capítulo del relato de la historia. */
+export interface CapituloHistoria {
+  /** Ancla del capítulo: /mas/historia#origenes (sin espacios ni tildes) */
+  id: string
+  /** Años o época que cubre */
+  epoca: string
+  titulo: string
+  /** Un texto por párrafo */
+  parrafos: string[]
+  imagen?: Media
+  cita?: Testimonio
+}
+
+/** Un momento clave de la línea de tiempo. */
+export interface Hito {
+  /** Texto libre: "1985", "Década de 1980"… Si es un año con edición publicada, enlaza a ella sola. */
+  fecha: string
+  titulo: string
+  texto?: string
+}
+
+/** De dónde sale la información: libro, entrevista, acta, periódico… */
+export interface Fuente {
+  titulo: string
+  /** Autor, archivo o persona entrevistada */
+  autor?: string
+  tipo?: string
+  anio?: string
+  /** Enlace, si la fuente está en internet */
+  enlace?: string
+}
+
+export interface Historia {
+  /** Párrafo de entrada, en letra grande */
+  entradilla: string
+  datos: DatoClave[]
+  capitulos: CapituloHistoria[]
+  hitos: Hito[]
+  fuentes: Fuente[]
+}
+
+/* ───────────── Página de Testimonios (/mas/testimonios) ───────────── */
+
+/** Grupos del filtro de testimonios. Sus nombres visibles están en data/testimonios.ts. */
+export type GrupoTestimonio = 'participantes' | 'organizadores' | 'oficios' | 'publico'
+
+/** Lo que cuenta una persona sobre el desfile. Amplía `Testimonio` (texto, fuente, fecha). */
+export interface TestimonioArchivo extends Testimonio {
+  /** Ancla: /mas/testimonios#testimonio-1 */
+  id: string
+  /** Quién lo cuenta */
+  nombre: string
+  /** Su relación con el desfile: "Participante desde [año]", "Organizadora"… */
+  relacion: string
+  grupo: GrupoTestimonio
+  retrato?: Media
+  /** Grabación original (tipo 'audio' o 'video'), si existe */
+  grabacion?: Media
+  /** Años del desfile de los que habla: enlazan a esa edición si está publicada */
+  ediciones?: number[]
+  /** El que abre la página en grande. Si ninguno lo tiene, se usa el primero. */
+  destacado?: boolean
+}
+
 /** Una sección de "Más" (Historia, Galería, Contacto…). */
 export interface SeccionMas {
   slug: string

@@ -38,6 +38,8 @@ Para apagarlo: `Ctrl + C` en la terminal.
 | Los **Objetos** (nombre, época, materiales, historia, fotos, 3D) | `src/data/objetos.ts` |
 | Las **Versiones / años** del desfile | `src/data/versiones.ts` |
 | Las secciones de **"Más"** (Historia, Galería, Contacto…) | `src/data/mas.ts` |
+| La página de **Historia** (relato, datos clave, línea de tiempo, fuentes) | `src/data/historia.ts` |
+| Los **Testimonios** (citas, retratos, grabaciones, grupos del filtro) | `src/data/testimonios.ts` |
 | Los **colores**, tipos de letra, tamaños, redondeos | `src/styles/tokens.css` |
 | El **orden de los bloques** de la página de inicio | `src/pages/Recorrido/Recorrido.tsx` |
 | La **ilustración animada** del pueblo | `src/components/ilustraciones/GualmatanAereo.tsx` |
@@ -66,6 +68,8 @@ desfile historico/
 │   │   ├── creadores.ts
 │   │   ├── objetos.ts
 │   │   ├── versiones.ts
+│   │   ├── historia.ts      la página de Historia
+│   │   ├── testimonios.ts   la página de Testimonios
 │   │   └── mas.ts
 │   │
 │   ├── types/               ← 🧩 LA FORMA DE CADA DATO (TypeScript, ver sección 11)
@@ -117,8 +121,10 @@ Para **cambiar el orden** o **quitar un bloque**, edita `src/pages/Recorrido/Rec
 | `/creadores/creador-1` | Ficha de una persona | `pages/CreadorDetalle/` |
 | `/objetos/objeto-1` | Ficha de un objeto (foto o 3D) | `pages/ObjetoDetalle/` |
 | `/versiones/2025` | Ficha de un año | `pages/VersionDetalle/` |
+| `/mas/historia` | La historia completa: índice, capítulos, línea de tiempo y fuentes | `pages/Mas/secciones/HistoriaPagina.tsx` |
 | `/mas/galeria` | Galería: todas las fotos de los años y los objetos, juntas | `pages/Mas/secciones/GaleriaPagina.tsx` |
-| `/mas/historia`, `/mas/contacto`… | Demás secciones de "Más" (por ahora "pendiente") | `pages/Mas/` |
+| `/mas/testimonios` | Testimonios: uno destacado y los demás en tarjetas, con filtro | `pages/Mas/secciones/TestimoniosPagina.tsx` |
+| `/mas/archivo`, `/mas/contacto`… | Demás secciones de "Más" (por ahora "pendiente") | `pages/Mas/` |
 | cualquier dirección que no existe | "Esta pieza no está en el archivo" | `pages/NoEncontrado/` |
 
 Las fichas se crean **solas** a partir de los datos: si agregas un objeto en `objetos.ts`, su página aparece automáticamente.
@@ -175,6 +181,31 @@ No hay que configurar nada: las fotos que pongas en los datos aparecen solas en 
 | **Más → Galería** (`/mas/galeria`) | Todas las de los años y los objetos, juntas |
 
 El visor es `src/components/media/Visor.tsx` y la cuadrícula de fotos `src/components/media/Galeria.tsx`.
+
+### La página de Historia 📜
+Todo está en `src/data/historia.ts`, en este orden (el mismo de la página):
+- `entradilla` → el párrafo de entrada, en letra grande.
+- `datos` → las tarjetas de datos breves ("Primera edición", "Pasos"…). Puedes cambiar, quitar o agregar.
+- `capitulos` → el relato. Cada capítulo tiene `epoca`, `titulo`, `parrafos` (uno por párrafo) y, si quieres,
+  una `imagen` (se abre en grande) y una `cita`. El `id` es su ancla: `/mas/historia#origenes`
+  (sin espacios ni tildes). Cada capítulo aparece solo en el **índice** de la izquierda,
+  que marca en qué parte de la lectura vas.
+- `hitos` → la **línea de tiempo**. Si la `fecha` es un año con edición publicada (por ejemplo `'2024'`),
+  aparece sola el enlace "Ver la edición 2024".
+- `fuentes` → de dónde sale la información (libro, entrevista, acta…). En un archivo histórico es lo que
+  le da confianza al visitante: anota la fuente de cada dato.
+
+### La página de Testimonios 🎙️
+Todo está en `src/data/testimonios.ts`. Cada testimonio tiene `nombre`, `relacion` (por ejemplo
+"Participante desde 1998"), `texto`, `fecha`, `fuente` (quién lo registró y dónde) y `grupo`.
+Opcionales: `retrato` (sin foto se ven las iniciales del nombre), `grabacion` (audio o video original)
+y `ediciones` (años de los que habla: enlazan a su ficha).
+- El que tenga `destacado: true` abre la página en grande (si ninguno lo tiene, el primero).
+- Los **grupos del filtro** (Participantes, Organizadores…) se nombran en `gruposTestimonio`.
+  Solo aparecen los botones de los grupos que tienen testimonios.
+- El filtro queda en la dirección: `/mas/testimonios?grupo=participantes` se puede compartir.
+
+⚠️ Publica solo testimonios con autorización de la persona (o de su acudiente, si es menor de edad).
 
 ### Agregar un año, un objeto o un creador nuevo
 Copia uno de los bloques `{ ... }` existentes en su archivo de datos, pégalo y cambia sus valores.

@@ -53,22 +53,23 @@ src/
   data/                   ★ TODO EL CONTENIDO vive aquí (sin tocar componentes)
     sitio.ts              Nombre, lema, orden de capítulos, frases puente
     pasos.ts  creadores.ts  objetos.ts  versiones.ts  mas.ts
+    historia.ts  testimonios.ts   Páginas propias de "Más"
   sections/               Bloques del recorrido de inicio
     Inicio/ Historia/ Pasos/ Creadores/ Objetos/ Versiones/
   pages/                  Páginas completas
     Recorrido/            La exposición (compone las secciones en orden)
     Pasos/                Página propia de los Pasos (son muchos)
     CreadorDetalle/ ObjetoDetalle/ VersionDetalle/   Fichas
-    Mas/                  /mas/:slug + registro de páginas propias (secciones/GaleriaPagina: /mas/galeria)
+    Mas/                  /mas/:slug + registro de páginas propias (secciones/: Historia, Galería, Testimonios)
     NoEncontrado/
   components/
     layout/               Layout, SiteHeader, MenuPantalla, SiteFooter (incluye "Más"), ScrollManager
     media/                Media (imagen/video/audio/3D), Galeria + Visor (fotos en grande), VideoPortada, MediaPlaceholder, ModelViewer
-    ui/                   Boton, SectionHeader, CabeceraPagina, Flechas, Carrusel, Reveal, Interludio, PrevNext
+    ui/                   Boton, SectionHeader, CabeceraPagina, Indice, Flechas, Carrusel, Reveal, Interludio, PrevNext
     marca/                Bandera de Gualmatán + Marca (logo provisional)
     ilustraciones/        GualmatanAereo: el pueblo desde el aire, animado (SVG)
     pasos/                LineaPasos (lista completa en /pasos)
-  hooks/                  useInView, usePrefersReducedMotion, useMediaQuery, useCarrusel, useEstadoScroll
+  hooks/                  useInView, useSeccionActiva, usePrefersReducedMotion, useMediaQuery, useCarrusel, useEstadoScroll
   types/                  contenido.ts (forma de cada dato), react-css.d.ts (variables CSS en style)
   styles/                 tokens.css (diseño), reset.css, base.css
   utils/                  media.ts (pendiente(), tieneArchivo()), titulo.ts (título de pestaña), cx.ts
@@ -84,7 +85,9 @@ src/
 | `/creadores/:id` | Ficha de una persona |
 | `/objetos/:id` | Ficha museográfica (foto o modelo 3D) |
 | `/versiones/:anio` | Una edición del desfile |
-| `/mas/:slug` | Historia, Galería, Testimonios, Archivo, Créditos, Contacto… |
+| `/mas/historia` | Relato completo: índice que sigue la lectura, capítulos, línea de tiempo, fuentes |
+| `/mas/testimonios` | Testimonio destacado + tarjetas con filtro por grupo (`?grupo=participantes`) |
+| `/mas/:slug` | Galería, Archivo, Créditos, Contacto… |
 
 ## Contenido y placeholders
 
@@ -115,6 +118,6 @@ El sitio usa rutas reales (`/objetos/...`). El hosting debe redirigir toda ruta 
 4. ✅ Inicio (portada + ilustración animada de Gualmatán)
 5. ✅ Navegación y sistema de páginas (barra que se oculta, menú a pantalla completa)
 6. ✅ Pasos, Creadores, Objetos, Versiones (estructura y diseño; contenido pendiente)
-7. ◐ Interacciones y animaciones (apariciones, carruseles, paralaje; faltan galería/lightbox y visor 3D)
+7. ◐ Interacciones y animaciones (apariciones, carruseles, paralaje, galería con visor; falta el visor 3D)
 8. ☐ Responsive
 9. ☐ Optimización y limpieza

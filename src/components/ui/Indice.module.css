@@ -1,0 +1,76 @@
+/* Índice: en móvil, una fila deslizable; en escritorio, columna lateral fija. */
+.indice {
+  display: grid;
+  gap: var(--e-3);
+}
+
+.indice ol {
+  display: flex;
+  gap: var(--e-2);
+  overflow-x: auto;
+  padding-bottom: var(--e-2);
+  scrollbar-width: none;
+}
+
+.indice a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1.5px solid var(--linea);
+  border-radius: var(--r-m);
+  font-weight: 600;
+  font-size: var(--t-s);
+  white-space: nowrap;
+  text-decoration: none;
+  transition:
+    background var(--dur-corta),
+    color var(--dur-corta),
+    border-color var(--dur-corta),
+    padding var(--dur-corta);
+}
+
+.indice a:hover {
+  background: var(--hover-fondo);
+  color: var(--hover-texto);
+}
+
+/* La sección que se está leyendo */
+.indice a.activa {
+  border-color: var(--texto);
+}
+
+@media (min-width: 900px) {
+  .indice {
+    position: sticky;
+    top: var(--e-4);
+    max-height: calc(100dvh - var(--e-5));
+    overflow-y: auto;
+  }
+
+  .indice ol {
+    flex-direction: column;
+    overflow-x: visible;
+  }
+
+  .indice a {
+    display: flex;
+    white-space: normal;
+    border-color: transparent;
+    border-radius: 0;
+    padding-inline: 0;
+  }
+
+  .indice a:hover {
+    background: none;
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  /* En la columna: una raya del color de acento delante de la sección activa */
+  .indice a.activa {
+    border-color: transparent;
+    box-shadow: inset 3px 0 0 var(--acento);
+    padding-left: 14px;
+  }
+}

@@ -12,8 +12,10 @@ export interface PaginaMasProps {
  * Cada una se carga solo cuando se visita (lazy).
  *
  * Para registrar otra: crearla en ./secciones/ y añadir una línea, p. ej.
- *   historia: lazy(() => import('./secciones/HistoriaPagina')),
+ *   contacto: lazy(() => import('./secciones/ContactoPagina')),
  */
 export const paginasMas: Partial<Record<string, ComponentType<PaginaMasProps>>> = {
+  historia: lazy(() => import('./secciones/HistoriaPagina')),
   galeria: lazy(() => import('./secciones/GaleriaPagina')),
+  testimonios: lazy(() => import('./secciones/TestimoniosPagina')),
 }
