@@ -1,0 +1,118 @@
+.grafico {
+  --alto: 220px;
+  --eje: 3rem;
+
+  display: grid;
+  gap: var(--e-2);
+}
+
+.cuerpo {
+  display: grid;
+  grid-template-columns: var(--eje) minmax(0, 1fr);
+  height: var(--alto);
+}
+
+/* Números del eje vertical */
+.eje,
+.fechas {
+  list-style: none;
+  padding: 0;
+}
+
+.eje {
+  position: relative;
+  font-family: var(--f-mono);
+  font-size: var(--t-xs);
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+
+.eje li {
+  position: absolute;
+  right: var(--e-2);
+  transform: translateY(50%);
+}
+
+.area {
+  position: relative;
+  display: grid;
+  align-items: end;
+  border-bottom: 1px solid var(--texto);
+  outline-offset: 6px;
+}
+
+/* Líneas guía: finas y discretas */
+.guia {
+  position: absolute;
+  inset-inline: 0;
+  border-top: 1px solid var(--linea);
+  pointer-events: none;
+}
+
+/* Cada columna ocupa su franja completa: el área de toque es más grande que la barra */
+.franja {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  padding-inline: 1px;
+}
+
+.barra {
+  width: min(24px, 100%);
+  min-height: 0;
+  border-radius: 4px 4px 0 0;
+  background: var(--c-verde-oscuro);
+  transition: background var(--dur-corta);
+}
+
+.franja[data-activa] .barra {
+  background: var(--c-verde);
+}
+
+.franja[data-activa]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, currentColor 5%, transparent);
+  pointer-events: none;
+}
+
+.aviso {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  gap: 2px;
+  min-width: max-content;
+  margin-bottom: var(--e-2);
+  padding: 8px 12px;
+  border-radius: var(--r-s);
+  background: var(--c-noche);
+  color: var(--c-blanco);
+  font-size: var(--t-s);
+  pointer-events: none;
+}
+
+.aviso b {
+  font-size: var(--t-m);
+}
+
+.aviso span {
+  font-size: var(--t-xs);
+  opacity: 0.8;
+}
+
+.fechas {
+  display: grid;
+  overflow-x: clip;
+  margin-left: var(--eje);
+  font-family: var(--f-mono);
+  font-size: var(--t-xs);
+  color: var(--texto-suave);
+}
+
+.fechas li {
+  overflow: visible;
+  white-space: nowrap;
+}

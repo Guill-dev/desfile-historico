@@ -1,0 +1,33 @@
+.mapa {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--e-3);
+}
+
+.resumen,
+.ayuda {
+  font-size: var(--t-s);
+  color: var(--texto-suave);
+}
+
+/* Mide el ancho disponible: no puede crecer con la página de adentro */
+.contenedor {
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+/* El marco ocupa el tamaño ya achicado; la página adentro se dibuja a tamaño real y se escala */
+.marco {
+  overflow: hidden;
+  margin-inline: auto;
+  border: 1px solid var(--linea);
+  border-radius: var(--r-m);
+  background: var(--c-blanco);
+}
+
+.marco iframe {
+  display: block;
+  border: 0;
+  transform-origin: 0 0;
+}

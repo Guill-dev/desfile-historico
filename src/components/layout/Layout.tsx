@@ -4,6 +4,7 @@ import { tituloPagina } from '@/utils/titulo'
 import SiteHeader from './SiteHeader'
 import SiteFooter from './SiteFooter'
 import ScrollManager from './ScrollManager'
+import Medicion from './Medicion'
 
 /** Mientras carga una página: un aviso y el título general en la pestaña */
 const cargando = (
@@ -22,6 +23,7 @@ export default function Layout() {
     <>
       <a href="#contenido" className="skip-link">Saltar al contenido</a>
       <ScrollManager />
+      <Medicion />
       <SiteHeader />
       <main id="contenido">
         <Suspense fallback={cargando}>

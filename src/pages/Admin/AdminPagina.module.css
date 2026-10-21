@@ -1,0 +1,101 @@
+.pagina {
+  min-height: 100vh;
+}
+
+.centro {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--e-4);
+  min-height: 100vh;
+  padding: var(--e-5) var(--gutter);
+}
+
+/* La marca es blanca: sobre papel va dentro de una píldora oscura */
+.marca {
+  padding: 10px 18px;
+  border-radius: var(--r-m);
+  background: var(--c-noche);
+  color: var(--c-blanco);
+  text-decoration: none;
+}
+
+.caja {
+  display: grid;
+  gap: var(--e-3);
+  width: min(100%, 26rem);
+  padding: var(--e-5);
+  border: 1px solid var(--linea);
+  border-radius: var(--r-l);
+  background: var(--c-blanco);
+}
+
+.caja h1 {
+  font-size: var(--t-h2);
+  text-transform: uppercase;
+}
+
+.formulario {
+  display: grid;
+  gap: var(--e-3);
+}
+
+.formulario label {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+  font-size: var(--t-s);
+}
+
+.formulario input {
+  padding: 12px 14px;
+  border: 1.5px solid var(--linea);
+  border-radius: var(--r-m);
+  font: inherit;
+  font-weight: 400;
+}
+
+.formulario input:focus-visible {
+  outline: 2px solid var(--c-verde-oscuro);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.nota {
+  font-size: var(--t-s);
+  color: var(--texto-suave);
+}
+
+.error {
+  padding: var(--e-2) var(--e-3);
+  border-radius: var(--r-s);
+  background: color-mix(in srgb, var(--c-rojo) 10%, transparent);
+  font-size: var(--t-s);
+}
+
+.boton {
+  justify-self: start;
+  padding: 12px 18px;
+  border: 1.5px solid var(--texto);
+  border-radius: var(--r-m);
+  font-weight: 600;
+  font-size: var(--t-s);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.principal {
+  justify-self: stretch;
+  border-color: var(--c-rojo);
+  background: var(--c-rojo);
+  color: var(--c-blanco);
+}
+
+.principal:hover {
+  background: var(--c-rojo-hondo);
+}
+
+.principal:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}

@@ -1,0 +1,42 @@
+.lista {
+  display: grid;
+  gap: var(--e-3);
+}
+
+/* Nombre arriba, barra y valor debajo: funciona igual en celular y en computador */
+.fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px var(--e-3);
+}
+
+.etiqueta {
+  grid-column: 1 / -1;
+  overflow-wrap: anywhere;
+  font-size: var(--t-s);
+}
+
+.pista {
+  height: 12px;
+}
+
+.barra {
+  display: block;
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+  background: var(--c-verde-oscuro);
+}
+
+.valor {
+  min-width: 3.5ch;
+  font-weight: 600;
+  font-size: var(--t-s);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.vacio {
+  color: var(--texto-suave);
+  font-size: var(--t-s);
+}

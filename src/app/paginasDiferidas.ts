@@ -6,3 +6,4 @@ export const CreadorDetalle = lazy(() => import('@/pages/CreadorDetalle/CreadorD
 export const ObjetoDetalle = lazy(() => import('@/pages/ObjetoDetalle/ObjetoDetalle'))
 export const VersionDetalle = lazy(() => import('@/pages/VersionDetalle/VersionDetalle'))
 export const MasSeccion = lazy(() => import('@/pages/Mas/MasSeccion'))
+export const AdminPagina = lazy(() => import('@/pages/Admin/AdminPagina'))

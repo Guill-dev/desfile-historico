@@ -1,0 +1,399 @@
+.panel {
+  min-height: 100vh;
+}
+
+/* ── Barra superior oscura, como la del sitio ── */
+.barra {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.barraContenido {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-2) var(--e-4);
+  min-height: 72px;
+  padding-block: var(--e-2);
+}
+
+.marca {
+  text-decoration: none;
+}
+
+.nombrePanel {
+  font-weight: 700;
+  text-transform: uppercase;
+  padding-left: var(--e-4);
+  border-left: 1px solid var(--linea);
+}
+
+.cuenta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-2) var(--e-4);
+  margin-left: auto;
+}
+
+.accionBarra {
+  font-weight: 600;
+  font-size: var(--t-s);
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.accionBarra:hover {
+  text-decoration: underline;
+}
+
+.contenido {
+  display: grid;
+  gap: var(--e-5);
+  padding-block: var(--e-5) var(--e-6);
+}
+
+/* ── Avisos ── */
+.aviso {
+  max-width: 80ch;
+  padding: var(--e-3) var(--e-4);
+  border-left: 4px solid var(--c-verde-oscuro);
+  border-radius: var(--r-s);
+  background: color-mix(in srgb, var(--c-verde) 10%, transparent);
+  font-size: var(--t-s);
+}
+
+.avisoEjemplo {
+  max-width: none;
+  border-left-color: var(--c-rojo);
+  background: color-mix(in srgb, var(--c-rojo) 12%, transparent);
+  font-size: var(--t-m);
+}
+
+.avisoError {
+  border-left-color: var(--c-rojo);
+  background: color-mix(in srgb, var(--c-rojo) 8%, transparent);
+}
+
+.aviso code,
+.nota code {
+  font-family: var(--f-mono);
+  font-size: 0.9em;
+}
+
+/* ── Filtros: una fila arriba de todo ── */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-3);
+}
+
+.rangos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--e-2);
+}
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border: 1.5px solid var(--linea);
+  border-radius: var(--r-m);
+  background: var(--c-blanco);
+  font-weight: 600;
+  font-size: var(--t-s);
+  cursor: pointer;
+  transition:
+    background var(--dur-corta),
+    color var(--dur-corta),
+    border-color var(--dur-corta);
+}
+
+.boton:hover {
+  border-color: var(--texto);
+}
+
+.boton[aria-pressed='true'] {
+  background: var(--hover-fondo);
+  border-color: var(--hover-fondo);
+  color: var(--hover-texto);
+}
+
+.boton[aria-pressed='true'] :global(.suave) {
+  color: inherit;
+  opacity: 0.8;
+}
+
+.estado {
+  min-width: 12ch;
+}
+
+.opciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--e-3);
+  margin-left: auto;
+}
+
+.casilla {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--e-2);
+  font-size: var(--t-s);
+  cursor: pointer;
+}
+
+.casilla input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--c-verde-oscuro);
+}
+
+/* ── Tablero ── */
+.tablero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--e-4);
+  transition: opacity var(--dur-corta);
+}
+
+/* Mientras se vuelve a leer, se mantiene lo anterior un poco apagado (sin saltos) */
+.recargando {
+  opacity: 0.55;
+}
+
+.cifras {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr));
+  gap: var(--e-3);
+}
+
+.cifra {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  padding: var(--e-3) var(--e-4) var(--e-4);
+  border: 1px solid var(--linea);
+  border-radius: var(--r-l);
+  background: var(--c-blanco);
+}
+
+.cifraNombre {
+  font-weight: 600;
+  font-size: var(--t-s);
+}
+
+.cifraValor {
+  font-size: clamp(1.5rem, 1.2rem + 0.7vw, 1.875rem);
+  font-weight: 600;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+.cifraAyuda {
+  font-size: var(--t-xs);
+  color: var(--texto-suave);
+}
+
+.tarjeta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: var(--e-3);
+  min-width: 0;
+  padding: var(--e-4);
+  border: 1px solid var(--linea);
+  border-radius: var(--r-l);
+  background: var(--c-blanco);
+}
+
+.tarjeta h2,
+.detalle h2,
+.vacio h2,
+.privacidad h2 {
+  font-size: var(--t-h3);
+  text-transform: uppercase;
+}
+
+.tarjeta > .boton {
+  justify-self: start;
+}
+
+.nota {
+  font-size: var(--t-xs);
+  color: var(--texto-suave);
+  max-width: 75ch;
+}
+
+.tablaOculta summary {
+  font-weight: 600;
+  font-size: var(--t-s);
+  cursor: pointer;
+}
+
+.tablaOculta[open] summary {
+  margin-bottom: var(--e-3);
+}
+
+/* Las tablas anchas se deslizan de lado en el celular, sin ensanchar la página */
+.desliza {
+  overflow-x: auto;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--t-s);
+}
+
+.tabla th,
+.tabla td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--linea);
+  text-align: left;
+  vertical-align: top;
+}
+
+.tabla thead th {
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+  white-space: nowrap;
+}
+
+.tabla tbody th {
+  font-weight: 600;
+}
+
+.tabla tbody tr:hover {
+  background: color-mix(in srgb, currentColor 4%, transparent);
+}
+
+.tabla .num {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.enlaceTabla {
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: var(--linea);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.enlaceTabla:hover {
+  text-decoration-color: currentColor;
+}
+
+.destino {
+  display: block;
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: var(--t-xs);
+  color: var(--texto-suave);
+  overflow-wrap: anywhere;
+}
+
+.etiquetaChica {
+  display: inline-block;
+  margin-left: var(--e-2);
+  padding: 1px 8px;
+  border-radius: var(--r-s);
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  font-weight: 500;
+  font-size: var(--t-xs);
+}
+
+/* ── Detalle de una página ── */
+.detalle {
+  display: grid;
+  gap: var(--e-4);
+  margin-top: var(--e-4);
+  padding-top: var(--e-4);
+  border-top: 2px solid currentColor;
+  scroll-margin-top: 88px;
+}
+
+.detalleCabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--e-3);
+}
+
+.selector {
+  display: grid;
+  gap: 4px;
+}
+
+.selector select {
+  min-width: min(100%, 22rem);
+  padding: 9px 12px;
+  border: 1.5px solid var(--linea);
+  border-radius: var(--r-m);
+  background: var(--c-blanco);
+  font: inherit;
+  font-size: var(--t-s);
+}
+
+.detalleCuerpo {
+  display: grid;
+  gap: var(--e-4);
+}
+
+.vacio {
+  display: grid;
+  gap: var(--e-2);
+  padding: var(--e-5);
+  border: 1px dashed var(--linea);
+  border-radius: var(--r-l);
+}
+
+.vacio p {
+  max-width: 70ch;
+  color: var(--texto-suave);
+}
+
+.privacidad {
+  display: grid;
+  gap: var(--e-2);
+  max-width: 80ch;
+  padding-top: var(--e-4);
+  border-top: 1px solid var(--linea);
+  font-size: var(--t-s);
+  color: var(--texto-suave);
+}
+
+.privacidad h2 {
+  color: var(--texto);
+}
+
+@media (min-width: 1000px) {
+  .tablero {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cifras,
+  .ancha,
+  .detalle {
+    grid-column: 1 / -1;
+  }
+
+  .detalleCuerpo {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    align-items: start;
+  }
+}

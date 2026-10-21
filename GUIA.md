@@ -40,6 +40,7 @@ Para apagarlo: `Ctrl + C` en la terminal.
 | Las secciones de **"Más"** (Historia, Galería, Contacto…) | `src/data/mas.ts` |
 | La página de **Historia** (relato, datos clave, línea de tiempo, fuentes) | `src/data/historia.ts` |
 | Los **Testimonios** (citas, retratos, grabaciones, grupos del filtro) | `src/data/testimonios.ts` |
+| Las **estadísticas** (qué se mide, el panel `/admin`) | `src/estadisticas/` y `src/pages/Admin/` (ver sección 13) |
 | Los **colores**, tipos de letra, tamaños, redondeos | `src/styles/tokens.css` |
 | El **orden de los bloques** de la página de inicio | `src/pages/Recorrido/Recorrido.tsx` |
 | La **ilustración animada** del pueblo | `src/components/ilustraciones/GualmatanAereo.tsx` |
@@ -71,6 +72,8 @@ desfile historico/
 │   │   ├── historia.ts      la página de Historia
 │   │   ├── testimonios.ts   la página de Testimonios
 │   │   └── mas.ts
+│   │
+│   ├── estadisticas/        ← 📊 medición anónima y cálculos del panel (sección 13)
 │   │
 │   ├── types/               ← 🧩 LA FORMA DE CADA DATO (TypeScript, ver sección 11)
 │   │   └── contenido.ts     qué campos tiene un Paso, un Objeto, una Versión…
@@ -125,6 +128,7 @@ Para **cambiar el orden** o **quitar un bloque**, edita `src/pages/Recorrido/Rec
 | `/mas/galeria` | Galería: todas las fotos de los años y los objetos, juntas | `pages/Mas/secciones/GaleriaPagina.tsx` |
 | `/mas/testimonios` | Testimonios: uno destacado y los demás en tarjetas, con filtro | `pages/Mas/secciones/TestimoniosPagina.tsx` |
 | `/mas/archivo`, `/mas/contacto`… | Demás secciones de "Más" (por ahora "pendiente") | `pages/Mas/` |
+| `/admin` | Panel de estadísticas (privado, ver sección 13) | `pages/Admin/` |
 | cualquier dirección que no existe | "Esta pieza no está en el archivo" | `pages/NoEncontrado/` |
 
 Las fichas se crean **solas** a partir de los datos: si agregas un objeto en `objetos.ts`, su página aparece automáticamente.
@@ -435,3 +439,73 @@ lograr una tarjeta distinta por página (por ejemplo, la foto de cada objeto) co
 ### El título de la pestaña
 Cada página pone su propio título en la pestaña del navegador ("Edición 2025 · Desfile Histórico de Gualmatán")
 con la etiqueta `<title>` dentro de la página. La función que arma ese texto está en `src/utils/titulo.ts`.
+
+---
+
+## 13. Estadísticas: quién entra y qué mira 📊
+
+El sitio mide **de forma anónima** cómo lo usa la gente, y tú lo ves en un panel privado: **`/admin`**
+(por ejemplo `http://localhost:5173/admin`). No aparece en ningún menú y los buscadores no lo muestran.
+
+### Qué muestra el panel
+| Parte | Qué responde |
+|---|---|
+| **Resumen** | Visitantes, visitas, páginas vistas, tiempo típico por visita, salidas rápidas, cuántos volvieron, quién está ahora |
+| **Visitas por día** | Cómo va el tráfico (pasa el mouse o usa las flechas para ver cada día; también como tabla) |
+| **Páginas más vistas** | Vistas, visitantes, tiempo típico y hasta dónde bajan en cada página |
+| **Cómo llegan / Desde qué aparato** | WhatsApp, Facebook, Google… · celular, tablet o computador |
+| **Por dónde entran / Dónde se despiden / Recorridos** | La primera y la última página, y los saltos más comunes ("Inicio → Pasos") |
+| **¿A qué hora entran?** | Para saber cuándo publicar |
+| **Lo más tocado** | Botones y enlaces que más se usan |
+| **Tocan, pero no pasa nada** | Fotos o textos que la gente toca esperando que se abran |
+| **Videos y audios** | Cuántos empiezan, llegan a la mitad y terminan |
+| **Detalle de una página** | Qué secciones alcanzan a ver y el **mapa de toques**: la página real con un punto rojo en cada toque |
+
+### Qué se mide y qué no
+- **Sí:** páginas abiertas, tiempo a la vista (no cuenta si la pestaña está oculta ni tras 5 minutos sin actividad),
+  hasta dónde bajan, secciones vistas al menos un segundo, toques, avance de videos y audios, tipo de aparato y de dónde llegan.
+- **No:** nombres, correos, dirección IP ni cookies. Cada navegador se reconoce solo por un número al azar.
+- **No se mide** a quien activó "no rastrear" en su navegador, a los robots, el propio panel, ni un navegador marcado con
+  **"No contar mis visitas en este navegador"** (márcalo en el tuyo para que tus pruebas no se mezclen; al entrar al panel
+  con tu cuenta se marca solo).
+
+💡 **Para saber cuánta gente llega por WhatsApp**, comparte el enlace con `?origen=whatsapp` al final, por ejemplo
+`https://tu-sitio.com/?origen=whatsapp`. WhatsApp no avisa de dónde viene la visita y, sin esto, aparece como "Directo".
+Sirve con cualquier nombre: `?origen=afiche`, `?origen=alcaldia`…
+
+### Mientras no esté conectado (modo local)
+Con `npm run dev` y sin Supabase, el panel funciona con **tus propias visitas en este navegador**: abre el sitio en otra pestaña,
+recórrelo, vuelve a `/admin` y pulsa **Actualizar**. El botón **"Datos de ejemplo"** llena el panel con visitas inventadas
+para ver cómo luce (lo avisa en grande, solo existe en desarrollo y no llega al sitio publicado).
+En el sitio publicado sin Supabase no se mide nada.
+
+### Conectarlo para ver las visitas de todo el mundo (Supabase, gratis)
+1. Crea una cuenta en **supabase.com** y un proyecto nuevo.
+2. En **SQL Editor**, pega todo el archivo **`docs/sql/estadisticas.sql`** y pulsa **Run**.
+3. En **Authentication → Users → Add user**, crea tu usuario con tu correo y una contraseña
+   (marca "Auto Confirm User"). En **Authentication → Sign In / Providers**, **desactiva** "Allow new users to sign up"
+   para que nadie más pueda registrarse.
+4. Vuelve al **SQL Editor** y ejecuta la última instrucción del archivo (la de `insert into public.administradores`)
+   con tu correo en lugar de `[tu correo]`.
+5. En **Project Settings → API** copia la **Project URL** y la clave pública (**publishable** o **anon**) y crea en la carpeta
+   del proyecto un archivo **`.env.local`** (no se sube a GitHub) con:
+   ```
+   VITE_SUPABASE_URL=https://xxxxxxxx.supabase.co
+   VITE_SUPABASE_CLAVE=tu_clave_publica
+   ```
+   Al publicar, pon esas mismas dos variables en la configuración del hosting (Netlify, Vercel…).
+6. Reinicia `npm run dev` y entra a `/admin` con tu correo y contraseña.
+
+ℹ️ La clave pública puede estar en el sitio sin problema: con ella **solo se pueden enviar** eventos. Leerlos exige tu sesión,
+y la base de datos misma (no el sitio) revisa que estés en la lista de administradores. **Nunca** pongas en el sitio la clave
+"secret" o "service_role".
+
+### Dónde está cada cosa
+| Qué | Archivo |
+|---|---|
+| La medición (qué se registra y cuándo) | `src/estadisticas/rastreador.ts` |
+| Los cálculos del panel | `src/estadisticas/calcular.ts` |
+| Nombres legibles de páginas y secciones | `src/estadisticas/nombres.ts` |
+| Envío y lectura (Supabase o navegador) | `src/estadisticas/almacen.ts` |
+| El panel y sus gráficos | `src/pages/Admin/` |
+| Tablas y reglas de la base de datos | `docs/sql/estadisticas.sql` |

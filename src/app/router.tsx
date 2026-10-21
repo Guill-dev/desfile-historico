@@ -1,8 +1,9 @@
+import { Suspense } from 'react'
 import { Navigate, createBrowserRouter } from 'react-router'
 import Layout from '@/components/layout/Layout'
 import Recorrido from '@/pages/Recorrido/Recorrido'
 import NoEncontrado from '@/pages/NoEncontrado/NoEncontrado'
-import { CreadorDetalle, MasSeccion, ObjetoDetalle, PasosPagina, VersionDetalle } from './paginasDiferidas'
+import { AdminPagina, CreadorDetalle, MasSeccion, ObjetoDetalle, PasosPagina, VersionDetalle } from './paginasDiferidas'
 
 /**
  * Mapa del sitio:
@@ -13,6 +14,7 @@ import { CreadorDetalle, MasSeccion, ObjetoDetalle, PasosPagina, VersionDetalle 
  *   /versiones/:anio    Una edición del desfile
  *   /mas                Lleva al bloque "Más" del recorrido
  *   /mas/:slug          Historia, Galería, Testimonios, Archivo, Créditos, Contacto…
+ *   /admin              Panel de estadísticas (fuera del marco del sitio, sin menú ni pie)
  */
 export const router = createBrowserRouter([
   {
@@ -27,5 +29,13 @@ export const router = createBrowserRouter([
       { path: 'mas/:slug', element: <MasSeccion /> },
       { path: '*', element: <NoEncontrado /> },
     ],
+  },
+  {
+    path: 'admin',
+    element: (
+      <Suspense fallback={null}>
+        <AdminPagina />
+      </Suspense>
+    ),
   },
 ])

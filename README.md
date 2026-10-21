@@ -6,6 +6,8 @@ Experiencia web tipo museo / archivo interactivo sobre el Desfile Histórico de 
 > 📘 **¿Vas a cambiar textos, fotos o el video?** Lee [GUIA.md](GUIA.md): explica paso a paso dónde está cada cosa.
 >
 > 🗂️ **Base de datos de participantes (en diseño):** [docs/BASE-DE-DATOS.md](docs/BASE-DE-DATOS.md) · plantilla de recolección: `docs/plantillas/datos-desfile.xlsx`
+>
+> 📊 **Estadísticas:** panel privado en `/admin` · cómo conectarlo: [GUIA.md, sección 13](GUIA.md) · base de datos: [docs/sql/estadisticas.sql](docs/sql/estadisticas.sql)
 
 ## Ejecutar
 
@@ -61,6 +63,7 @@ src/
     Pasos/                Página propia de los Pasos (son muchos)
     CreadorDetalle/ ObjetoDetalle/ VersionDetalle/   Fichas
     Mas/                  /mas/:slug + registro de páginas propias (secciones/: Historia, Galería, Testimonios)
+    Admin/                /admin: panel de estadísticas (gráficos, mapa de toques, inicio de sesión)
     NoEncontrado/
   components/
     layout/               Layout, SiteHeader, MenuPantalla, SiteFooter (incluye "Más"), ScrollManager
@@ -69,6 +72,7 @@ src/
     marca/                Bandera de Gualmatán + Marca (logo provisional)
     ilustraciones/        GualmatanAereo: el pueblo desde el aire, animado (SVG)
     pasos/                LineaPasos (lista completa en /pasos)
+  estadisticas/           Medición anónima (rastreador), envío/lectura (almacen), cálculos del panel, sesión del administrador
   hooks/                  useInView, useSeccionActiva, usePrefersReducedMotion, useMediaQuery, useCarrusel, useEstadoScroll
   types/                  contenido.ts (forma de cada dato), react-css.d.ts (variables CSS en style)
   styles/                 tokens.css (diseño), reset.css, base.css
@@ -88,6 +92,7 @@ src/
 | `/mas/historia` | Relato completo: índice que sigue la lectura, capítulos, línea de tiempo, fuentes |
 | `/mas/testimonios` | Testimonio destacado + tarjetas con filtro por grupo (`?grupo=participantes`) |
 | `/mas/:slug` | Galería, Archivo, Créditos, Contacto… |
+| `/admin` | Panel de estadísticas (privado; fuera del marco del sitio, sin indexar) |
 
 ## Contenido y placeholders
 
