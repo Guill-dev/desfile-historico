@@ -1,11 +1,6 @@
 import type { GrupoTestimonio, TestimonioArchivo } from '@/types/contenido'
 import { pendiente } from '@/utils/media'
 
-/**
- * TESTIMONIOS — la página /mas/testimonios: lo que cuenta la gente del pueblo.
- * ⚠️ Solo testimonios con autorización de la persona (o de su acudiente, si es menor de edad).
- * Campos disponibles: ver `interface TestimonioArchivo` en src/types/contenido.ts
- */
 
 /**
  * Nombre visible de cada grupo del filtro. `Record` obliga a escribir uno por cada grupo:
