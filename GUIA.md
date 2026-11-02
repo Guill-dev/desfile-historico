@@ -166,6 +166,15 @@ nombre: 'María Pérez',
 ⚠️ No borres las comillas `' '` ni las comas `,` del final de cada línea.
 Si el texto lleva un apóstrofo (`'`), usa comillas dobles: `"El 'caballo' blanco"`.
 
+### Los textos de los pasos (por ahora, solo en tu computador)
+Los títulos y descripciones de los pasos están en **`src/data/pasos.textos.ts`**, un archivo que **no se sube a GitHub**:
+está excluido en `.git/info/exclude` (una lista de archivos ignorados que solo existe en tu computador).
+- En tu computador el sitio los muestra; en GitHub los 79 pasos salen como `[pendiente]`.
+- Para escribir o corregir un paso: `4: { titulo: 'Título del paso', resumen: 'Qué es el paso, en pocas líneas.' },` (el número es el del paso).
+- **Cuando quieras publicarlos**, borra la línea `src/data/pasos.textos.ts` de `.git/info/exclude` y haz el commit.
+- ⚠️ Si publicas el sitio **desde tu computador** (por ejemplo, subiendo la carpeta `dist`), los textos irán incluidos,
+  porque el archivo está ahí. Si el hosting construye el sitio desde GitHub, no.
+
 ### Fotos (paso a paso)
 1. Copia la foto a la carpeta de su sección, por ejemplo `public/media/objetos/objeto-1/mascara.jpg`
 2. En el archivo de datos, cambia la foto pendiente por la real:

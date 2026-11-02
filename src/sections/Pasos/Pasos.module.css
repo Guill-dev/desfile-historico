@@ -4,8 +4,11 @@
   gap: 24px;
 }
 
+/* Número, título y foto: el título ocupa el espacio que sobra, así las fotos de una fila quedan alineadas abajo */
 .paso {
   display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
   gap: 14px;
   padding-top: 18px;
   border-top: 2px solid currentColor;
