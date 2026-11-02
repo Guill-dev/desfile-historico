@@ -1,0 +1,49 @@
+/* Páginas "Ver todos" (/creadores, /objetos, /versiones): todas las tarjetas en cuadrícula */
+
+.cuerpo {
+  padding-block: clamp(40px, 6vw, 80px) clamp(88px, 10vw, 140px);
+}
+
+.grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: 40px 24px;
+}
+
+.cantidad {
+  max-width: var(--ancho-texto);
+  font-size: var(--t-l);
+}
+
+/* Riel de la línea de tiempo en la página de ediciones: cada tarjeta lleva su punto */
+.edicion {
+  position: relative;
+  padding-top: 30px;
+}
+
+.edicion::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 2px;
+  background: var(--texto);
+}
+
+.edicion::after {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--c-rojo);
+}
+
+/* En el celular, de a dos por fila, igual que en el inicio */
+@media (max-width: 899px) {
+  .grilla {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 12px;
+  }
+}

@@ -7,8 +7,11 @@ import { pendiente } from '@/utils/media'
  * Campos disponibles: ver `interface Paso` en src/types/contenido.ts
  */
 
+/** Cantidad de pasos del desfile (dato del administrador) */
+const TOTAL_PASOS = 79
+
 /** PLACEHOLDERS (son muchos: tienen página propia en /pasos) */
-export const pasos: Paso[] = Array.from({ length: 12 }, (_, i) => i + 1).map((n) => ({
+export const pasos: Paso[] = Array.from({ length: TOTAL_PASOS }, (_, i) => i + 1).map((n) => ({
   id: `paso-${n}`,
   numero: n,
   titulo: `[Título del paso ${n}]`,

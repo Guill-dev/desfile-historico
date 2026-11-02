@@ -9,7 +9,7 @@ import { pendiente } from '@/utils/media'
  */
 
 /** Años de ejemplo tomados del brief — confirmar ediciones reales. */
-const anios = [2026, 2025, 2024]
+const anios = [2026, 2025, 2024, 2023]
 
 /** PLACEHOLDERS, ordenadas de la más reciente a la más antigua */
 export const versiones: Version[] = anios.map((anio) => ({

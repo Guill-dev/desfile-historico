@@ -16,7 +16,7 @@ export const historia: Historia = {
   datos: [
     { etiqueta: 'Primera edición', valor: '[Año]' },
     { etiqueta: 'Se celebra', valor: '[Fecha o temporada]' },
-    { etiqueta: 'Pasos', valor: '60' },
+    { etiqueta: 'Pasos', valor: '79' },
     { etiqueta: 'Lugar', valor: 'Gualmatán, Nariño' },
   ],
 

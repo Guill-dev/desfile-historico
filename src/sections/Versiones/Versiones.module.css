@@ -35,19 +35,13 @@
   transform: scale(1.4);
 }
 
-.enlace {
-  display: grid;
-  gap: 14px;
-  text-decoration: none;
-}
+/* En el celular (2 × 2), el riel une las dos tarjetas de cada fila */
+@media (max-width: 899px) {
+  .edicion::before {
+    right: 0;
+  }
 
-.anio {
-  font-size: clamp(3.5rem, 2rem + 4vw, 5.75rem);
-  line-height: 0.85;
-  letter-spacing: -0.02em;
-  color: var(--c-verde);
-}
-
-.foto {
-  border-radius: var(--r-l);
+  .edicion:nth-child(odd):not(:last-child)::before {
+    right: -12px;
+  }
 }

@@ -33,3 +33,55 @@
   background: var(--c-rojo-hondo);
   border-color: var(--c-rojo-hondo);
 }
+
+/*
+ * Llamativo: un brillo cruza el botón y un anillo late a su alrededor, cada pocos segundos.
+ * Invita a tocarlo sin distraer. Se apaga si la persona pidió "reducir movimiento".
+ */
+.llamativo {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  animation: latido 2.8s var(--ease-salida) infinite;
+}
+
+.llamativo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 0.4) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: brillo 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes latido {
+  0%,
+  55% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 50%, transparent);
+  }
+
+  100% {
+    box-shadow: 0 0 0 14px transparent;
+  }
+}
+
+@keyframes brillo {
+  0%,
+  50% {
+    transform: translateX(-120%);
+  }
+
+  80%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .llamativo,
+  .llamativo::after {
+    animation: none;
+  }
+}

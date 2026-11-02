@@ -1,0 +1,18 @@
+/* La tarjeta mide su propio ancho (container): el año crece o se achica con ella */
+.enlace {
+  container-type: inline-size;
+  display: grid;
+  gap: 14px;
+  text-decoration: none;
+}
+
+.anio {
+  font-size: clamp(2.25rem, 0.5rem + 20cqw, 5.75rem);
+  line-height: 0.85;
+  letter-spacing: -0.02em;
+  color: var(--c-verde);
+}
+
+.foto {
+  border-radius: var(--r-l);
+}

@@ -32,19 +32,35 @@
   border-radius: 60px;
 }
 
-/* En móvil, la muestra se desliza con el dedo */
+/* En el computador: los tres primeros, en fila */
+@media (min-width: 900px) {
+  .pasos > li:nth-child(n + 4) {
+    display: none;
+  }
+}
+
+/* En el celular: los cuatro primeros en una cuadrícula de 2 × 2 */
 @media (max-width: 899px) {
   .pasos {
-    grid-auto-flow: column;
-    grid-template-columns: none;
-    grid-auto-columns: 78%;
-    gap: 16px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 12px;
   }
 
-  .pasos > li {
-    scroll-snap-align: start;
+  .paso {
+    gap: 10px;
+    padding-top: 12px;
+  }
+
+  .numero {
+    font-size: 2.5rem;
+  }
+
+  .titulo {
+    font-size: 0.9375rem;
+    overflow-wrap: break-word;
+  }
+
+  .paso:hover .foto {
+    border-radius: 36px;
   }
 }

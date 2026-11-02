@@ -62,6 +62,7 @@ src/
     Recorrido/            La exposición (compone las secciones en orden)
     Pasos/                Página propia de los Pasos (son muchos)
     CreadorDetalle/ ObjetoDetalle/ VersionDetalle/   Fichas
+    Listados/             /creadores, /objetos, /versiones: todas las tarjetas en cuadrícula
     Mas/                  /mas/:slug + registro de páginas propias (secciones/: Historia, Galería, Testimonios)
     Admin/                /admin: panel de estadísticas (gráficos, mapa de toques, inicio de sesión)
     NoEncontrado/
@@ -70,6 +71,7 @@ src/
     media/                Media (imagen/video/audio/3D), Galeria + Visor (fotos en grande), VideoPortada, MediaPlaceholder, ModelViewer
     ui/                   Boton, SectionHeader, CabeceraPagina, Indice, Flechas, Carrusel, Reveal, Interludio, PrevNext
     marca/                Bandera de Gualmatán + Marca (logo provisional)
+    tarjetas/             TarjetaCreador, TarjetaObjeto, TarjetaEdicion (iguales en el inicio y en los listados)
     ilustraciones/        GualmatanAereo: el pueblo desde el aire, animado (SVG)
     pasos/                LineaPasos (lista completa en /pasos)
   estadisticas/           Medición anónima (rastreador), envío/lectura (almacen), cálculos del panel, sesión del administrador
@@ -86,6 +88,7 @@ src/
 |---|---|
 | `/` | Recorrido: Portada → Conoce la historia → muestra de Pasos → Creadores → Objetos → Versiones (+ "Más" en el pie) |
 | `/pasos` | Todos los pasos, con índice (`/pasos#paso-3`) |
+| `/creadores` · `/objetos` · `/versiones` | Todas las tarjetas en cuadrícula (el "Ver todos" del celular) |
 | `/creadores/:id` | Ficha de una persona |
 | `/objetos/:id` | Ficha museográfica (foto o modelo 3D) |
 | `/versiones/:anio` | Una edición del desfile |

@@ -8,7 +8,7 @@ import { pendiente } from '@/utils/media'
  */
 
 /** PLACEHOLDERS */
-export const creadores: Creador[] = [1, 2, 3, 4].map((n) => ({
+export const creadores: Creador[] = [1, 2, 3, 4, 5, 6].map((n) => ({
   id: `creador-${n}`,
   nombre: '[Nombre del creador]',
   periodo: '[Año o período]',

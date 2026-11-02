@@ -80,7 +80,7 @@ desfile historico/
 │   │
 │   ├── sections/            los BLOQUES de la página de inicio (uno por carpeta)
 │   ├── pages/               las PÁGINAS completas (inicio, fichas, pasos…)
-│   ├── components/          piezas reutilizables (botones, menú, video, ilustración…)
+│   ├── components/          piezas reutilizables (botones, menú, video, tarjetas, ilustración…)
 │   ├── styles/              colores, letras y estilos generales
 │   ├── hooks/  utils/  app/ funcionamiento interno (normalmente no se tocan)
 │
@@ -105,13 +105,27 @@ La página de inicio es un recorrido de arriba hacia abajo. Cada bloque vive en 
 |---|---|---|---|
 | 1 | **Portada** oscura con el video, el título y el botón rojo | `sections/Inicio/` | `data/sitio.ts` → `sitio` y `portada` |
 | 2 | **Conoce la historia**: la ilustración del pueblo + tarjeta oscura | `sections/Historia/` | `data/sitio.ts` → `textos.historia` |
-| 3 | **Los pasos del desfile**: muestra de 3 + botón "Ver los N pasos" | `sections/Pasos/` | `data/pasos.ts` |
+| 3 | **Los pasos del desfile**: pasos **al azar** que cambian solos (3 en el computador, 4 en el celular) + botón "Ver los N pasos" | `sections/Pasos/` | `data/pasos.ts` |
 | 4 | **Quienes lo hicieron posible**: carrusel de retratos | `sections/Creadores/` | `data/creadores.ts` |
-| 5 | **La colección**: vitrina oscura de objetos | `sections/Objetos/` | `data/objetos.ts` |
+| 5 | **La colección**: vitrina oscura de objetos, **al azar** (en el celular cambian solos) | `sections/Objetos/` | `data/objetos.ts` |
 | 6 | **Cada año, el pueblo vuelve a contarla** + línea de años | `sections/Versiones/` | `data/versiones.ts` |
 | — | **Más del archivo** + pie (aparece en todas las páginas) | `components/layout/SiteFooter.tsx` | `data/mas.ts` |
 
 Para **cambiar el orden** o **quitar un bloque**, edita `src/pages/Recorrido/Recorrido.tsx`: es una lista con los bloques en orden.
+
+📱 **En el celular**, los bloques 3 a 6 muestran solo **cuatro tarjetas en 2 × 2** y un botón arriba para ver todas
+("Ver los 4 creadores", "Ver las 6 piezas"…), que lleva a `/pasos`, `/creadores`, `/objetos` o `/versiones`.
+En el computador siguen siendo carruseles con flechas. Las tarjetas son las mismas en el inicio y en esas páginas:
+están en `src/components/tarjetas/` (cambiar una cambia las dos).
+
+🎲 **Pasos y piezas al azar.** Cada vez que alguien entra ve otros, y **cada 3 segundos** cambian por otros
+(las tarjetas se voltean como cartas). Cambian **siempre**, aunque el mouse o el dedo estén encima o se esté
+desplazando la página: así invitan a entrar. Solo se detienen si la persona pulsa el botón de pausa (❚❚) o si su
+teléfono o computador tiene activado "reducir movimiento".
+- Para cambiar el tiempo: `CADA_MS = 3000` (en milisegundos) en `src/sections/Pasos/Pasos.tsx` y `src/sections/Objetos/Objetos.tsx`.
+- En la página `/pasos` salen todos **en orden**; en `/objetos`, en un orden al azar distinto cada vez.
+  Cada pieza conserva su número (Nº 07…), que es su lugar en `src/data/objetos.ts`.
+- La pieza que hace esto se puede usar en otros bloques: `src/hooks/useMuestraRotativa.ts`.
 
 ---
 
@@ -121,6 +135,7 @@ Para **cambiar el orden** o **quitar un bloque**, edita `src/pages/Recorrido/Rec
 |---|---|---|
 | `/` | La página de inicio (el recorrido) | `pages/Recorrido/` |
 | `/pasos` | Todos los pasos, con índice | `pages/Pasos/` |
+| `/creadores`, `/objetos`, `/versiones` | Todas las personas, piezas o ediciones, en cuadrícula ("Ver todos") | `pages/Listados/` |
 | `/creadores/creador-1` | Ficha de una persona | `pages/CreadorDetalle/` |
 | `/objetos/objeto-1` | Ficha de un objeto (foto o 3D) | `pages/ObjetoDetalle/` |
 | `/versiones/2025` | Ficha de un año | `pages/VersionDetalle/` |

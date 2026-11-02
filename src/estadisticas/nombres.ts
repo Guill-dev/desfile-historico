@@ -19,6 +19,9 @@ export function nombreRuta(ruta: string): string {
   if (ruta === '/') return 'Inicio'
   if (ruta === '/pasos') return 'Pasos'
   const [, grupo, id = ''] = ruta.split('/')
+  // Las páginas "Ver todos": /creadores, /objetos, /versiones
+  const listados: Record<string, string> = { creadores: 'Todos los creadores', objetos: 'Toda la colección', versiones: 'Todas las ediciones' }
+  if (!id && listados[grupo]) return listados[grupo]
   switch (grupo) {
     case 'creadores': {
       const c = creadores.find((x) => x.id === id)

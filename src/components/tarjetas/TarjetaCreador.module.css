@@ -1,4 +1,6 @@
+/* La tarjeta mide su propio ancho (container) para ajustar la letra: igual de bien en el carrusel y en la cuadrícula */
 .persona {
+  container-type: inline-size;
   display: grid;
   gap: 12px;
   text-decoration: none;
@@ -10,12 +12,13 @@
 }
 
 .persona:hover .retrato {
-  border-radius: 80px;
+  border-radius: min(80px, 25cqw);
 }
 
 .nombre {
   font-weight: 700;
-  font-size: 1.125rem;
+  font-size: clamp(0.9375rem, 0.55rem + 4cqw, 1.125rem);
   line-height: 1.1;
   text-transform: uppercase;
+  overflow-wrap: break-word;
 }

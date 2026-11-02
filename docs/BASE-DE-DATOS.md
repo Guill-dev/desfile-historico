@@ -6,7 +6,7 @@ y que el sitio las lea de ahí: cronología de cada persona, buscador por nombre
 ## Decisiones tomadas
 - **Solo el administrador carga datos.** El público no sube nada; solo ve lo publicado.
 - **De cada persona se guarda únicamente su nombre completo** (en un solo campo) y su foto, con autorización.
-- **Todo lo demás sale de listas** que controla el administrador: año, paso (68) y personaje.
+- **Todo lo demás sale de listas** que controla el administrador: año, paso (79) y personaje.
 - **Una fila = una participación**: persona + año + paso + personaje. Una persona con 20 años de recorrido tiene 20 filas.
 - Recolección: **años anteriores** → plantilla de Excel (`docs/plantillas/datos-desfile.xlsx`) ·
   **desde 2027** → un Google Forms por año.
@@ -23,7 +23,7 @@ y que el sitio las lea de ahí: cronología de cada persona, buscador por nombre
 
 | Tabla | Campos | Notas |
 |---|---|---|
-| **pasos** | número (1–68), nombre, descripción | Los 68 pasos (estampas) del desfile |
+| **pasos** | número (1–79), nombre, descripción | Los 79 pasos (estampas) del desfile |
 | **personajes** | paso, nombre, tipo (principal / secundario) | Cada personaje pertenece a un paso |
 | **ediciones** | año, título, resumen, portada | Un registro por año del desfile (hoy "Versiones" en el sitio) |
 | **personas** | nombre completo, nombre normalizado | El normalizado (sin tildes ni mayúsculas) evita duplicados |
@@ -49,10 +49,10 @@ Título: *Participación — Desfile Histórico de Gualmatán 2027*
 
 1. **Nombre completo** — respuesta corta, obligatoria.
    Ayuda: "Escríbelo completo y con tildes, igual que en tu documento. Ej.: Guillermo Alejandro Hernández Quirós".
-2. **¿En qué paso participas?** — lista desplegable con los 68 pasos, obligatoria.
+2. **¿En qué paso participas?** — lista desplegable con los 79 pasos, obligatoria.
 3. **¿Qué personaje representas?** — opción múltiple con los personajes **de ese paso** + **"Otro"** (para escribir uno secundario).
    Para que salgan solo los personajes del paso elegido, el formulario usa una sección por paso
-   ("ir a la sección según la respuesta"). Hacer 68 secciones a mano es largo: **se puede generar automáticamente**
+   ("ir a la sección según la respuesta"). Hacer 79 secciones a mano es largo: **se puede generar automáticamente**
    con un script a partir de las hojas «Pasos» y «Personajes» de la plantilla.
 4. **Foto** — subir archivo. Ojo: Google exige que quien responde **inicie sesión con una cuenta de Google** para subir archivos.
    Alternativa: pedir la foto por WhatsApp o correo con el nombre completo.
@@ -72,7 +72,7 @@ Título: *Participación — Desfile Histórico de Gualmatán 2027*
 4. Se importan a la base de datos → el sitio se actualiza solo.
 
 ## Pasos siguientes
-- [ ] Llenar en la plantilla las hojas **Pasos** (68) y **Personajes**.
+- [ ] Llenar en la plantilla las hojas **Pasos** (79) y **Personajes**.
 - [ ] Crear la cuenta gratuita de Supabase (la crea el administrador con su correo).
 - [ ] Crear las tablas y las reglas de seguridad, y conectar el sitio (persona + cronología + buscador).
 - [ ] Script que genera el Google Forms a partir de las listas.

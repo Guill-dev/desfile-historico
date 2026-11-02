@@ -7,8 +7,11 @@ import { pendiente } from '@/utils/media'
  * Campos disponibles: ver `interface Objeto` en src/types/contenido.ts
  */
 
-/** PLACEHOLDERS */
-export const objetos: Objeto[] = [1, 2, 3, 4, 5, 6].map((n) => ({
+/** Piezas de ejemplo mientras llega el inventario real de la colección */
+const TOTAL_PIEZAS = 50
+
+/** PLACEHOLDERS. El orden de esta lista es el número de cada pieza (Nº 01, Nº 02…), aunque se muestren al azar. */
+export const objetos: Objeto[] = Array.from({ length: TOTAL_PIEZAS }, (_, i) => i + 1).map((n) => ({
   id: `objeto-${n}`,
   nombre: `[Nombre del objeto ${n}]`,
   epoca: '[Año o época]',

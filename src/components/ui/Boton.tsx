@@ -11,6 +11,8 @@ interface Props {
   /** Enlace externo: 'https://…' */
   href?: string
   variante?: Variante
+  /** Brilla y late suavemente para invitar a tocarlo (p. ej. "Ver los 79 pasos") */
+  llamativo?: boolean
   className?: string
   onClick?: () => void
   children: ReactNode
@@ -22,8 +24,8 @@ interface Props {
  *  - 'primario': rojo de la bandera. Uno por bloque, para la acción principal.
  * Con `to` es un enlace interno; con `href`, externo; sin ninguno, un <button>.
  */
-export default function Boton({ to, href, variante = 'contorno', className, onClick, children }: Props) {
-  const clases = cx(styles.boton, styles[variante], className)
+export default function Boton({ to, href, variante = 'contorno', llamativo, className, onClick, children }: Props) {
+  const clases = cx(styles.boton, styles[variante], llamativo && styles.llamativo, className)
   if (to) return <Link to={to} className={clases} onClick={onClick}>{children}</Link>
   if (href) return <a href={href} className={clases} onClick={onClick}>{children}</a>
   return <button type="button" className={clases} onClick={onClick}>{children}</button>

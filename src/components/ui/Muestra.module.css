@@ -1,0 +1,85 @@
+/*
+ * Muestras que cambian solas (pasos y piezas al azar en el inicio).
+ * Cada casilla tiene encima la tarjeta que se va (.sale) y debajo la que llega (.cambio): la vieja gira y
+ * se apaga mientras la nueva entra girando, como una carta que se voltea. Nunca queda la casilla vacía.
+ * La que se va flota sobre la casilla (absolute), así el alto lo da solo la nueva.
+ * El retraso escalonado entre casillas va en --retraso-cambio.
+ */
+.casilla {
+  position: relative;
+}
+
+.sale {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  animation: salir 0.4s ease-in both;
+  animation-delay: var(--retraso-cambio, 0ms);
+  pointer-events: none;
+}
+
+.cambio {
+  animation: entrar 0.5s var(--ease-salida) both;
+  animation-delay: calc(var(--retraso-cambio, 0ms) + 0.22s);
+}
+
+@keyframes salir {
+  from {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Se apaga antes de terminar de girar: así los textos de las dos tarjetas casi no se cruzan */
+  60% {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 0;
+    transform: perspective(900px) rotateY(70deg) scale(0.96);
+  }
+}
+
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: perspective(900px) rotateY(-70deg) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Botón redondo para pausar o seguir el cambio automático (como el del video de portada) */
+.pausa {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  font-size: 13px;
+  letter-spacing: -1px;
+  transition:
+    background var(--dur-corta),
+    color var(--dur-corta),
+    border-color var(--dur-corta);
+}
+
+.pausa:hover {
+  background: var(--hover-fondo);
+  border-color: var(--hover-fondo);
+  color: var(--hover-texto);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sale {
+    display: none;
+  }
+
+  .cambio {
+    animation: none;
+  }
+}
