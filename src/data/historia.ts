@@ -7,8 +7,8 @@ import { pendiente } from '@/utils/media'
  * Campos disponibles: ver `interface Historia` en src/types/contenido.ts
  */
 
-/** PLACEHOLDERS */
-export const historia: Historia = {
+/** PLACEHOLDERS (los reemplaza src/data/historia.textos.ts, si está: ver al final) */
+const historiaBase: Historia = {
   // Letra grande al empezar la página: en pocas líneas, qué es el desfile
   entradilla: '[Párrafo de entrada pendiente: en pocas líneas, qué es el Desfile Histórico y qué cuenta.]',
 
@@ -60,3 +60,8 @@ export const historia: Historia = {
     { titulo: '[Título de la fuente]', autor: '[Autor, archivo o persona entrevistada]', tipo: '[Libro, entrevista, acta…]', anio: '[Año]' },
   ],
 }
+
+// El contenido real está, por ahora, en src/data/historia.textos.ts: vive solo en el computador del administrador
+// y no se sube a GitHub (ver GUIA, sección 6). import.meta.glob no falla si el archivo no existe.
+const locales = import.meta.glob<{ historiaLocal: Historia }>('./historia.textos.ts', { eager: true })
+export const historia: Historia = Object.values(locales)[0]?.historiaLocal ?? historiaBase

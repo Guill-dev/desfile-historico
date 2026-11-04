@@ -13,8 +13,37 @@
   grid-column: 1 / 9;
   grid-row: 1;
   aspect-ratio: 3 / 2;
+  /* Si el texto de la tarjeta es más alto que la foto, la foto crece hasta su altura
+     (width explícito: si no, la proporción también la ensancharía) */
+  width: 100%;
+  min-height: 100%;
   border-radius: var(--r-l);
   overflow: hidden;
+}
+
+/* La foto del pueblo llena el mismo recuadro que la ilustración */
+.foto {
+  position: relative;
+  height: 100%;
+  margin: 0;
+}
+
+.foto img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Mismo rótulo que la ilustración */
+.leyenda {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  padding: 6px 10px;
+  border-radius: var(--r-s);
+  background: rgb(255 255 255 / 0.75);
+  color: #34423c;
 }
 
 .tarjeta {
@@ -31,6 +60,13 @@
   font-size: var(--t-h2);
 }
 
+/* Párrafo inicial justificado; el guion automático (la página está en español) evita huecos grandes entre palabras */
+.entradilla {
+  text-align: justify;
+  hyphens: auto;
+  line-height: 1.6;
+}
+
 @media (max-width: 899px) {
   .grilla {
     grid-template-columns: minmax(0, 1fr);
@@ -42,9 +78,15 @@
     aspect-ratio: 1 / 1;
   }
 
+  /* Un poco más ancha en el celular: el texto justificado necesita renglones largos para no dejar huecos */
   .tarjeta {
     grid-column: 1;
     grid-row: 2;
-    margin: -40px 16px 0;
+    margin: -40px 8px 0;
+    padding: 26px 22px;
+  }
+
+  .entradilla {
+    font-size: 1rem;
   }
 }

@@ -3,11 +3,18 @@
   gap: clamp(40px, 5vw, 72px);
 }
 
+/* Número, texto y foto, separados del paso anterior por una raya */
 .paso {
   display: grid;
   gap: 16px;
   padding-top: 20px;
   border-top: 2px solid currentColor;
+}
+
+.bloque {
+  display: grid;
+  align-content: start;
+  gap: 16px;
 }
 
 .numero {
@@ -21,8 +28,11 @@
   gap: var(--e-2);
 }
 
+/* Justificado; el guion automático (la página está en español) evita huecos grandes entre palabras */
 .texto p {
   max-width: 52ch;
+  text-align: justify;
+  hyphens: auto;
 }
 
 .titulo {
@@ -35,10 +45,15 @@
   border-radius: var(--r-l);
 }
 
+/* Pantallas anchas: número y texto a la izquierda, la foto (más grande) a la derecha */
 @media (min-width: 768px) {
   .paso {
-    grid-template-columns: 7rem minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 6fr) minmax(0, 7fr);
     align-items: start;
-    gap: 32px;
+    gap: clamp(20px, 2.5vw, 36px);
+  }
+
+  .texto p {
+    max-width: none;
   }
 }

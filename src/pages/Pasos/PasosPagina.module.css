@@ -3,14 +3,32 @@
   font-size: var(--t-l);
 }
 
+/* Celular y tableta: como un contenedor normal (el índice es el botón flotante) */
 .cuerpo {
   display: grid;
   gap: var(--e-5);
+  width: 100%;
+  max-width: var(--ancho-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
 }
 
+/*
+ * Computador: el índice va pegado al borde izquierdo de la pantalla y los pasos ocupan el resto,
+ * centrados y con un ancho máximo para que la foto no se vuelva enorme en pantallas muy anchas.
+ */
 @media (min-width: 900px) {
   .cuerpo {
-    grid-template-columns: 17rem minmax(0, 1fr);
+    grid-template-columns: 16rem minmax(0, 1fr);
     align-items: start;
+    gap: clamp(32px, 3vw, 56px);
+    max-width: none;
+    padding-inline: var(--e-4) var(--gutter);
+  }
+
+  .lista {
+    justify-self: center;
+    width: 100%;
+    max-width: 1180px;
   }
 }

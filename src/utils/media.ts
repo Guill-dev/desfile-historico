@@ -5,6 +5,11 @@ export function pendiente(etiqueta: string, tipo: Media['tipo'] = 'imagen'): Med
   return { tipo, src: null, alt: `[${etiqueta}]` }
 }
 
+/** Una foto que ya tiene su archivo: foto('/media/…/principal.jpg', 'Descripción de la foto') */
+export function foto(src: string, alt: string): Media {
+  return { tipo: 'imagen', src, alt }
+}
+
 /**
  * true si el recurso ya tiene su archivo.
  * El tipo de retorno `media is Media & { src: string }` es un "type guard": después de

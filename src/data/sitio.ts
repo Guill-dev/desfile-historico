@@ -55,8 +55,8 @@ export const rotulo = (c: Capitulo): string => `${c.numero} · ${c.titulo}`
 /** A dónde lleva un capítulo desde el menú: su página o su bloque en el recorrido. */
 export const destino = (c: Capitulo): To => c.ruta ?? { pathname: '/', hash: `#${c.id}` }
 
-/** Textos sueltos del sitio. */
-export const textos = {
+/** Textos sueltos del sitio (los provisionales; ver más abajo los que viven solo en tu computador). */
+const textosBase = {
   // Tarjeta oscura "Conoce la historia" (junto a la ilustración del pueblo)
   historia: '[Texto introductorio pendiente: qué es el Desfile Histórico, cómo nació y por qué el pueblo lo mantiene vivo.]',
   // Introducción de la página /pasos
@@ -64,6 +64,11 @@ export const textos = {
   // Frase del pie de página
   pie: 'Una exposición digital sobre la memoria del pueblo',
 }
+
+// Los textos de src/data/sitio.textos.ts (solo en tu computador, no se sube a GitHub) reemplazan a los de arriba.
+// import.meta.glob no falla si el archivo no existe: en ese caso devuelve un objeto vacío.
+const locales = import.meta.glob<{ textosSitio: Partial<typeof textosBase> }>('./sitio.textos.ts', { eager: true })
+export const textos = { ...textosBase, ...Object.values(locales)[0]?.textosSitio }
 
 /** Frases puente entre capítulos (narrativa del recorrido). */
 export const interludios = {

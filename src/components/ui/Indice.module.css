@@ -40,12 +40,23 @@
   border-color: var(--texto);
 }
 
+/* Índices largos: en el celular se usa el botón flotante (IndiceFlotante) */
+@media (max-width: 899px) {
+  .soloEscritorio {
+    display: none;
+  }
+}
+
 @media (min-width: 900px) {
+  /* Debajo de la barra superior, que es fija */
   .indice {
     position: sticky;
-    top: var(--e-4);
-    max-height: calc(100dvh - var(--e-5));
+    top: calc(var(--alto-header) + var(--e-3));
+    max-height: calc(100dvh - var(--alto-header) - var(--e-5));
     overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--linea) transparent;
   }
 
   .indice ol {

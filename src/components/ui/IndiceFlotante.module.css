@@ -1,0 +1,212 @@
+/*
+ * Botón flotante del índice (celular). Su lugar sale de --y (altura de su centro, 0–1) y del lado:
+ * siempre por debajo de la barra superior y por encima del borde inferior.
+ */
+.boton {
+  --tam: 60px;
+
+  position: fixed;
+  z-index: 30; /* debajo de la barra superior (40) y del menú (60) */
+  top: clamp(
+    calc(var(--alto-header) + 12px),
+    calc(var(--y, 0.85) * 100dvh - var(--tam) / 2),
+    calc(100dvh - var(--tam) - 12px - env(safe-area-inset-bottom))
+  );
+  left: calc(100% - var(--tam) - 12px);
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 2px;
+  width: var(--tam);
+  height: var(--tam);
+  border-radius: 50%;
+  background: var(--c-rojo);
+  color: var(--c-blanco);
+  box-shadow:
+    0 0 0 2px rgb(255 255 255 / 0.85),
+    0 12px 28px -10px rgb(0 0 0 / 0.6);
+  cursor: pointer;
+  /* Que dejarlo presionado no seleccione texto ni abra menús del celular */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+  transition:
+    left 0.35s var(--ease-salida),
+    top 0.35s var(--ease-salida),
+    transform var(--dur-corta) var(--ease-salida),
+    box-shadow var(--dur-corta);
+  animation: aparecer 0.5s var(--ease-salida) both;
+}
+
+.izq {
+  left: 12px;
+}
+
+/* Mientras se arrastra: sigue al dedo sin retraso y se "levanta" */
+.arrastrando {
+  cursor: grabbing;
+  transform: scale(1.1);
+  box-shadow:
+    0 0 0 2px var(--c-blanco),
+    0 20px 36px -10px rgb(0 0 0 / 0.65);
+  transition:
+    transform var(--dur-corta) var(--ease-salida),
+    box-shadow var(--dur-corta);
+}
+
+.rotulo {
+  font-size: 8.5px;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.numero {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.icono {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+/* ── Panel con los números ── */
+.panel {
+  inset: auto 0 0;
+  width: calc(100% - 24px);
+  max-width: 480px;
+  max-height: none;
+  margin: 0 auto calc(12px + env(safe-area-inset-bottom));
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-l);
+  overflow: visible;
+  background: var(--c-noche);
+  color: var(--c-blanco);
+  box-shadow: 0 24px 60px -12px rgb(0 0 0 / 0.6);
+}
+
+.panel[open] {
+  animation: subir 0.35s var(--ease-salida);
+}
+
+.panel::backdrop {
+  background: rgb(0 0 0 / 0.45);
+}
+
+@keyframes subir {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+.contenido {
+  display: grid;
+  gap: 12px;
+  padding: 18px 16px 16px;
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-left: 4px;
+  color: var(--c-verde-claro);
+}
+
+.cerrar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--c-blanco);
+  background: rgb(255 255 255 / 0.1);
+}
+
+.cerrar svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.actual {
+  display: grid;
+  gap: 2px;
+  padding: 0 4px;
+  font-weight: 600;
+  font-size: var(--t-s);
+  line-height: 1.3;
+}
+
+.actual .mono {
+  color: var(--c-verde-claro);
+}
+
+/* Cuadrícula de números: se desplaza por dentro si no caben todos */
+.numeros {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 8px;
+  max-height: min(52dvh, 440px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.25) transparent;
+}
+
+.numeros a {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 1.5px solid rgb(255 255 255 / 0.18);
+  border-radius: var(--r-m);
+  font-family: var(--f-mono);
+  font-weight: 600;
+  font-size: var(--t-s);
+  text-decoration: none;
+  transition:
+    background var(--dur-corta),
+    color var(--dur-corta),
+    border-color var(--dur-corta);
+}
+
+.numeros a:hover {
+  background: var(--c-blanco);
+  border-color: var(--c-blanco);
+  color: var(--c-noche);
+}
+
+/* El paso en el que se está */
+.numeros a.activo {
+  background: var(--c-rojo);
+  border-color: var(--c-rojo);
+  color: var(--c-blanco);
+}
+
+/* En el computador está la columna del índice */
+@media (min-width: 900px) {
+  .boton,
+  .panel {
+    display: none;
+  }
+}

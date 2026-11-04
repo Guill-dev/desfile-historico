@@ -16,7 +16,10 @@ const entradas: EntradaIndice[] = pasos.map((p) => ({
   numero: String(p.numero).padStart(2, '0'),
 }))
 
-/** Página propia de los Pasos: índice para saltar entre ellos + lista completa. */
+/**
+ * Página propia de los Pasos: índice para saltar entre ellos + lista completa.
+ * En el computador el índice es una columna pegada a la izquierda; en el celular, un botón flotante.
+ */
 export default function PasosPagina() {
   const activa = useSeccionActiva(entradas.map((e) => e.id))
 
@@ -27,10 +30,10 @@ export default function PasosPagina() {
         <p className={styles.intro}>{textos.pasos}</p>
       </CabeceraPagina>
 
-      <div className={cx('contenedor', 'capitulo', styles.cuerpo)}>
-        <Indice entradas={entradas} nombre="Índice de pasos" activa={activa} />
+      <div className={cx('capitulo', styles.cuerpo)}>
+        <Indice entradas={entradas} nombre="Índice de pasos" activa={activa} flotanteEnMovil />
 
-        <LineaPasos pasos={pasos} />
+        <LineaPasos pasos={pasos} className={styles.lista} />
       </div>
     </div>
   )

@@ -14,8 +14,8 @@ import muestra from '@/components/ui/Muestra.module.css'
 import styles from './Pasos.module.css'
 
 const cap = capitulo('pasos')
-/** Cuántos pasos se muestran: 4 en 2 × 2 en el celular (en el computador, los 3 primeros de ellos en fila) */
-const MUESTRA = 4
+/** Cuántos pasos se muestran: 6 en 2 filas de 3 en el computador; en el celular, los 4 primeros en 2 × 2 */
+const MUESTRA = 6
 /** Cada cuánto cambian por otros al azar */
 const CADA_MS = 3000
 

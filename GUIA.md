@@ -105,7 +105,7 @@ La página de inicio es un recorrido de arriba hacia abajo. Cada bloque vive en 
 |---|---|---|---|
 | 1 | **Portada** oscura con el video, el título y el botón rojo | `sections/Inicio/` | `data/sitio.ts` → `sitio` y `portada` |
 | 2 | **Conoce la historia**: la ilustración del pueblo + tarjeta oscura | `sections/Historia/` | `data/sitio.ts` → `textos.historia` |
-| 3 | **Los pasos del desfile**: pasos **al azar** que cambian solos (3 en el computador, 4 en el celular) + botón "Ver los N pasos" | `sections/Pasos/` | `data/pasos.ts` |
+| 3 | **Los pasos del desfile**: pasos **al azar** que cambian solos (6 en 2 filas de 3 en el computador, 4 en 2 × 2 en el celular) + botón "Ver los N pasos" | `sections/Pasos/` | `data/pasos.ts` |
 | 4 | **Quienes lo hicieron posible**: carrusel de retratos | `sections/Creadores/` | `data/creadores.ts` |
 | 5 | **La colección**: vitrina oscura de objetos, **al azar** (en el celular cambian solos) | `sections/Objetos/` | `data/objetos.ts` |
 | 6 | **Cada año, el pueblo vuelve a contarla** + línea de años | `sections/Versiones/` | `data/versiones.ts` |
@@ -134,7 +134,7 @@ teléfono o computador tiene activado "reducir movimiento".
 | Dirección en el navegador | Qué muestra | Archivo |
 |---|---|---|
 | `/` | La página de inicio (el recorrido) | `pages/Recorrido/` |
-| `/pasos` | Todos los pasos, con índice | `pages/Pasos/` |
+| `/pasos` | Todos los pasos, con índice (columna a la izquierda en el computador; botón flotante que se puede arrastrar en el celular) | `pages/Pasos/` |
 | `/creadores`, `/objetos`, `/versiones` | Todas las personas, piezas o ediciones, en cuadrícula ("Ver todos") | `pages/Listados/` |
 | `/creadores/creador-1` | Ficha de una persona | `pages/CreadorDetalle/` |
 | `/objetos/objeto-1` | Ficha de un objeto (foto o 3D) | `pages/ObjetoDetalle/` |
@@ -174,6 +174,35 @@ está excluido en `.git/info/exclude` (una lista de archivos ignorados que solo 
 - **Cuando quieras publicarlos**, borra la línea `src/data/pasos.textos.ts` de `.git/info/exclude` y haz el commit.
 - ⚠️ Si publicas el sitio **desde tu computador** (por ejemplo, subiendo la carpeta `dist`), los textos irán incluidos,
   porque el archivo está ahí. Si el hosting construye el sitio desde GitHub, no.
+- Lo mismo pasa con **`src/data/sitio.textos.ts`**: ahí están, por ahora, el texto de "Conoce la historia" y la
+  introducción de `/pasos`. Cada texto de ese archivo reemplaza al del mismo nombre en `textos` (`src/data/sitio.ts`);
+  si el archivo no está, salen los provisionales `[ ]`.
+
+### Las fotos de los pasos 📸 (sin tocar código)
+Cada paso tiene su carpeta en **`public/media/pasos/`**: `paso-01`, `paso-02` … `paso-79`.
+- Pon en la carpeta del paso una foto llamada **`principal`** (`principal.jpg`, `principal.png`…): es la que sale **en la tarjeta**.
+- Las demás fotos del paso, con cualquier nombre, van en la misma carpeta: quedan guardadas para ver el paso a fondo.
+- Con `npm run dev` abierto, la página se recarga sola al agregar, cambiar o borrar una foto.
+- Sirven `.jpg`, `.jpeg`, `.png`, `.webp`, `.avif` y `.gif`. Las `.heic` del iPhone **no** se ven en el navegador: pásalas a JPG.
+- Si la carpeta no tiene `principal`, la tarjeta sigue mostrando el recuadro de `[Fotografía pendiente]`.
+- Conviene que pesen poco (menos de 500 KB, unos 1600 px de ancho): así el sitio carga rápido en el celular.
+- Quien hace esto es `vite-fotos.ts`, en la raíz del proyecto.
+- 🔒 **Por ahora las fotos no se suben a GitHub** (están en `.git/info/exclude`; las carpetas vacías sí).
+  Para publicarlas, borra de ese archivo las líneas de `public/media/pasos/` y haz el commit.
+
+### Las fotos y los datos de los creadores 📸
+Igual que los pasos: cada creador tiene su carpeta en **`public/media/creadores/`**: `creador-01` … `creador-06`
+(el número es su lugar en la lista: el 3 es el tercero).
+- La foto llamada **`principal`** es el retrato de su tarjeta (la portada).
+- Las demás fotos de la carpeta, con cualquier nombre, salen en su ficha (`/creadores/creador-3`), junto al retrato.
+- El nombre y los demás datos (período, rol, descripción…) van en **`src/data/creadores.textos.ts`**,
+  con el mismo número. Lo que no se ponga ahí sale como `[pendiente]`.
+- 🔒 Las fotos y `creadores.textos.ts` **no se suben a GitHub** por ahora (están en `.git/info/exclude`).
+
+### La foto del pueblo (junto a "Conoce la historia")
+Es **`src/assets/fotos/gualmatan-principal.jpg`**. Para cambiarla, reemplaza ese archivo por otro con el mismo nombre
+(sirve `.jpg`, `.png` o `.webp`). Si no está, sale la ilustración animada de "Gualmatán desde el aire".
+- 🔒 Por ahora tampoco se sube a GitHub (la carpeta `src/assets/fotos/` está en `.git/info/exclude`).
 
 ### Fotos (paso a paso)
 1. Copia la foto a la carpeta de su sección, por ejemplo `public/media/objetos/objeto-1/mascara.jpg`
@@ -211,7 +240,9 @@ No hay que configurar nada: las fotos que pongas en los datos aparecen solas en 
 El visor es `src/components/media/Visor.tsx` y la cuadrícula de fotos `src/components/media/Galeria.tsx`.
 
 ### La página de Historia 📜
-Todo está en `src/data/historia.ts`, en este orden (el mismo de la página):
+Todo está en `src/data/historia.ts`, en este orden (el mismo de la página).
+🔒 Por ahora, el contenido real está en **`src/data/historia.textos.ts`** (mismos campos), que vive solo en tu
+computador y reemplaza entero al de `historia.ts`. Para publicarlo, quita su línea de `.git/info/exclude`.
 - `entradilla` → el párrafo de entrada, en letra grande.
 - `datos` → las tarjetas de datos breves ("Primera edición", "Pasos"…). Puedes cambiar, quitar o agregar.
 - `capitulos` → el relato. Cada capítulo tiene `epoca`, `titulo`, `parrafos` (uno por párrafo) y, si quieres,
