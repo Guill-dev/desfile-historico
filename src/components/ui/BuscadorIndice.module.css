@@ -1,0 +1,188 @@
+/* Buscador del índice. En el computador vive en la columna del índice (sus enlaces toman el estilo de
+   Indice.module.css); en el celular, dentro del panel oscuro del botón flotante (.oscuro). */
+.buscador {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+
+.campo {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.campo input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 42px 10px 40px;
+  border: 1.5px solid var(--linea);
+  border-radius: var(--r-m);
+  background: rgb(255 255 255 / 0.1);
+  /* 16 px: con menos, el iPhone acerca la página al escribir */
+  font-size: 1rem;
+  font-weight: 500;
+  appearance: none;
+  transition:
+    border-color var(--dur-corta),
+    background var(--dur-corta);
+}
+
+.campo input::placeholder {
+  color: inherit;
+  opacity: 0.72;
+}
+
+.campo input:hover {
+  border-color: rgb(255 255 255 / 0.6);
+}
+
+.campo input:focus-visible {
+  border-color: var(--c-blanco);
+  background: rgb(255 255 255 / 0.16);
+  outline-offset: 2px;
+}
+
+/* La "x" propia del navegador sobra: hay un botón para borrar */
+.campo input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+.lupa,
+.borrar svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+}
+
+.lupa {
+  position: absolute;
+  left: 13px;
+  width: 17px;
+  height: 17px;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.borrar {
+  position: absolute;
+  right: 5px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  transition: background var(--dur-corta);
+}
+
+.borrar:hover {
+  background: rgb(255 255 255 / 0.16);
+}
+
+.borrar svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 2;
+}
+
+.estado {
+  padding-inline: 2px;
+  opacity: 0.85;
+}
+
+/* Lo que coincide con lo escrito */
+.resultados mark,
+.coincide {
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.24);
+  color: inherit;
+  box-shadow: 0 0 0 1.5px rgb(255 255 255 / 0.24);
+}
+
+.resultados mark {
+  font-weight: 700;
+}
+
+/* El resultado al que lleva Enter (o la tecla "Ir" del celular) mientras se escribe */
+.campo:focus-within ~ .resultados .primero::after {
+  content: '↵';
+  margin-left: auto;
+  padding-left: 8px;
+  opacity: 0.7;
+}
+
+/* ── En la columna del computador ── */
+.buscador:not(.oscuro) .campo {
+  /* El campo se queda arriba mientras se recorre la lista */
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding-block: 4px 8px;
+  margin-bottom: -8px;
+  background: var(--fondo);
+}
+
+.buscador:not(.oscuro) .resultados a[aria-current] {
+  box-shadow: inset 3px 0 0 var(--acento);
+  padding-left: 14px;
+}
+
+.buscador:not(.oscuro) .campo:focus-within ~ .resultados .primero {
+  background: rgb(255 255 255 / 0.12);
+  padding-inline: 10px;
+  border-radius: var(--r-s);
+}
+
+/* ── En el panel del celular ── */
+.oscuro .resultados {
+  display: grid;
+  gap: 2px;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 2px;
+  margin: -2px;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.25) transparent;
+}
+
+.oscuro .resultados a {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--r-m);
+  font-weight: 600;
+  font-size: var(--t-s);
+  line-height: 1.3;
+  text-decoration: none;
+  transition: background var(--dur-corta);
+}
+
+.oscuro .resultados a:hover,
+.oscuro .campo:focus-within ~ .resultados .primero {
+  background: rgb(255 255 255 / 0.1);
+}
+
+/* El paso en el que se está, con la raya roja */
+.oscuro .resultados a[aria-current] {
+  box-shadow: inset 3px 0 0 var(--c-rojo);
+}
+
+.oscuro .numero {
+  flex: none;
+  min-width: 2.6ch;
+  color: var(--c-verde-claro);
+}
+
+.oscuro .numero.coincide {
+  color: var(--c-blanco);
+}
+
+.oscuro .estado {
+  color: var(--c-verde-claro);
+}

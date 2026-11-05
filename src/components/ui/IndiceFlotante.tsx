@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type PointerEvent } from 'react'
 import { Link } from 'react-router'
 import { cx } from '@/utils/cx'
 import { useIrAlAncla } from '@/hooks/useIrAlAncla'
+import BuscadorIndice from './BuscadorIndice'
 import type { EntradaIndice } from './Indice'
 import styles from './IndiceFlotante.module.css'
 
@@ -9,6 +10,8 @@ interface Props {
   entradas: EntradaIndice[]
   nombre: string
   activa?: string | null
+  /** Barra para buscar por nombre o número encima de los números */
+  buscador?: boolean
 }
 
 /** Dónde está el botón: pegado a un lado y a qué altura (0 = arriba, 1 = abajo; es su centro). */
@@ -70,12 +73,17 @@ interface Gesto {
  * está a la vista. Al tocarlo se despliegan los números; al tocar uno, la página va a ese paso.
  * Para que no estorbe, se puede mover: se deja presionado un momento y se arrastra (con el mouse,
  * basta con arrastrarlo). Al soltarlo se pega al lado más cercano y el navegador recuerda dónde quedó.
+ * Con `buscador`, arriba de los números hay una barra para buscar por nombre o número; al escribir,
+ * el panel sube a la parte de arriba de la pantalla para que el teclado no tape los resultados.
  * En el computador no se muestra: allí está la columna del índice.
  */
-export default function IndiceFlotante({ entradas, nombre, activa }: Props) {
+export default function IndiceFlotante({ entradas, nombre, activa, buscador = false }: Props) {
   const [posicion, setPosicion] = useState(leerPosicion)
   const [arrastrando, setArrastrando] = useState(false)
   const [abierto, setAbierto] = useState(false)
+  const [consulta, setConsulta] = useState('')
+  /** El panel pasa arriba al entrar al buscador (y ahí se queda hasta cerrarlo, para que no salte al tocar) */
+  const [arriba, setArriba] = useState(false)
   const boton = useRef<HTMLButtonElement>(null)
   const dialogo = useRef<HTMLDialogElement>(null)
   const numeros = useRef<HTMLOListElement>(null)
@@ -106,6 +114,17 @@ export default function IndiceFlotante({ entradas, nombre, activa }: Props) {
     if (!lista || !enlace) return
     lista.scrollTop = enlace.offsetTop - (lista.clientHeight - enlace.offsetHeight) / 2
     enlace.focus({ preventScroll: true })
+  }, [abierto])
+
+  // El teclado del celular achica la parte visible de la pantalla: el panel no debe quedar más alto que ella
+  useEffect(() => {
+    const d = dialogo.current
+    const visible = window.visualViewport
+    if (!abierto || !d || !visible) return
+    const ajustar = () => d.style.setProperty('--alto-visible', `${visible.height}px`)
+    ajustar()
+    visible.addEventListener('resize', ajustar)
+    return () => visible.removeEventListener('resize', ajustar)
   }, [abierto])
 
   // Si se desmonta con el gesto a medias (cambio de página), no dejar el temporizador vivo
@@ -215,6 +234,38 @@ export default function IndiceFlotante({ entradas, nombre, activa }: Props) {
 
   const cerrar = () => dialogo.current?.close()
 
+  const ir = (id: string) => {
+    cerrar()
+    irAlAncla(id)
+  }
+
+  const cuadricula = (
+    <>
+      {actual && (
+        <p className={styles.actual}>
+          <span className="mono">Estás aquí{actual.numero && ` · ${actual.numero}`}</span> {actual.etiqueta}
+        </p>
+      )}
+
+      <ol ref={numeros} role="list" className={styles.numeros}>
+        {entradas.map((e) => (
+          <li key={e.id}>
+            <Link
+              to={{ hash: `#${e.id}` }}
+              title={e.etiqueta}
+              aria-label={e.numero ? `${e.numero}: ${e.etiqueta}` : e.etiqueta}
+              aria-current={e.id === activa ? 'location' : undefined}
+              className={cx(e.id === activa && styles.activo)}
+              onClick={() => ir(e.id)}
+            >
+              {e.numero ?? e.etiqueta}
+            </Link>
+          </li>
+        ))}
+      </ol>
+    </>
+  )
+
   return (
     <>
       <button
@@ -247,9 +298,13 @@ export default function IndiceFlotante({ entradas, nombre, activa }: Props) {
       <dialog
         ref={dialogo}
         id={idPanel}
-        className={styles.panel}
+        className={cx(styles.panel, arriba && styles.arriba)}
         aria-label={nombre}
-        onClose={() => setAbierto(false)}
+        onClose={() => {
+          setAbierto(false)
+          setConsulta('') // al volver a abrirlo, otra vez los números
+          setArriba(false)
+        }}
         // Tocar fuera del panel (el fondo oscuro) lo cierra
         onClick={(e) => e.target === e.currentTarget && cerrar()}
       >
@@ -263,31 +318,21 @@ export default function IndiceFlotante({ entradas, nombre, activa }: Props) {
             </button>
           </div>
 
-          {actual && (
-            <p className={styles.actual}>
-              <span className="mono">Estás aquí{actual.numero && ` · ${actual.numero}`}</span> {actual.etiqueta}
-            </p>
+          {buscador ? (
+            <BuscadorIndice
+              entradas={entradas}
+              activa={activa}
+              consulta={consulta}
+              alCambiar={setConsulta}
+              alElegir={ir}
+              alEnfocar={() => setArriba(true)}
+              oscuro
+            >
+              {cuadricula}
+            </BuscadorIndice>
+          ) : (
+            cuadricula
           )}
-
-          <ol ref={numeros} role="list" className={styles.numeros}>
-            {entradas.map((e) => (
-              <li key={e.id}>
-                <Link
-                  to={{ hash: `#${e.id}` }}
-                  title={e.etiqueta}
-                  aria-label={e.numero ? `${e.numero}: ${e.etiqueta}` : e.etiqueta}
-                  aria-current={e.id === activa ? 'location' : undefined}
-                  className={cx(e.id === activa && styles.activo)}
-                  onClick={() => {
-                    cerrar()
-                    irAlAncla(e.id)
-                  }}
-                >
-                  {e.numero ?? e.etiqueta}
-                </Link>
-              </li>
-            ))}
-          </ol>
         </div>
       </dialog>
     </>

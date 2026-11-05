@@ -31,7 +31,7 @@ export default function PasosPagina() {
       </CabeceraPagina>
 
       <div className={cx('capitulo', styles.cuerpo)}>
-        <Indice entradas={entradas} nombre="Índice de pasos" activa={activa} flotanteEnMovil />
+        <Indice entradas={entradas} nombre="Índice de pasos" activa={activa} flotanteEnMovil buscador />
 
         <LineaPasos pasos={pasos} className={styles.lista} />
       </div>

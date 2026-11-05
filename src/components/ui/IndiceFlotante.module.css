@@ -102,6 +102,12 @@
   animation: subir 0.35s var(--ease-salida);
 }
 
+/* Buscando: arriba de la pantalla, para que el teclado no lo tape */
+.panel.arriba {
+  inset: 0 0 auto;
+  margin: calc(12px + env(safe-area-inset-top)) auto auto;
+}
+
 .panel::backdrop {
   background: rgb(0 0 0 / 0.45);
 }
@@ -113,9 +119,12 @@
   }
 }
 
+/* Nunca más alto que lo que se ve (con el teclado abierto, menos): lo que no cabe se desplaza por dentro */
 .contenido {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
+  max-height: calc(var(--alto-visible, 100dvh) - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   padding: 18px 16px 16px;
 }
 
@@ -167,6 +176,7 @@
   grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
   gap: 8px;
   max-height: min(52dvh, 440px);
+  min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 4px;

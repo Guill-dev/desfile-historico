@@ -134,7 +134,7 @@ teléfono o computador tiene activado "reducir movimiento".
 | Dirección en el navegador | Qué muestra | Archivo |
 |---|---|---|
 | `/` | La página de inicio (el recorrido) | `pages/Recorrido/` |
-| `/pasos` | Todos los pasos, con índice (columna a la izquierda en el computador; botón flotante que se puede arrastrar en el celular) | `pages/Pasos/` |
+| `/pasos` | Todos los pasos, con índice (columna a la izquierda en el computador; botón flotante que se puede arrastrar en el celular) y **buscador** por nombre o número, que perdona tildes y errores (`utils/buscar.ts`) | `pages/Pasos/` |
 | `/creadores`, `/objetos`, `/versiones` | Todas las personas, piezas o ediciones, en cuadrícula ("Ver todos") | `pages/Listados/` |
 | `/creadores/creador-1` | Ficha de una persona | `pages/CreadorDetalle/` |
 | `/objetos/objeto-1` | Ficha de un objeto (foto o 3D) | `pages/ObjetoDetalle/` |
