@@ -9,12 +9,21 @@ export function barajar<T>(lista: readonly T[]): T[] {
 }
 
 /**
- * `cantidad` posiciones distintas al azar entre 0 y total − 1.
- * Si alcanza, evita las de `evitar` (las que se están mostrando), para que siempre cambien todas.
+ * Al azar, pero por grupos: primero todos los de mayor prioridad (entre ellos, al azar), luego los siguientes…
+ * Ej.: las piezas con modelo 3D primero, después las que tienen foto y al final las de ejemplo.
  */
-export function posicionesAlAzar(total: number, cantidad: number, evitar: readonly number[] = []): number[] {
-  const todas = Array.from({ length: total }, (_, i) => i)
-  const nuevas = todas.filter((i) => !evitar.includes(i))
-  const fuente = nuevas.length >= cantidad ? nuevas : todas
-  return barajar(fuente).slice(0, Math.min(cantidad, total))
+export function barajarPorPrioridad<T>(lista: readonly T[], prioridad: (x: T) => number): T[] {
+  // sort es estable: dentro de cada grupo se conserva el orden al azar de barajar()
+  return barajar(lista.map((x) => ({ x, p: prioridad(x) })))
+    .sort((a, b) => b.p - a.p)
+    .map((e) => e.x)
+}
+
+/**
+ * `cantidad` elementos distintos de `fuente`, al azar.
+ * Si alcanza, evita los de `evitar` (los que se están mostrando), para que siempre cambien todos.
+ */
+export function alAzarDe<T>(fuente: readonly T[], cantidad: number, evitar: readonly T[] = []): T[] {
+  const nuevos = fuente.filter((x) => !evitar.includes(x))
+  return barajar(nuevos.length >= cantidad ? nuevos : fuente).slice(0, Math.max(0, Math.min(cantidad, fuente.length)))
 }

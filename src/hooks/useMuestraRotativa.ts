@@ -1,28 +1,73 @@
-import { useCallback, useEffect, useState } from 'react'
-import { posicionesAlAzar } from '@/utils/azar'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { alAzarDe, barajar } from '@/utils/azar'
 import { usePrefersReducedMotion } from './usePrefersReducedMotion'
 
-interface Opciones {
+interface Opciones<T> {
   /** Cuántos se muestran a la vez */
   cantidad: number
   /** Cada cuánto cambian, en milisegundos */
   cadaMs?: number
   /** false: no gira (p. ej. en el computador, donde el bloque es un carrusel) */
   activa?: boolean
+  /**
+   * Para que algunos salgan siempre (p. ej. las piezas con modelo 3D): mayor número = más importante.
+   * Debe ser una función fija (definida fuera del componente).
+   */
+  prioridad?: (x: T) => number
+}
+
+/** Qué casillas se quedan fijas y entre cuáles se turnan las demás (posiciones dentro de la lista) */
+interface Reparto {
+  fijos: number[]
+  rotan: number[]
+}
+
+/**
+ * Los grupos más importantes que caben enteros en la muestra se quedan fijos; el primero que ya no cabe
+ * se turna en las casillas que sobran. Sin prioridades, todos se turnan (si son más que las casillas).
+ */
+function repartir(prioridades: number[], cantidad: number): Reparto {
+  const niveles = [...new Set(prioridades)].sort((a, b) => b - a)
+  const fijos: number[] = []
+  for (const nivel of niveles) {
+    const grupo = prioridades.flatMap((p, i) => (p === nivel ? [i] : []))
+    if (fijos.length + grupo.length > cantidad) return { fijos, rotan: grupo }
+    fijos.push(...grupo)
+  }
+  return { fijos, rotan: [] }
+}
+
+/**
+ * Nueva muestra. Los fijos conservan su casilla, para que no se muevan cuando cambian los demás.
+ * Entran los que estaban esperando su turno; si son menos que las casillas que giran (p. ej. 5 piezas
+ * para 4 casillas), solo cambian esas casillas y las demás se quedan como están.
+ */
+function elegir({ fijos, rotan }: Reparto, cantidad: number, anterior?: number[]): number[] {
+  if (!anterior) return [...barajar(fijos), ...alAzarDe(rotan, Math.max(0, cantidad - fijos.length))]
+  const esperando = barajar(rotan.filter((i) => !anterior.includes(i)))
+  const casillas = barajar(anterior.flatMap((i, c) => (fijos.includes(i) ? [] : [c]))).slice(0, esperando.length)
+  const nueva = [...anterior]
+  casillas.forEach((c, k) => {
+    nueva[c] = esperando[k]
+  })
+  return nueva
 }
 
 /**
  * Una muestra al azar de una lista que se renueva sola cada cierto tiempo (p. ej. 4 de los 79 pasos).
  * Cada vez que alguien entra ve otros, y cada `cadaMs` cambian por otros que no estaban.
+ * Con `prioridad`, los más importantes se quedan siempre a la vista y solo cambian las demás casillas.
  *
  * Cambia siempre, aunque el mouse o el dedo estén encima o se esté desplazando la página: así invita
  * a entrar a las secciones. Solo se detiene si la persona pulsa el botón de pausa o si pidió
  * "reducir movimiento" en su teléfono o computador.
  */
-export function useMuestraRotativa<T>(todos: readonly T[], { cantidad, cadaMs = 3000, activa = true }: Opciones) {
+export function useMuestraRotativa<T>(todos: readonly T[], { cantidad, cadaMs = 3000, activa = true, prioridad }: Opciones<T>) {
+  const reparto = useMemo(() => repartir(todos.map((x) => prioridad?.(x) ?? 0), cantidad), [todos, prioridad, cantidad])
+
   // actual: lo que se ve; previa: lo que se veía (se va con una animación mientras entra lo nuevo)
   const [{ actual, previa, ronda }, setMuestra] = useState(() => ({
-    actual: posicionesAlAzar(todos.length, cantidad),
+    actual: elegir(reparto, cantidad),
     previa: [] as number[],
     /** Cuántas veces cambió: 0 = la primera muestra (sin animación de cambio) */
     ronda: 0,
@@ -30,16 +75,17 @@ export function useMuestraRotativa<T>(todos: readonly T[], { cantidad, cadaMs = 
   const [pausada, setPausada] = useState(false)
   const reducirMovimiento = usePrefersReducedMotion()
 
-  const puedeGirar = activa && !reducirMovimiento && todos.length > cantidad
+  // Solo gira si hay más candidatos que casillas libres
+  const puedeGirar = activa && !reducirMovimiento && reparto.rotan.length > cantidad - reparto.fijos.length
   const girando = puedeGirar && !pausada
 
   useEffect(() => {
     if (!girando) return
     const intervalo = window.setInterval(() => {
-      setMuestra((m) => ({ actual: posicionesAlAzar(todos.length, cantidad, m.actual), previa: m.actual, ronda: m.ronda + 1 }))
+      setMuestra((m) => ({ actual: elegir(reparto, cantidad, m.actual), previa: m.actual, ronda: m.ronda + 1 }))
     }, cadaMs)
     return () => clearInterval(intervalo)
-  }, [girando, todos.length, cantidad, cadaMs])
+  }, [girando, reparto, cantidad, cadaMs])
 
   const alternarPausa = useCallback(() => setPausada((p) => !p), [])
 

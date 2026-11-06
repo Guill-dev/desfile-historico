@@ -3,32 +3,37 @@ import path from 'node:path'
 import type { Plugin } from 'vite'
 
 /**
- * FOTOS DE LOS PASOS Y DE LOS CREADORES — el sitio las encuentra solo.
+ * FOTOS (Y MODELOS 3D) DE LOS PASOS, LOS CREADORES Y LOS OBJETOS — el sitio los encuentra solo.
  *
  * Lee las carpetas numeradas de cada colección y le entrega al sitio, por cada número:
  *   - principal: la foto que se llama "principal" (principal.jpg, Principal.PNG…) → va en la tarjeta (la portada)
  *   - otras: el resto de fotos de la carpeta, en orden por nombre → para verlo a fondo
+ *   - modelo: el modelo 3D (.glb) de la carpeta, si hay uno → en los objetos, reemplaza a la foto
  *
  *   public/media/pasos/paso-01 … paso-79           → import fotos from 'virtual:fotos-pasos'      (src/data/pasos.ts)
  *   public/media/creadores/creador-01 … creador-06 → import fotos from 'virtual:fotos-creadores'  (src/data/creadores.ts)
+ *   public/media/objetos/objeto-01 … objeto-50     → import fotos from 'virtual:fotos-objetos'    (src/data/objetos.ts)
  *
- * Con `npm run dev` abierto, al agregar, cambiar o borrar una foto la página se recarga sola.
+ * Con `npm run dev` abierto, al agregar, cambiar o borrar un archivo la página se recarga sola.
  */
 
 /** Cada colección: su carpeta dentro de public/media y el nombre de sus subcarpetas (paso-01, creador-03…) */
 const COLECCIONES = {
   pasos: /^paso-(\d+)$/i,
   creadores: /^creador-(\d+)$/i,
+  objetos: /^objeto-(\d+)$/i,
 } as const
 
 type Coleccion = keyof typeof COLECCIONES
 
 const IMAGEN = /\.(jpe?g|png|webp|avif|gif)$/i
+const MODELO = /\.glb$/i
 const PREFIJO = 'virtual:fotos-'
 
 interface Fotos {
   principal: string | null
   otras: string[]
+  modelo: string | null
 }
 
 function leerFotos(carpeta: string, coleccion: Coleccion): Record<number, Fotos> {
@@ -40,11 +45,10 @@ function leerFotos(carpeta: string, coleccion: Coleccion): Record<number, Fotos>
     if (!coincide) continue
 
     const dir = path.join(carpeta, sub.name)
-    const archivos = fs
-      .readdirSync(dir)
-      .filter((a) => IMAGEN.test(a))
-      .sort((a, b) => a.localeCompare(b, 'es', { numeric: true }))
-    if (archivos.length === 0) continue
+    const todos = fs.readdirSync(dir).sort((a, b) => a.localeCompare(b, 'es', { numeric: true }))
+    const archivos = todos.filter((a) => IMAGEN.test(a))
+    const modelo = todos.find((a) => MODELO.test(a))
+    if (archivos.length === 0 && !modelo) continue
 
     // ?v= cambia si se reemplaza la foto por otra con el mismo nombre (así nadie ve la vieja guardada)
     const url = (archivo: string) => {
@@ -55,6 +59,7 @@ function leerFotos(carpeta: string, coleccion: Coleccion): Record<number, Fotos>
     fotos[Number(coincide[1])] = {
       principal: principal ? url(principal) : null,
       otras: archivos.filter((a) => a !== principal).map(url),
+      modelo: modelo ? url(modelo) : null,
     }
   }
   return fotos

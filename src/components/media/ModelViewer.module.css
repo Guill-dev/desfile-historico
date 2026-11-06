@@ -1,0 +1,16 @@
+/* <model-viewer>: fondo transparente (se ve el de la tarjeta o la ficha) y barra de carga con el rojo de la bandera */
+.visor {
+  display: block;
+  width: 100%;
+  /* model-viewer trae 300 × 150 px fijos: así manda la proporción (ratio) */
+  height: auto;
+  background: transparent;
+  --poster-color: transparent;
+  --progress-bar-color: var(--c-rojo);
+  --progress-bar-height: 3px;
+}
+
+.visor:focus-visible {
+  outline: 2px solid var(--texto);
+  outline-offset: 3px;
+}

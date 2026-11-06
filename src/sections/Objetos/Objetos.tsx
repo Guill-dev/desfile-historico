@@ -1,8 +1,8 @@
 import { useState, type CSSProperties } from 'react'
 import { capitulo, rotulo } from '@/data/sitio'
-import { objetos } from '@/data/objetos'
+import { objetos, prioridadObjeto } from '@/data/objetos'
 import { cx } from '@/utils/cx'
-import { barajar } from '@/utils/azar'
+import { barajarPorPrioridad } from '@/utils/azar'
 import { useCarrusel } from '@/hooks/useCarrusel'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useMuestraRotativa } from '@/hooks/useMuestraRotativa'
@@ -17,25 +17,28 @@ import styles from './Objetos.module.css'
 
 const cap = capitulo('objetos')
 const MUESTRA = 4
-const CADA_MS = 3000
+/** Más pausado que los pasos (3 s): las piezas en 3D ya se mueven solas */
+const CADA_MS = 8000
 
 /** Número de la pieza en la colección (su lugar en data/objetos.ts), aunque se muestre en otro orden */
 const numeroDe = (id: string) => objetos.findIndex((o) => o.id === id) + 1
 
 /**
  * La vitrina: fondo oscuro para que las piezas resalten. Cada una abre su ficha (lista para 3D).
- * Las piezas salen al azar:
+ * Las piezas salen al azar, pero primero las que ya tienen modelo 3D (y luego las que tienen foto):
  *  - en el computador, el carrusel completo en un orden distinto cada vez que se entra;
- *  - en el celular, cuatro en 2 × 2 que cambian solas cada 3 s (siempre), y "Ver todas" (/objetos).
+ *  - en el celular, cuatro en 2 × 2 que cambian solas cada 6 s (siempre), y "Ver todas" (/objetos).
+ *    Las piezas con modelo 3D se quedan fijas en su casilla; las demás casillas van cambiando.
  */
 export default function Objetos() {
   const { ref, anterior, siguiente } = useCarrusel()
   const esMovil = useMediaQuery('(max-width: 899px)')
-  const [orden] = useState(() => barajar(objetos))
+  const [orden] = useState(() => barajarPorPrioridad(objetos, prioridadObjeto))
   const { visibles, anteriores, ronda, puedeGirar, pausada, alternarPausa } = useMuestraRotativa(objetos, {
     cantidad: MUESTRA,
     cadaMs: CADA_MS,
     activa: esMovil,
+    prioridad: prioridadObjeto,
   })
   const lista = esMovil ? visibles : orden
 
@@ -68,15 +71,17 @@ export default function Objetos() {
             }
             // En el celular la casilla se queda: la pieza anterior se va girando y la nueva entra girando
             const retraso: CSSProperties = { '--retraso-cambio': `${i * 90}ms` }
+            // Si la casilla no cambió (una pieza fija), no hay animación de cambio
             const anterior = anteriores[i]
+            const cambio = ronda > 0 && anterior !== undefined && anterior.id !== o.id
             return (
               <li key={i} className={muestra.casilla}>
-                {ronda > 0 && anterior && (
+                {cambio && (
                   <div key={`sale-${ronda}`} className={muestra.sale} style={retraso} inert aria-hidden>
                     <TarjetaObjeto objeto={anterior} numero={numeroDe(anterior.id)} />
                   </div>
                 )}
-                <div key={o.id} className={cx(ronda > 0 && muestra.cambio)} style={retraso}>
+                <div key={o.id} className={cx(cambio && muestra.cambio)} style={retraso}>
                   <TarjetaObjeto objeto={o} numero={numeroDe(o.id)} />
                 </div>
               </li>

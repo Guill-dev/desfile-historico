@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { capitulo, rotulo } from '@/data/sitio'
-import { objetos } from '@/data/objetos'
+import { objetos, prioridadObjeto } from '@/data/objetos'
 import { cx } from '@/utils/cx'
-import { barajar } from '@/utils/azar'
+import { barajarPorPrioridad } from '@/utils/azar'
 import { tituloPagina } from '@/utils/titulo'
 import CabeceraPagina from '@/components/ui/CabeceraPagina'
 import Reveal from '@/components/ui/Reveal'
@@ -16,10 +16,11 @@ const numeroDe = (id: string) => objetos.findIndex((o) => o.id === id) + 1
 
 /**
  * /objetos — la colección completa, en vitrina oscura (el "Ver todas" del inicio en el celular).
- * Las piezas salen en un orden al azar distinto cada vez que se entra; cada una conserva su número.
+ * Las piezas salen en un orden al azar distinto cada vez que se entra, pero primero las que ya tienen modelo 3D
+ * (y luego las que tienen foto); cada una conserva su número.
  */
 export default function ObjetosPagina() {
-  const [orden] = useState(() => barajar(objetos))
+  const [orden] = useState(() => barajarPorPrioridad(objetos, prioridadObjeto))
 
   return (
     <div className="tema-noche">

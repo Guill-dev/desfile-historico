@@ -118,13 +118,16 @@ Para **cambiar el orden** o **quitar un bloque**, edita `src/pages/Recorrido/Rec
 En el computador siguen siendo carruseles con flechas. Las tarjetas son las mismas en el inicio y en esas páginas:
 están en `src/components/tarjetas/` (cambiar una cambia las dos).
 
-🎲 **Pasos y piezas al azar.** Cada vez que alguien entra ve otros, y **cada 3 segundos** cambian por otros
+🎲 **Pasos y piezas al azar.** Cada vez que alguien entra ve otros, y cambian solos por otros (**los pasos cada 3 segundos, las piezas cada 6**)
 (las tarjetas se voltean como cartas). Cambian **siempre**, aunque el mouse o el dedo estén encima o se esté
 desplazando la página: así invitan a entrar. Solo se detienen si la persona pulsa el botón de pausa (❚❚) o si su
 teléfono o computador tiene activado "reducir movimiento".
-- Para cambiar el tiempo: `CADA_MS = 3000` (en milisegundos) en `src/sections/Pasos/Pasos.tsx` y `src/sections/Objetos/Objetos.tsx`.
+- Para cambiar el tiempo: `CADA_MS` (en milisegundos: 3000 = 3 s) en `src/sections/Pasos/Pasos.tsx` y `src/sections/Objetos/Objetos.tsx`.
 - En la página `/pasos` salen todos **en orden**; en `/objetos`, en un orden al azar distinto cada vez.
   Cada pieza conserva su número (Nº 07…), que es su lugar en `src/data/objetos.ts`.
+- 🏺 **Las piezas con modelo 3D van primero** (en el inicio y en `/objetos`), luego las que ya tienen foto y al final
+  las de ejemplo; dentro de cada grupo, al azar. En el celular, las piezas 3D se quedan **fijas** en su casilla y solo
+  cambian las demás (si llegan a ser más de 4, se turnan entre ellas). Se decide en `prioridadObjeto`, en `objetos.ts`.
 - La pieza que hace esto se puede usar en otros bloques: `src/hooks/useMuestraRotativa.ts`.
 
 ---
@@ -199,23 +202,51 @@ Igual que los pasos: cada creador tiene su carpeta en **`public/media/creadores/
   con el mismo número. Lo que no se ponga ahí sale como `[pendiente]`.
 - 🔒 Las fotos y `creadores.textos.ts` **no se suben a GitHub** por ahora (están en `.git/info/exclude`).
 
+### Los objetos: modelos 3D, fotos y datos 🏺
+Cada pieza tiene su carpeta en **`public/media/objetos/`**: `objeto-01` … `objeto-50` (el número es el de la pieza: Nº 01).
+- El **modelo 3D** (`modelo.glb`, o cualquier archivo `.glb`) hace que la tarjeta muestre la pieza **dando vueltas**
+  en vez de la foto, con la marca "3D". En su ficha (`/objetos/objeto-1`) se puede girar arrastrando con el mouse
+  o el dedo; para acercar, se pellizca (celular o trackpad) o se usa **Ctrl + rueda** (la rueda sola baja la página).
+- La foto llamada **`principal`** es la de la tarjeta cuando no hay modelo, y la imagen que se ve mientras el modelo carga.
+  Las demás fotos de la carpeta son otras vistas de la pieza.
+- El nombre y los demás datos (época, procedencia, materiales…) van en **`src/data/objetos.textos.ts`**,
+  con el mismo número. Lo que no se ponga ahí sale como `[pendiente]`.
+- 🔒 Los modelos, las fotos y `objetos.textos.ts` **no se suben a GitHub** por ahora (están en `.git/info/exclude`).
+
+**Cómo exportar el modelo:** formato **GLB**, texturas de **2k** (4k pesa mucho y no se nota en pantalla).
+Los programas que crean modelos (Tripo, Meshy…) los sacan con muchísimos triángulos: el primer modelo salió con
+1.9 millones y 62 MB. Antes de ponerlo en su carpeta hay que aligerarlo; con este comando quedó en 1.5 MB, igual de bonito:
+
+```bash
+npx @gltf-transform/cli optimize "original.glb" modelo.glb --compress draco --texture-compress webp --texture-size 2048 --simplify-ratio 0.1 --simplify-error 0.001
+```
+
+- Busca que cada `modelo.glb` quede por debajo de **5 MB** (el celular lo descarga entero antes de mostrarlo).
+- Guarda el original (el pesado) fuera del proyecto, como respaldo.
+- El visor es `src/components/media/ModelViewer.tsx` (usa [model-viewer](https://modelviewer.dev), de Google).
+  Se descarga solo en las páginas que muestran un modelo. Los modelos comprimidos con Draco necesitan su
+  decodificador, que el sitio trae en `public/draco/` (no depende de servidores externos).
+
 ### La foto del pueblo (junto a "Conoce la historia")
 Es **`src/assets/fotos/gualmatan-principal.jpg`**. Para cambiarla, reemplaza ese archivo por otro con el mismo nombre
 (sirve `.jpg`, `.png` o `.webp`). Si no está, sale la ilustración animada de "Gualmatán desde el aire".
 - 🔒 Por ahora tampoco se sube a GitHub (la carpeta `src/assets/fotos/` está en `.git/info/exclude`).
 
 ### Fotos (paso a paso)
-1. Copia la foto a la carpeta de su sección, por ejemplo `public/media/objetos/objeto-1/mascara.jpg`
+Para los **pasos, los creadores y los objetos** no hace falta esto: basta con poner la foto en su carpeta (ver arriba).
+Para las demás secciones (por ejemplo, la galería de un año en `versiones.ts`):
+
+1. Copia la foto a la carpeta de su sección, por ejemplo `public/media/versiones/2024/desfile.jpg`
 2. En el archivo de datos, cambia la foto pendiente por la real:
 
 ```js
-// ANTES (3 fotos pendientes de ejemplo)
-imagenes: [1, 2, 3].map((v) => pendiente(`Fotografía del objeto ${n} — vista ${v}`)),
+// ANTES (6 fotos pendientes de ejemplo)
+galeria: [1, 2, 3, 4, 5, 6].map((n) => pendiente(`Foto ${n} de la edición ${anio}`)),
 
-// DESPUÉS (las fotos reales: la primera es la principal)
-imagenes: [
-  { tipo: 'imagen', src: '/media/objetos/objeto-1/mascara.jpg', alt: 'Máscara de madera pintada a mano', credito: 'Foto: Juan Gómez' },
-  { tipo: 'imagen', src: '/media/objetos/objeto-1/mascara-perfil.jpg', alt: 'La máscara vista de perfil' },
+// DESPUÉS (las fotos reales)
+galeria: [
+  { tipo: 'imagen', src: '/media/versiones/2024/desfile.jpg', alt: 'Comparsa cruzando la plaza principal', credito: 'Foto: Juan Gómez' },
+  { tipo: 'imagen', src: '/media/versiones/2024/carroza.jpg', alt: 'Carroza de la Virgen al final del recorrido' },
 ],
 ```
 
@@ -269,11 +300,6 @@ y `ediciones` (años de los que habla: enlazan a su ficha).
 ### Agregar un año, un objeto o un creador nuevo
 Copia uno de los bloques `{ ... }` existentes en su archivo de datos, pégalo y cambia sus valores.
 Cada uno necesita un `id` distinto (para años, el `anio` hace de id). El sitio lo muestra solo.
-
-### Modelos 3D (a futuro)
-Guarda el archivo `.glb` en `public/media/objetos/<id-del-objeto>/modelo.glb` y en `objetos.ts` escribe:
-`modelo3d: { tipo: 'modelo3d', src: '/media/objetos/objeto-1/modelo.glb', alt: 'Modelo 3D de la máscara' }`.
-El visor 3D se activará en `src/components/media/ModelViewer.tsx` cuando tengamos los archivos.
 
 ---
 

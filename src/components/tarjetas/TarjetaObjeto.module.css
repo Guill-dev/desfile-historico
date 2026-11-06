@@ -21,6 +21,27 @@
   transform: scale(1.04);
 }
 
+/* Con modelo 3D: fondo de vitrina, con luz suave detrás de la pieza */
+.vitrina {
+  background:
+    radial-gradient(75% 55% at 50% 40%, rgb(143 211 164 / 0.22), transparent 70%),
+    linear-gradient(#1b3a27, var(--c-noche));
+}
+
+/* El modelo va por encima del nombre (que ocupa la parte de abajo) y no recibe el mouse: la tarjeta es el enlace */
+.modelo {
+  position: absolute;
+  inset: 6% 0 20%;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  transition: transform 0.8s var(--ease-salida);
+}
+
+.pieza:hover .modelo {
+  transform: scale(1.06);
+}
+
 .ficha {
   position: absolute;
   inset: auto 0 0;
