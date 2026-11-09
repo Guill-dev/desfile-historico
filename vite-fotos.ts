@@ -8,7 +8,8 @@ import type { Plugin } from 'vite'
  * Lee las carpetas numeradas de cada colección y le entrega al sitio, por cada número:
  *   - principal: la foto que se llama "principal" (principal.jpg, Principal.PNG…) → va en la tarjeta (la portada)
  *   - otras: el resto de fotos de la carpeta, en orden por nombre → para verlo a fondo
- *   - modelo: el modelo 3D (.glb) de la carpeta, si hay uno → en los objetos, reemplaza a la foto
+ *   - modelo: el modelo 3D (modelo.glb, o el .glb que haya) → en los objetos, reemplaza a la foto
+ *   - modeloTarjeta: tarjeta.glb, la versión liviana del modelo para las tarjetas (ver scripts/preparar-modelo.mjs)
  *
  *   public/media/pasos/paso-01 … paso-79           → import fotos from 'virtual:fotos-pasos'      (src/data/pasos.ts)
  *   public/media/creadores/creador-01 … creador-06 → import fotos from 'virtual:fotos-creadores'  (src/data/creadores.ts)
@@ -28,12 +29,14 @@ type Coleccion = keyof typeof COLECCIONES
 
 const IMAGEN = /\.(jpe?g|png|webp|avif|gif)$/i
 const MODELO = /\.glb$/i
+const TARJETA = /^tarjeta\.glb$/i
 const PREFIJO = 'virtual:fotos-'
 
 interface Fotos {
   principal: string | null
   otras: string[]
   modelo: string | null
+  modeloTarjeta: string | null
 }
 
 function leerFotos(carpeta: string, coleccion: Coleccion): Record<number, Fotos> {
@@ -47,7 +50,9 @@ function leerFotos(carpeta: string, coleccion: Coleccion): Record<number, Fotos>
     const dir = path.join(carpeta, sub.name)
     const todos = fs.readdirSync(dir).sort((a, b) => a.localeCompare(b, 'es', { numeric: true }))
     const archivos = todos.filter((a) => IMAGEN.test(a))
-    const modelo = todos.find((a) => MODELO.test(a))
+    const modelos = todos.filter((a) => MODELO.test(a))
+    const tarjeta = modelos.find((a) => TARJETA.test(a))
+    const modelo = modelos.find((a) => /^modelo\.glb$/i.test(a)) ?? modelos.find((a) => a !== tarjeta)
     if (archivos.length === 0 && !modelo) continue
 
     // ?v= cambia si se reemplaza la foto por otra con el mismo nombre (así nadie ve la vieja guardada)
@@ -60,6 +65,7 @@ function leerFotos(carpeta: string, coleccion: Coleccion): Record<number, Fotos>
       principal: principal ? url(principal) : null,
       otras: archivos.filter((a) => a !== principal).map(url),
       modelo: modelo ? url(modelo) : null,
+      modeloTarjeta: tarjeta ? url(tarjeta) : null,
     }
   }
   return fotos

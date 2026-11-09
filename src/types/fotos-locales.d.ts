@@ -6,6 +6,8 @@ interface FotosLocales {
   otras: string[]
   /** El modelo 3D (.glb) de la carpeta, si hay uno */
   modelo: string | null
+  /** tarjeta.glb: la versión liviana del modelo, para las tarjetas */
+  modeloTarjeta: string | null
 }
 
 /** Fotos encontradas en public/media/pasos/paso-NN/ */

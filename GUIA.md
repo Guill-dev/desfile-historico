@@ -104,10 +104,10 @@ La página de inicio es un recorrido de arriba hacia abajo. Cada bloque vive en 
 | # | Lo que ves | Carpeta | Su información viene de |
 |---|---|---|---|
 | 1 | **Portada** oscura con el video, el título y el botón rojo | `sections/Inicio/` | `data/sitio.ts` → `sitio` y `portada` |
-| 2 | **Conoce la historia**: la ilustración del pueblo + tarjeta oscura | `sections/Historia/` | `data/sitio.ts` → `textos.historia` |
-| 3 | **Los pasos del desfile**: pasos **al azar** que cambian solos (6 en 2 filas de 3 en el computador, 4 en 2 × 2 en el celular) + botón "Ver los N pasos" | `sections/Pasos/` | `data/pasos.ts` |
+| 2 | **Conoce la historia**: animación del mundo a Gualmatán, que termina en la foto del pueblo + tarjeta oscura | `sections/Historia/` | `data/sitio.ts` → `textos.historia` |
+| 3 | **Los pasos del desfile**: pasos **al azar**, solo de los que ya tienen foto, que cambian solos (6 en 2 filas de 3 en el computador, 4 en 2 × 2 en el celular) + botón "Ver los N pasos" | `sections/Pasos/` | `data/pasos.ts` |
 | 4 | **Quienes lo hicieron posible**: carrusel de retratos | `sections/Creadores/` | `data/creadores.ts` |
-| 5 | **La colección**: vitrina oscura de objetos, **al azar** (en el celular cambian solos) | `sections/Objetos/` | `data/objetos.ts` |
+| 5 | **La colección**: vitrina oscura de objetos **al azar** que cambian solos (6 en 2 filas de 3 en el computador, 4 en 2 × 2 en el celular) + botón "Ver las N piezas" | `sections/Objetos/` | `data/objetos.ts` |
 | 6 | **Cada año, el pueblo vuelve a contarla** + línea de años | `sections/Versiones/` | `data/versiones.ts` |
 | — | **Más del archivo** + pie (aparece en todas las páginas) | `components/layout/SiteFooter.tsx` | `data/mas.ts` |
 
@@ -123,11 +123,13 @@ están en `src/components/tarjetas/` (cambiar una cambia las dos).
 desplazando la página: así invitan a entrar. Solo se detienen si la persona pulsa el botón de pausa (❚❚) o si su
 teléfono o computador tiene activado "reducir movimiento".
 - Para cambiar el tiempo: `CADA_MS` (en milisegundos: 3000 = 3 s) en `src/sections/Pasos/Pasos.tsx` y `src/sections/Objetos/Objetos.tsx`.
+- 📷 En el inicio solo salen **los pasos que ya tienen foto** (su `principal`). Los demás están en `/pasos`.
+  Si ninguno tiene foto todavía, salen todos.
 - En la página `/pasos` salen todos **en orden**; en `/objetos`, en un orden al azar distinto cada vez.
-  Cada pieza conserva su número (Nº 07…), que es su lugar en `src/data/objetos.ts`.
-- 🏺 **Las piezas con modelo 3D van primero** (en el inicio y en `/objetos`), luego las que ya tienen foto y al final
-  las de ejemplo; dentro de cada grupo, al azar. En el celular, las piezas 3D se quedan **fijas** en su casilla y solo
-  cambian las demás (si llegan a ser más de 4, se turnan entre ellas). Se decide en `prioridadObjeto`, en `objetos.ts`.
+  Cada pieza conserva su número (Nº 07…), que es el de su carpeta (`objeto-07`).
+- 🏺 **Las piezas con modelo 3D van primero** (en el inicio y en `/objetos`), luego las que solo tienen foto y al final
+  las que solo tienen datos; dentro de cada grupo, al azar. En el inicio, si las piezas 3D caben en las casillas
+  (6 en el computador, 4 en el celular), se quedan **fijas** y solo cambian las demás; si son más, se turnan entre ellas. Se decide en `prioridadObjeto`, en `objetos.ts`.
 - La pieza que hace esto se puede usar en otros bloques: `src/hooks/useMuestraRotativa.ts`.
 
 ---
@@ -187,7 +189,10 @@ Cada paso tiene su carpeta en **`public/media/pasos/`**: `paso-01`, `paso-02` �
 - Las demás fotos del paso, con cualquier nombre, van en la misma carpeta: quedan guardadas para ver el paso a fondo.
 - Con `npm run dev` abierto, la página se recarga sola al agregar, cambiar o borrar una foto.
 - Sirven `.jpg`, `.jpeg`, `.png`, `.webp`, `.avif` y `.gif`. Las `.heic` del iPhone **no** se ven en el navegador: pásalas a JPG.
-- Si la carpeta no tiene `principal`, la tarjeta sigue mostrando el recuadro de `[Fotografía pendiente]`.
+- Si la carpeta no tiene `principal`: en la página `/pasos`, en lugar de la foto sale una invitación
+  ("¿Tienes una foto de este paso?") con un botón rojo que lleva a Contacto (`/mas/contacto?paso=12`: el número
+  del paso va en la dirección, para que el formulario sepa de cuál es). En el inicio, esos pasos no salen.
+  La invitación está en `src/components/pasos/LineaPasos.tsx` (`PideFoto`).
 - Conviene que pesen poco (menos de 500 KB, unos 1600 px de ancho): así el sitio carga rápido en el celular.
 - Quien hace esto es `vite-fotos.ts`, en la raíz del proyecto.
 - 🔒 **Por ahora las fotos no se suben a GitHub** (están en `.git/info/exclude`; las carpetas vacías sí).
@@ -203,7 +208,11 @@ Igual que los pasos: cada creador tiene su carpeta en **`public/media/creadores/
 - 🔒 Las fotos y `creadores.textos.ts` **no se suben a GitHub** por ahora (están en `.git/info/exclude`).
 
 ### Los objetos: modelos 3D, fotos y datos 🏺
-Cada pieza tiene su carpeta en **`public/media/objetos/`**: `objeto-01` … `objeto-50` (el número es el de la pieza: Nº 01).
+Cada pieza tiene su carpeta en **`public/media/objetos/`**: `objeto-01` … `objeto-20` (el número es el de la pieza: Nº 01).
+- **Solo se muestran las piezas que existen:** las que tienen algo en su carpeta (modelo o fotos) o sus datos en
+  `objetos.textos.ts`. Las carpetas vacías no cuentan: al poner el primer archivo, la pieza aparece sola y
+  "Ver las N piezas" cuenta una más. ¿Más de 20? Crea la carpeta `objeto-21` y sigue igual.
+- Si no hay ninguna pieza real (por ejemplo, en la copia de GitHub, que no lleva los modelos), se ven 8 de ejemplo.
 - El **modelo 3D** (`modelo.glb`, o cualquier archivo `.glb`) hace que la tarjeta muestre la pieza **dando vueltas**
   en vez de la foto, con la marca "3D". En su ficha (`/objetos/objeto-1`) se puede girar arrastrando con el mouse
   o el dedo; para acercar, se pellizca (celular o trackpad) o se usa **Ctrl + rueda** (la rueda sola baja la página).
@@ -215,22 +224,56 @@ Cada pieza tiene su carpeta en **`public/media/objetos/`**: `objeto-01` … `obj
 
 **Cómo exportar el modelo:** formato **GLB**, texturas de **2k** (4k pesa mucho y no se nota en pantalla).
 Los programas que crean modelos (Tripo, Meshy…) los sacan con muchísimos triángulos: el primer modelo salió con
-1.9 millones y 62 MB. Antes de ponerlo en su carpeta hay que aligerarlo; con este comando quedó en 1.5 MB, igual de bonito:
+1.9 millones y 62 MB. Antes de ponerlo en su carpeta hay que aligerarlo. Un solo comando lo hace todo
+(con el número de la pieza al final):
 
 ```bash
-npx @gltf-transform/cli optimize "original.glb" modelo.glb --compress draco --texture-compress webp --texture-size 2048 --simplify-ratio 0.1 --simplify-error 0.001
+npm run modelo -- "C:\Users\...\Downloads\Mi pieza.glb" 15
 ```
 
-- Busca que cada `modelo.glb` quede por debajo de **5 MB** (el celular lo descarga entero antes de mostrarlo).
-- Guarda el original (el pesado) fuera del proyecto, como respaldo.
-- El visor es `src/components/media/ModelViewer.tsx` (usa [model-viewer](https://modelviewer.dev), de Google).
-  Se descarga solo en las páginas que muestran un modelo. Los modelos comprimidos con Draco necesitan su
-  decodificador, que el sitio trae en `public/draco/` (no depende de servidores externos).
+Crea la carpeta `objeto-15` con **dos versiones** del modelo:
+- `modelo.glb` (~1.3 MB, ~200 mil triángulos, texturas de 2048 px) → la de la **ficha**, donde se gira y se acerca.
+- `tarjeta.glb` (~0.35 MB, ~40 mil triángulos, 1024 px) → la de las **tarjetas**. Son pequeñas y giran varias a la
+  vez: con la versión completa, el celular se trababa.
 
-### La foto del pueblo (junto a "Conoce la historia")
-Es **`src/assets/fotos/gualmatan-principal.jpg`**. Para cambiarla, reemplaza ese archivo por otro con el mismo nombre
-(sirve `.jpg`, `.png` o `.webp`). Si no está, sale la ilustración animada de "Gualmatán desde el aire".
-- 🔒 Por ahora tampoco se sube a GitHub (la carpeta `src/assets/fotos/` está en `.git/info/exclude`).
+Después solo falta el nombre en `objetos.textos.ts`. El original (el pesado) no se toca: guárdalo fuera del proyecto
+como respaldo. Si alguna pieza tiene `modelo.glb` pero no `tarjeta.glb`, `npm run modelo -- --tarjetas` se la hace.
+El comando está en `scripts/preparar-modelo.mjs` (usa [glTF-Transform](https://gltf-transform.dev)).
+
+- El visor es `src/components/media/ModelViewer.tsx` (usa [model-viewer](https://modelviewer.dev), de Google).
+  Se descarga solo cuando un modelo está por aparecer en pantalla, no al abrir la página. Los modelos comprimidos
+  con Draco necesitan su decodificador, que el sitio trae en `public/draco/` (no depende de servidores externos).
+- En la vitrina del inicio, las tarjetas que salen se quitan de la página al terminar su animación: así nunca
+  giran más modelos de los que se ven.
+
+### La foto del pueblo y la animación "del mundo a Gualmatán" 🌎
+En el recuadro de "Conoce la historia", cuando la persona llega ahí, empieza sola una animación (unos 9 segundos):
+el globo gira hasta **América**, se acerca a **Colombia** (en blanco), a **Nariño** (en rojo y luego con sus municipios)
+y, *¡tin!*, cae un punto rojo sobre **Gualmatán**. Al final, la **foto del pueblo** se abre en círculo desde el punto,
+se queda **3.5 segundos** y la animación **vuelve a empezar, siempre** (la foto se desvanece sobre el globo).
+- Si la sección sale de la pantalla, la animación se detiene (no gasta batería) y sigue donde iba al volver.
+- Un botón pequeño y redondo (❚❚) abajo a la izquierda la pausa: las animaciones que se repiten solas deben poder
+  detenerse (accesibilidad). Los tiempos se cambian en `MapaAnimado.tsx` (`FOTO_QUIETA`, `TERMINA`…).
+- La foto es **`src/assets/fotos/gualmatan-principal.jpg`**. Para cambiarla, reemplaza ese archivo por otro con el
+  mismo nombre (sirve `.jpg`, `.png` o `.webp`). Si no está, al final sale la ilustración "Gualmatán desde el aire".
+- La animación está en `src/sections/Historia/MapaAnimado.tsx`. Los tiempos y los lugares por donde pasa la cámara
+  están arriba del archivo (`CAMARA`, `ROTULOS`…).
+- Lo que dibuja está en **`public/media/mapa/mapa.json`**, que se arma con **`npm run mapa`** a partir de:
+  - el mundo y los países lejanos: **Natural Earth** (dominio público), del paquete `world-atlas`;
+  - **Colombia** (sus 33 departamentos), **Nariño**, sus 64 municipios y Gualmatán: los **límites oficiales del DANE**
+    (Marco Geoestadístico Nacional), publicados por [geoBoundaries](https://www.geoboundaries.org);
+  - **Ecuador**: geoBoundaries (CC0), que encaja con la frontera del DANE.
+  - Colombia y Nariño salen de los mismos datos: la costa del Pacífico y la frontera con Ecuador coinciden y no
+    quedan franjas sin pintar. Nariño se pinta entero con su contorno y encima van las líneas de los municipios.
+  - La primera vez el comando descarga los límites (~13 MB) en `node_modules/.cache/preparar-mapa/` (fuera del sitio
+    y de GitHub); las siguientes usa esa copia.
+- ⚖️ Los límites del DANE vía geoBoundaries tienen licencia **CC BY 4.0**: hay que dar el crédito en Créditos
+  (por ejemplo: "Límites de Nariño: DANE, Marco Geoestadístico Nacional, vía geoBoundaries, CC BY 4.0").
+  (Antes se usó un mapa SVG de Wikimedia: tenía un pedazo de más y le faltaban dos municipios, y se quitó.)
+- Si la persona pidió "reducir movimiento", se ve la foto directo y el botón dice "Ver dónde queda".
+- Si falta `mapa.json` (por ejemplo, en la copia de GitHub), se ve la foto y ya.
+- 🔒 Por ahora la foto (`src/assets/fotos/`) y la carpeta `public/media/mapa/` no se suben a GitHub (`.git/info/exclude`).
+  El mapa de Nariño en 3D (sin el recuadro de Colombia) está guardado en `originales/mapa/narino.glb`, por si se quiere usar.
 
 ### Fotos (paso a paso)
 Para los **pasos, los creadores y los objetos** no hace falta esto: basta con poner la foto en su carpeta (ver arriba).
@@ -285,6 +328,16 @@ computador y reemplaza entero al de `historia.ts`. Para publicarlo, quita su lí
 - `fuentes` → de dónde sale la información (libro, entrevista, acta…). En un archivo histórico es lo que
   le da confianza al visitante: anota la fuente de cada dato.
 
+### La página de Contacto ✉️
+`/mas/contacto` tiene cuatro botones grandes, solo con los logos: **Gmail, WhatsApp, Instagram y Facebook**.
+- Los datos (correo, número de WhatsApp, enlaces de Instagram y Facebook) van en **`src/data/contacto.textos.ts`**.
+  Cada botón sale solo si su dato está puesto: para quitar uno, borra su línea.
+- El WhatsApp va solo con números y el código del país: `573001234567`.
+- Gmail: en el celular abre la aplicación de correo; en el computador, Gmail en el navegador, con el mensaje listo.
+- Si se llega desde un paso sin foto (botón "Enviar la foto"), el correo y el WhatsApp ya dicen de qué paso es.
+- Los logos son de [Simple Icons](https://simpleicons.org) (libres de uso). La página está en `src/pages/Mas/secciones/ContactoPagina.tsx`.
+- 🔒 `contacto.textos.ts` **no se sube a GitHub** por ahora (está en `.git/info/exclude`).
+
 ### La página de Testimonios 🎙️
 Todo está en `src/data/testimonios.ts`. Cada testimonio tiene `nombre`, `relacion` (por ejemplo
 "Participante desde 1998"), `texto`, `fecha`, `fuente` (quién lo registró y dónde) y `grupo`.
@@ -303,7 +356,33 @@ Cada uno necesita un `id` distinto (para años, el `anio` hace de id). El sitio 
 
 ---
 
+### Los originales pesados (respaldo) 🗄️
+La carpeta **`originales/`** (en la raíz del proyecto) guarda las versiones originales de lo que se aligeró para la web:
+el video de la portada (260 MB), las fotos de pasos que pesaban más de 400 KB y el mapa 3D de Nariño.
+- **No se publica** (está fuera de `public/`) **ni se sube a GitHub** (`.git/info/exclude`).
+- Si algún día quieres volver a preparar un archivo con otra calidad, sale de ahí.
+- Para fotos nuevas: que pesen menos de ~400 KB y midan hasta ~1600 px de ancho (JPG, calidad 80).
+
 ## 7. El video principal de la portada 🎬
+
+**Como está ahora:** el video original (1 min 50 s, 260 MB) se pasó a `desfile.mp4` en **alta calidad** (1080p,
+79 MB, sin sonido): a simple vista es igual al original, pero pesa menos de un tercio y empieza a verse mientras se
+descarga (el original tenía su índice al final del archivo y había que llegar hasta ahí para reproducirlo). Se usa
+igual en el computador y en el celular (`videoMovil: null`). `desfile-poster.jpg` (228 KB) es la imagen que se ve
+mientras carga. El original está en `originales/inicio/`.
+⚠️ Al contratar el hosting, revisa la **transferencia mensual** que incluye: cada visita que vea el video completo
+descarga hasta ~79 MB.
+
+### La pantalla de entrada ("telón") 🎭
+Al abrir el sitio aparece, unos **4 segundos**, una pantalla oscura con confeti en los colores de la bandera: la
+bandera de Gualmatán se arma, sube "DESFILE HISTÓRICO" letra por letra, aparece "GUALMATÁN · NARIÑO" y una barra
+tricolor se llena. Después **el telón se abre hacia los lados** y queda la página.
+- Sale **una vez por visita**: si la persona recarga o vuelve al inicio, no se repite (se recuerda en la pestaña).
+  Nunca en `/admin`.
+- Está en **`index.html`** (así aparece al instante, antes de que cargue lo demás): ahí se cambian textos, colores y
+  animaciones. La cierra `src/entrada.ts`, donde está la duración (`DURACION = 4000`, en milisegundos).
+- Con "reducir movimiento", se ve quieta un momento (1.5 s) y se desvanece.
+- Si algo fallara y nadie la cerrara, se va sola a los 9 segundos.
 
 ### Paso 1 — Preparar el video
 | | Recomendado |
@@ -394,7 +473,9 @@ Todo está en **`src/styles/tokens.css`**. Cambiar un valor ahí lo cambia en to
 | `--c-papel` | Fondo de las fichas (lectura larga) |
 | `--c-verde-claro` | Rótulos pequeños sobre fondo oscuro |
 
-- Letras: **Rubik** (títulos y texto) e **IBM Plex Mono** (rótulos tipo archivo). Se cargan en `index.html`.
+- Letras: **Rubik** (títulos y texto) e **IBM Plex Mono** (rótulos tipo archivo). Vienen de los paquetes
+  `@fontsource/rubik` y `@fontsource/ibm-plex-mono` y se sirven desde el propio sitio (no se le piden a Google:
+  carga más rápido y es más privado). Se cargan en `src/main.tsx`; para otro grosor, agrega su línea ahí.
 - Cada bloque usa un **tema** (`tema-verde`, `tema-noche`, `tema-papel`), definido en `src/styles/base.css`: los botones y textos cambian de color solos según el fondo.
 - 💡 Al cambiar un color, revisa que el texto encima **se siga leyendo bien** (buen contraste), sobre todo el texto blanco sobre el verde.
 

@@ -16,6 +16,12 @@ interface Opciones<T> {
   prioridad?: (x: T) => number
 }
 
+/**
+ * Cuánto dura un cambio completo: la salida (0.4 s) y la entrada (0.5 s, que empieza 0.22 s después), más el
+ * retraso escalonado entre casillas (hasta ~0.5 s con 6), con margen. Ver Muestra.module.css.
+ */
+const SALIDA_MS = 1500
+
 /** Qué casillas se quedan fijas y entre cuáles se turnan las demás (posiciones dentro de la lista) */
 interface Reparto {
   fijos: number[]
@@ -87,12 +93,20 @@ export function useMuestraRotativa<T>(todos: readonly T[], { cantidad, cadaMs = 
     return () => clearInterval(intervalo)
   }, [girando, reparto, cantidad, cadaMs])
 
+  // Cuando terminan de irse, las tarjetas que salieron se quitan de la página. Si no, se quedarían
+  // invisibles hasta el próximo cambio (y si son modelos 3D, girando y gastando batería por nada).
+  useEffect(() => {
+    if (ronda === 0) return
+    const t = window.setTimeout(() => setMuestra((m) => (m.ronda === ronda ? { ...m, previa: [] } : m)), SALIDA_MS)
+    return () => clearTimeout(t)
+  }, [ronda])
+
   const alternarPausa = useCallback(() => setPausada((p) => !p), [])
 
   return {
     /** Lo que se muestra ahora */
     visibles: actual.map((i) => todos[i]).filter((x): x is T => x !== undefined),
-    /** Lo que se mostraba antes del último cambio, en las mismas casillas (para animar la salida) */
+    /** Lo que se mostraba antes del último cambio, en las mismas casillas, mientras se va (luego queda vacío) */
     anteriores: previa.map((i) => todos[i]),
     ronda,
     /** Hay botón de pausa solo si de verdad puede girar */

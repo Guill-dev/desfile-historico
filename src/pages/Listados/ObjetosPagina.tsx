@@ -11,9 +11,6 @@ import styles from './listado.module.css'
 
 const cap = capitulo('objetos')
 
-/** Número de la pieza en la colección (su lugar en data/objetos.ts), aunque se muestre en otro orden */
-const numeroDe = (id: string) => objetos.findIndex((o) => o.id === id) + 1
-
 /**
  * /objetos — la colección completa, en vitrina oscura (el "Ver todas" del inicio en el celular).
  * Las piezas salen en un orden al azar distinto cada vez que se entra, pero primero las que ya tienen modelo 3D
@@ -35,7 +32,7 @@ export default function ObjetosPagina() {
         <ul role="list" className={styles.grilla}>
           {orden.map((o, i) => (
             <Reveal as="li" key={o.id} retraso={(i % 4) * 80}>
-              <TarjetaObjeto objeto={o} numero={numeroDe(o.id)} />
+              <TarjetaObjeto objeto={o} />
             </Reveal>
           ))}
         </ul>

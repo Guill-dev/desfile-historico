@@ -45,6 +45,52 @@
   border-radius: var(--r-l);
 }
 
+/* Donde falta la foto: el mismo marco, punteado, con la invitación a enviarla */
+.pideFoto {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  /* Mide como las fotos (3:2) y, si el texto no cabe, crece hacia abajo. min-width: 0 evita que, al crecer,
+     la proporción la ensanche más allá de la pantalla en el celular */
+  aspect-ratio: 3 / 2;
+  min-width: 0;
+  padding: clamp(20px, 4vw, 40px);
+  border: 2px dashed rgb(255 255 255 / 0.4);
+  border-radius: var(--r-l);
+  background: rgb(255 255 255 / 0.06);
+  text-align: center;
+}
+
+.camara {
+  width: 34px;
+  height: 34px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  opacity: 0.85;
+}
+
+.pregunta {
+  font-weight: 700;
+  font-size: clamp(1.0625rem, 0.9rem + 0.6vw, 1.3125rem);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* Gana a ".texto p" (justificado) aunque no esté dentro de .texto: centrado y angosto */
+.invitacion {
+  max-width: 36ch;
+  font-size: var(--t-s);
+  line-height: 1.45;
+  opacity: 0.9;
+}
+
+.pideFoto :global(a) {
+  margin-top: 6px;
+}
+
 /* Pantallas anchas: número y texto a la izquierda, la foto (más grande) a la derecha */
 @media (min-width: 768px) {
   .paso {

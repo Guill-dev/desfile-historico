@@ -8,8 +8,6 @@ import styles from './TarjetaObjeto.module.css'
 
 interface Props {
   objeto: Objeto
-  /** Número de la pieza en la colección (1, 2, 3…) */
-  numero: number
 }
 
 /**
@@ -17,21 +15,29 @@ interface Props {
  * Si la pieza tiene modelo 3D, la tarjeta lo muestra dando vueltas en vez de la foto
  * (para girarlo a mano está la ficha: la tarjeta entera es un enlace).
  */
-export default function TarjetaObjeto({ objeto, numero }: Props) {
+export default function TarjetaObjeto({ objeto }: Props) {
   const modelo = objeto.modelo3d
   const conModelo = tieneArchivo(modelo)
 
   return (
     <Link to={`/objetos/${objeto.id}`} className={cx(styles.pieza, conModelo && styles.vitrina)}>
       {conModelo ? (
-        <ModelViewer src={modelo.src} poster={modelo.poster} alt={modelo.alt} ratio="auto" interactivo={false} className={styles.modelo} />
+        // En la tarjeta va la versión liviana (tarjeta.glb): varias giran a la vez, y en el celular pesa mucho la completa
+        <ModelViewer
+          src={objeto.modeloTarjeta ?? modelo.src}
+          poster={modelo.poster}
+          alt={modelo.alt}
+          ratio="auto"
+          interactivo={false}
+          className={styles.modelo}
+        />
       ) : (
         <Media media={objeto.imagenes[0]} ratio="auto" className={styles.foto} />
       )}
       {conModelo && <span className={styles.chip}>3D</span>}
       <span className={styles.ficha}>
         <span className="mono suave">
-          Nº {String(numero).padStart(2, '0')} · {objeto.epoca}
+          Nº {String(objeto.numero).padStart(2, '0')} · {objeto.epoca}
         </span>
         <b>{objeto.nombre}</b>
       </span>

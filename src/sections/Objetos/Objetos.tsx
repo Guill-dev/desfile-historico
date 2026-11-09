@@ -1,46 +1,41 @@
-import { useState, type CSSProperties } from 'react'
+import type { CSSProperties } from 'react'
 import { capitulo, rotulo } from '@/data/sitio'
 import { objetos, prioridadObjeto } from '@/data/objetos'
 import { cx } from '@/utils/cx'
-import { barajarPorPrioridad } from '@/utils/azar'
-import { useCarrusel } from '@/hooks/useCarrusel'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useMuestraRotativa } from '@/hooks/useMuestraRotativa'
 import SectionHeader from '@/components/ui/SectionHeader'
-import Flechas from '@/components/ui/Flechas'
 import Boton from '@/components/ui/Boton'
 import PausaMuestra from '@/components/ui/PausaMuestra'
 import TarjetaObjeto from '@/components/tarjetas/TarjetaObjeto'
-import carrusel from '@/components/ui/Carrusel.module.css'
 import muestra from '@/components/ui/Muestra.module.css'
 import styles from './Objetos.module.css'
 
 const cap = capitulo('objetos')
-const MUESTRA = 4
+/** Cuántas piezas a la vez: 6 en 2 filas de 3 en el computador; 4 en 2 × 2 en el celular */
+const EN_COMPUTADOR = 6
+const EN_CELULAR = 4
 /** Más pausado que los pasos (3 s): las piezas en 3D ya se mueven solas */
 const CADA_MS = 8000
 
-/** Número de la pieza en la colección (su lugar en data/objetos.ts), aunque se muestre en otro orden */
-const numeroDe = (id: string) => objetos.findIndex((o) => o.id === id) + 1
-
 /**
- * La vitrina: fondo oscuro para que las piezas resalten. Cada una abre su ficha (lista para 3D).
- * Las piezas salen al azar, pero primero las que ya tienen modelo 3D (y luego las que tienen foto):
- *  - en el computador, el carrusel completo en un orden distinto cada vez que se entra;
- *  - en el celular, cuatro en 2 × 2 que cambian solas cada 6 s (siempre), y "Ver todas" (/objetos).
- *    Las piezas con modelo 3D se quedan fijas en su casilla; las demás casillas van cambiando.
+ * La vitrina: fondo oscuro para que las piezas resalten. Cada una abre su ficha.
+ * Unas pocas piezas al azar (6 en el computador, 4 en el celular) que cambian solas cada CADA_MS,
+ * y "Ver las N piezas" (/objetos). Primero salen las que ya tienen modelo 3D (y luego las que tienen foto):
+ * si caben todas, se quedan fijas en su casilla y solo cambian las demás.
  */
 export default function Objetos() {
-  const { ref, anterior, siguiente } = useCarrusel()
-  const esMovil = useMediaQuery('(max-width: 899px)')
-  const [orden] = useState(() => barajarPorPrioridad(objetos, prioridadObjeto))
+  const esCelular = useMediaQuery('(max-width: 899px)')
+  // Al pasar de celular a computador (o al revés) cambia cuántas caben: la muestra se arma de nuevo
+  return <Vitrina key={esCelular ? 'celular' : 'computador'} cantidad={esCelular ? EN_CELULAR : EN_COMPUTADOR} />
+}
+
+function Vitrina({ cantidad }: { cantidad: number }) {
   const { visibles, anteriores, ronda, puedeGirar, pausada, alternarPausa } = useMuestraRotativa(objetos, {
-    cantidad: MUESTRA,
+    cantidad,
     cadaMs: CADA_MS,
-    activa: esMovil,
     prioridad: prioridadObjeto,
   })
-  const lista = esMovil ? visibles : orden
 
   return (
     <section id="objetos" className="tema-noche capitulo" aria-labelledby="objetos-titulo">
@@ -51,38 +46,32 @@ export default function Objetos() {
           titulo={cap.encabezado}
           accion={
             <>
-              <Flechas anterior={anterior} siguiente={siguiente} etiqueta="objetos" />
-              {puedeGirar && <PausaMuestra pausada={pausada} onClick={alternarPausa} que="piezas" className={carrusel.soloMovil} />}
-              <Boton to="/objetos" llamativo className={carrusel.soloMovil}>
+              {puedeGirar && <PausaMuestra pausada={pausada} onClick={alternarPausa} que="piezas" />}
+              <Boton to="/objetos" llamativo>
                 Ver las {objetos.length} piezas →
               </Boton>
             </>
           }
         />
 
-        <ul ref={ref} role="list" className={cx(carrusel.pista, carrusel.muestra, styles.vitrina)}>
-          {lista.map((o, i) => {
-            if (!esMovil) {
-              return (
-                <li key={o.id}>
-                  <TarjetaObjeto objeto={o} numero={numeroDe(o.id)} />
-                </li>
-              )
-            }
-            // En el celular la casilla se queda: la pieza anterior se va girando y la nueva entra girando
+        <ul role="list" className={styles.vitrina}>
+          {visibles.map((o, i) => {
+            // La casilla se queda: la pieza anterior se va girando y la nueva entra girando
             const retraso: CSSProperties = { '--retraso-cambio': `${i * 90}ms` }
             // Si la casilla no cambió (una pieza fija), no hay animación de cambio
             const anterior = anteriores[i]
             const cambio = ronda > 0 && anterior !== undefined && anterior.id !== o.id
             return (
               <li key={i} className={muestra.casilla}>
+                {/* La que se va lleva la misma clave que tenía: React conserva esa tarjeta (y su modelo 3D ya
+                    cargado) y solo le cambia la animación, en vez de crear otra copia del modelo para despedirla */}
                 {cambio && (
-                  <div key={`sale-${ronda}`} className={muestra.sale} style={retraso} inert aria-hidden>
-                    <TarjetaObjeto objeto={anterior} numero={numeroDe(anterior.id)} />
+                  <div key={anterior.id} className={muestra.sale} style={retraso} inert aria-hidden>
+                    <TarjetaObjeto objeto={anterior} />
                   </div>
                 )}
                 <div key={o.id} className={cx(cambio && muestra.cambio)} style={retraso}>
-                  <TarjetaObjeto objeto={o} numero={numeroDe(o.id)} />
+                  <TarjetaObjeto objeto={o} />
                 </div>
               </li>
             )

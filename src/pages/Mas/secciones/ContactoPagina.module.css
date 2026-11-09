@@ -1,0 +1,176 @@
+.intro {
+  max-width: 48ch;
+}
+
+.cuerpo {
+  padding-block: clamp(40px, 7vw, 96px);
+}
+
+/* Vitrina oscura con una luz suave arriba, como la de la colección */
+.panel {
+  display: grid;
+  justify-items: center;
+  gap: clamp(20px, 3vw, 32px);
+  max-width: 760px;
+  margin-inline: auto;
+  padding: clamp(36px, 7vw, 72px) clamp(16px, 4vw, 48px);
+  border-radius: var(--r-xl);
+  background:
+    radial-gradient(80% 70% at 50% 0%, rgb(143 211 164 / 0.18), transparent 70%),
+    var(--c-noche);
+}
+
+.paso {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 46ch;
+  padding: 12px 16px;
+  border: 1.5px dashed rgb(255 255 255 / 0.3);
+  border-radius: var(--r-m);
+  font-size: var(--t-s);
+  line-height: 1.4;
+}
+
+.paso svg {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: var(--c-verde-claro);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+/* Los cuatro botones en fila; en pantallas muy angostas, 2 × 2 */
+.redes {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: clamp(14px, 4vw, 40px);
+}
+
+@media (max-width: 359px) {
+  .redes {
+    grid-template-columns: repeat(2, auto);
+  }
+}
+
+/*
+ * Cada botón: un círculo del color de la marca con su logo en blanco.
+ * Entran uno tras otro; al pasar el mouse (o con el teclado) suben, brillan con su color y aparece un anillo.
+ */
+.red {
+  --tam: clamp(62px, 17vw, 108px);
+
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--tam);
+  height: var(--tam);
+  border-radius: 50%;
+  color: var(--c-blanco);
+  background: var(--marca);
+  box-shadow:
+    0 12px 26px -14px var(--marca),
+    inset 0 -4px 0 rgb(0 0 0 / 0.14);
+  transition:
+    transform 0.35s var(--ease-salida),
+    box-shadow 0.35s var(--ease-salida);
+  /* backwards: la entrada no se queda "pegada" y deja funcionar el efecto del mouse */
+  animation: aparecer 0.6s var(--ease-salida) backwards;
+  animation-delay: calc(var(--i, 0) * 90ms + 150ms);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.red svg {
+  width: 46%;
+  height: 46%;
+  fill: currentColor;
+  transition: transform 0.35s var(--ease-salida);
+}
+
+/* Anillo del color de la marca, alrededor del círculo */
+.red::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border: 2px solid var(--marca);
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0.88);
+  transition:
+    opacity 0.3s,
+    transform 0.35s var(--ease-salida);
+  pointer-events: none;
+}
+
+.red:hover,
+.red:focus-visible {
+  transform: translateY(-6px) scale(1.06);
+  box-shadow:
+    0 24px 40px -16px var(--marca),
+    inset 0 -4px 0 rgb(0 0 0 / 0.14);
+}
+
+.red:hover::after,
+.red:focus-visible::after {
+  opacity: 0.7;
+  transform: scale(1);
+}
+
+.red:hover svg,
+.red:focus-visible svg {
+  transform: rotate(-8deg) scale(1.08);
+}
+
+.red:active {
+  transform: translateY(-2px) scale(0.96);
+}
+
+.red:focus-visible {
+  outline: none;
+}
+
+/* Colores de cada marca */
+.gmail {
+  --marca: #ea4335;
+  /* Gmail: fondo blanco con la "M" roja */
+  background: var(--c-blanco);
+  color: #ea4335;
+}
+
+.whatsapp {
+  --marca: #25d366;
+}
+
+.instagram {
+  --marca: #e1306c;
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+}
+
+.facebook {
+  --marca: #0866ff;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .red,
+  .red svg,
+  .red::after {
+    animation: none;
+    transition: none;
+  }
+
+  .red:hover,
+  .red:focus-visible,
+  .red:hover svg,
+  .red:focus-visible svg {
+    transform: none;
+  }
+}

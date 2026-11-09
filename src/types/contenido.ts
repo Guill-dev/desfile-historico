@@ -58,6 +58,8 @@ export interface Creador {
 /** Una pieza de la colección. */
 export interface Objeto {
   id: string
+  /** Número de la pieza en la colección (Nº 07): el de su carpeta, objeto-07 */
+  numero: number
   nombre: string
   /** Año o época */
   epoca: string
@@ -71,6 +73,8 @@ export interface Objeto {
   imagenes: Media[]
   /** tipo 'modelo3d'; src null = pendiente */
   modelo3d: Media
+  /** Versión liviana del modelo para las tarjetas (tarjeta.glb); si no hay, las tarjetas usan el completo */
+  modeloTarjeta?: string
 }
 
 export interface Personaje {

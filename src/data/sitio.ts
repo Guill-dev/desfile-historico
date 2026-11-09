@@ -22,9 +22,9 @@ export const portada: Portada = {
   // Video principal (MP4). Ej.: '/media/inicio/desfile.mp4'
   video: '/media/inicio/desfile.mp4',
   // Opcional: versión más liviana para celulares. Si queda en null, el celular usa `video`.
-  videoMovil: '/media/inicio/desfile.mp4',
+  videoMovil: null, // el mismo video en alta calidad también en el celular
   // Imagen que se ve mientras carga el video (o sola, si no hay video). Ej.: '/media/inicio/desfile-poster.jpg'
-  poster: '/media/inicio/desfile.mp4',
+  poster: '/media/inicio/desfile-poster.jpg',
   // Sombra del lado izquierdo del video, detrás del título (en computador): 0 = nada, 1 = negro. Recomendado entre 0.4 y 0.75.
   oscuridad: 0.65,
 }

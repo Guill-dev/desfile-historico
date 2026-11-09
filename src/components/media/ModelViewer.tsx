@@ -36,8 +36,21 @@ export default function ModelViewer({ src, poster, alt, ratio = '1 / 1', classNa
   const elemento = useRef<HTMLElement>(null)
   const reducirMovimiento = usePrefersReducedMotion()
 
+  // El visor (~1 MB) se descarga cuando el modelo está por aparecer en pantalla, no al abrir la página:
+  // así la portada carga primero lo que se ve arriba (video, textos, fotos)
   useEffect(() => {
-    if (src) void cargarVisor()
+    const el = elemento.current
+    if (!src || !el) return
+    const observador = new IntersectionObserver(
+      ([entrada]) => {
+        if (!entrada?.isIntersecting) return
+        void cargarVisor()
+        observador.disconnect()
+      },
+      { rootMargin: '600px 0px' },
+    )
+    observador.observe(el)
+    return () => observador.disconnect()
   }, [src])
 
   // La rueda del mouse sigue bajando la página; para acercar: Ctrl + rueda (o pellizcar en el celular y el trackpad)

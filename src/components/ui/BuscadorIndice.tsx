@@ -85,7 +85,7 @@ export default function BuscadorIndice({ entradas, consulta, alCambiar, alElegir
           onChange={(e) => alCambiar(e.target.value)}
           onKeyDown={alTeclearCampo}
           onFocus={alEnfocar}
-          placeholder="Buscar nombre o número"
+          placeholder="Nombre o número"
           aria-label="Buscar en el índice por nombre o número"
           autoComplete="off"
           autoCorrect="off"

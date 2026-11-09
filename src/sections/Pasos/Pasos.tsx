@@ -4,6 +4,7 @@ import type { Paso } from '@/types/contenido'
 import { capitulo, rotulo } from '@/data/sitio'
 import { pasos } from '@/data/pasos'
 import { cx } from '@/utils/cx'
+import { tieneArchivo } from '@/utils/media'
 import { useMuestraRotativa } from '@/hooks/useMuestraRotativa'
 import SectionHeader from '@/components/ui/SectionHeader'
 import Reveal from '@/components/ui/Reveal'
@@ -20,11 +21,18 @@ const MUESTRA = 6
 const CADA_MS = 3000
 
 /**
- * Entrada a los Pasos dentro del recorrido: unos pocos pasos al azar que cambian solos
- * y el acceso a la página completa (/pasos), donde salen todos en orden.
+ * Aquí solo salen los pasos que ya tienen foto (los demás se ven en /pasos).
+ * Si todavía ninguno tiene (p. ej. en la copia de GitHub, sin las fotos), salen todos.
+ */
+const conFoto = pasos.filter((p) => tieneArchivo(p.media[0]))
+const candidatos = conFoto.length > 0 ? conFoto : pasos
+
+/**
+ * Entrada a los Pasos dentro del recorrido: unos pocos pasos al azar (de los que tienen foto) que
+ * cambian solos y el acceso a la página completa (/pasos), donde salen todos en orden.
  */
 export default function Pasos() {
-  const { visibles, anteriores, ronda, puedeGirar, pausada, alternarPausa } = useMuestraRotativa(pasos, {
+  const { visibles, anteriores, ronda, puedeGirar, pausada, alternarPausa } = useMuestraRotativa(candidatos, {
     cantidad: MUESTRA,
     cadaMs: CADA_MS,
   })

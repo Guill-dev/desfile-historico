@@ -3,6 +3,7 @@ import { cx } from '@/utils/cx'
 import Reveal from '@/components/ui/Reveal'
 import Boton from '@/components/ui/Boton'
 import GualmatanAereo from '@/components/ilustraciones/GualmatanAereo'
+import MapaAnimado from './MapaAnimado'
 import styles from './Historia.module.css'
 
 /*
@@ -14,25 +15,32 @@ const fotoPueblo = Object.values(
   import.meta.glob<string>('@/assets/fotos/gualmatan-principal.*', { eager: true, query: '?url', import: 'default' }),
 )[0]
 
-/** Primer bloque tras la portada: el pueblo (foto o ilustración) y la invitación a conocer la historia. */
+/**
+ * Primer bloque tras la portada: dónde queda el pueblo y la invitación a conocer la historia.
+ * En el recuadro de la foto, primero el recorrido del mundo a Gualmatán (MapaAnimado) y al final
+ * aparece la foto (o la ilustración, si no está), con el botón "Volver a ver".
+ */
 export default function Historia() {
   return (
     <section id="historia" className={cx('tema-verde', styles.historia)} aria-labelledby="historia-titulo">
       <div className={cx('contenedor', styles.grilla)}>
         <Reveal className={styles.imagen}>
-          {fotoPueblo ? (
-            <figure className={styles.foto}>
-              <img
-                src={fotoPueblo}
-                alt="La iglesia de Gualmatán, blanca y verde, de dos torres, vista desde la plaza, junto a un monumento con dos leones dorados y un jinete a caballo."
-                loading="lazy"
-                decoding="async"
-              />
-              <figcaption className={cx('mono', styles.leyenda)}>Gualmatán · fotografía</figcaption>
-            </figure>
-          ) : (
-            <GualmatanAereo />
-          )}
+          <MapaAnimado
+            final={
+              fotoPueblo ? (
+                <figure className={styles.foto}>
+                  <img
+                    src={fotoPueblo}
+                    alt="La iglesia de Gualmatán, blanca y verde, de dos torres, vista desde la plaza, junto a un monumento con dos leones dorados y un jinete a caballo."
+                    decoding="async"
+                  />
+                  <figcaption className={cx('mono', styles.leyenda)}>Gualmatán · fotografía</figcaption>
+                </figure>
+              ) : (
+                <GualmatanAereo />
+              )
+            }
+          />
         </Reveal>
 
         <Reveal retraso={150} className={cx('tema-noche', styles.tarjeta)}>

@@ -26,7 +26,7 @@ export default function ObjetoDetalle() {
       <title>{tituloPagina(objeto.nombre)}</title>
       <CabeceraPagina
         volver={{ to: { pathname: '/', hash: '#objetos' }, texto: 'Objetos' }}
-        kicker={`Nº ${String(i + 1).padStart(2, '0')} · ${objeto.epoca}`}
+        kicker={`Nº ${String(objeto.numero).padStart(2, '0')} · ${objeto.epoca}`}
         titulo={objeto.nombre}
       />
 
