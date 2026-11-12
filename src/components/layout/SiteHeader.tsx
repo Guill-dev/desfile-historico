@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router'
 import { capitulos, destino } from '@/data/sitio'
 import { useEstadoScroll } from '@/hooks/useEstadoScroll'
 import { cx } from '@/utils/cx'
+import { alTocarLogo } from '@/entrada'
 import Marca from '@/components/marca/Marca'
 import MenuPantalla from './MenuPantalla'
 import styles from './SiteHeader.module.css'
@@ -21,7 +22,8 @@ export default function SiteHeader() {
     <>
       <header className={cx(styles.header, oculta && styles.oculta)}>
         <div className={cx('contenedor', styles.barra)}>
-          <Link to="/" className={styles.marca} aria-label="Inicio — Desfile Histórico de Gualmatán">
+          {/* Siempre lleva al inicio (arriba de todo) y vuelve a salir la pantalla de entrada */}
+          <Link to="/" onClick={alTocarLogo} className={styles.marca} aria-label="Inicio — Desfile Histórico de Gualmatán">
             <Marca />
           </Link>
 

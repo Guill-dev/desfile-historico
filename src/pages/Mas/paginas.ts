@@ -19,4 +19,5 @@ export const paginasMas: Partial<Record<string, ComponentType<PaginaMasProps>>> 
   galeria: lazy(() => import('./secciones/GaleriaPagina')),
   testimonios: lazy(() => import('./secciones/TestimoniosPagina')),
   contacto: lazy(() => import('./secciones/ContactoPagina')),
+  creditos: lazy(() => import('./secciones/CreditosPagina')),
 }

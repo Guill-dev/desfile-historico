@@ -338,6 +338,16 @@ computador y reemplaza entero al de `historia.ts`. Para publicarlo, quita su lí
 - Los logos son de [Simple Icons](https://simpleicons.org) (libres de uso). La página está en `src/pages/Mas/secciones/ContactoPagina.tsx`.
 - 🔒 `contacto.textos.ts` **no se sube a GitHub** por ahora (está en `.git/info/exclude`).
 
+### La página de Créditos 🎬
+`/mas/creditos` es como la pared de créditos al final de una exposición: presentación, **quiénes la hicieron**
+(por grupos: fotografía, textos, modelos 3D…), una dedicatoria (opcional), **agradecimientos**, **libros y
+documentos** consultados y, al final, **mapas, datos y herramientas** con sus licencias.
+- Tus textos van en **`src/data/creditos.textos.ts`** (el formato está explicado en `src/data/creditos.ts`).
+  Mientras no esté, la página muestra [espacios pendientes].
+- Los créditos de mapas y herramientas están en `src/data/creditos.ts` (`fuentes`).
+  ⚠️ **No borres el del DANE** mientras se use el mapa animado: su licencia (CC BY 4.0) obliga a darlo.
+- 🔒 `creditos.textos.ts` **no se sube a GitHub** por ahora (está en `.git/info/exclude`).
+
 ### La página de Testimonios 🎙️
 Todo está en `src/data/testimonios.ts`. Cada testimonio tiene `nombre`, `relacion` (por ejemplo
 "Participante desde 1998"), `texto`, `fecha`, `fuente` (quién lo registró y dónde) y `grupo`.
@@ -379,6 +389,9 @@ bandera de Gualmatán se arma, sube "DESFILE HISTÓRICO" letra por letra, aparec
 tricolor se llena. Después **el telón se abre hacia los lados** y queda la página.
 - Sale **una vez por visita**: si la persona recarga o vuelve al inicio, no se repite (se recuerda en la pestaña).
   Nunca en `/admin`.
+- **Al tocar el logo de arriba** (en la barra o en el menú) vuelve a salir completa, mientras la página sube al
+  inicio de la principal, desde cualquier página. Si el logo se abre en otra pestaña (Ctrl + clic), no sale.
+  Está en `src/entrada.ts` (`alTocarLogo`).
 - Está en **`index.html`** (así aparece al instante, antes de que cargue lo demás): ahí se cambian textos, colores y
   animaciones. La cierra `src/entrada.ts`, donde está la duración (`DURACION = 4000`, en milisegundos).
 - Con "reducir movimiento", se ve quieta un momento (1.5 s) y se desvanece.

@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { capitulos, destino, sitio } from '@/data/sitio'
 import { seccionesMas } from '@/data/mas'
 import { cx } from '@/utils/cx'
+import { alTocarLogo } from '@/entrada'
 import Marca from '@/components/marca/Marca'
 import styles from './MenuPantalla.module.css'
 
@@ -60,7 +61,15 @@ export default function MenuPantalla({ abierto, onCerrar, botonMenu }: Props) {
       inert={!abierto}
     >
       <div className={cx('contenedor', styles.barra)}>
-        <Link to="/" onClick={onCerrar} className={styles.marca} aria-label="Inicio">
+        <Link
+          to="/"
+          onClick={(e) => {
+            onCerrar()
+            alTocarLogo(e)
+          }}
+          className={styles.marca}
+          aria-label="Inicio"
+        >
           <Marca />
         </Link>
         <button ref={botonCerrar} type="button" onClick={onCerrar} className={styles.cerrar} aria-label="Cerrar menú">

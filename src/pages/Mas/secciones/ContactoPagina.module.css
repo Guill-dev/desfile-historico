@@ -6,6 +6,16 @@
   padding-block: clamp(40px, 7vw, 96px);
 }
 
+/*
+ * Celular: el pie de página sube sobre el final de la página (por sus esquinas redondeadas, ver SiteFooter).
+ * Se suma esa misma medida abajo para que el panel quede centrado, con el mismo espacio arriba y abajo.
+ */
+@media (max-width: 767px) {
+  .cuerpo {
+    padding-bottom: calc(clamp(40px, 7vw, 96px) + var(--r-xl));
+  }
+}
+
 /* Vitrina oscura con una luz suave arriba, como la de la colección */
 .panel {
   display: grid;

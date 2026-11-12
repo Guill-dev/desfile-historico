@@ -1,6 +1,9 @@
+/* Justificado, como el texto de cada paso; el guion automático evita huecos grandes entre palabras */
 .intro {
   max-width: var(--ancho-texto);
   font-size: var(--t-l);
+  text-align: justify;
+  hyphens: auto;
 }
 
 /* Celular y tableta: como un contenedor normal (el índice es el botón flotante) */

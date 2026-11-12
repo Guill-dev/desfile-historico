@@ -10,6 +10,6 @@ export const seccionesMas: SeccionMas[] = [
   { slug: 'galeria', titulo: 'Galería', descripcion: '[Descripción pendiente]' },
   { slug: 'testimonios', titulo: 'Testimonios', descripcion: '[Descripción pendiente]' },
   { slug: 'archivo', titulo: 'Archivo', descripcion: '[Descripción pendiente]' },
-  { slug: 'creditos', titulo: 'Créditos', descripcion: '[Descripción pendiente]' },
+  { slug: 'creditos', titulo: 'Créditos', descripcion: 'Quiénes hicieron posible esta exposición y de dónde salen sus datos.' },
   { slug: 'contacto', titulo: 'Contacto', descripcion: 'Escríbenos por correo, WhatsApp, Instagram o Facebook.' },
 ]
