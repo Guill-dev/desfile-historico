@@ -19,6 +19,8 @@ export default function VersionDetalle() {
   // versiones va de la más reciente a la más antigua: "anterior" en el tiempo es el índice siguiente
   const masAntigua = versiones[i + 1]
   const masReciente = versiones[i - 1]
+  const primera = version.galeria[0]
+  const credito = primera?.credito ? { texto: primera.credito, url: primera.creditoUrl } : null
 
   return (
     <div className="tema-papel">
@@ -64,6 +66,18 @@ export default function VersionDetalle() {
 
         <section className={f.bloqueAncho}>
           <h2>Galería {version.anio}</h2>
+          {/* De quién son las fotos (versiones.textos.ts → credito / creditoUrl) */}
+          {credito && (
+            <p className="mono suave">
+              {credito.url ? (
+                <a href={credito.url} target="_blank" rel="noopener noreferrer">
+                  {credito.texto} ↗
+                </a>
+              ) : (
+                credito.texto
+              )}
+            </p>
+          )}
           <Galeria medios={version.galeria} />
         </section>
 

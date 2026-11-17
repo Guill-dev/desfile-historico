@@ -133,7 +133,17 @@ export default function Visor({ medios, indice, onCambiar, onCerrar }: Props) {
 
           <div className={styles.pie}>
             <p>{actual.alt}</p>
-            {actual.credito && <p className="mono suave">{actual.credito}</p>}
+            {actual.credito && (
+              <p className={cx('mono suave', styles.credito)}>
+                {actual.creditoUrl ? (
+                  <a href={actual.creditoUrl} target="_blank" rel="noopener noreferrer">
+                    {actual.credito} ↗
+                  </a>
+                ) : (
+                  actual.credito
+                )}
+              </p>
+            )}
             {total > 1 && <p className={cx('mono suave', styles.pista)}>Desliza para ver más</p>}
           </div>
         </>

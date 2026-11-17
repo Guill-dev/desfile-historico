@@ -216,6 +216,33 @@ Igual que los pasos: cada creador tiene su carpeta en **`public/media/creadores/
   el color, y lleva a la ficha. Quien no tiene foto sale con sus iniciales a mano. Caben 6; si hay más, aparece
   el botón "Ver los N creadores". Está en `src/sections/Creadores/` (la inclinación de cada foto: `POSES`).
 
+### Las fotos de cada año (versiones) 📅
+Cada edición del desfile tiene su carpeta en **`public/media/versiones/`** con el año: `2025`, `2024`…
+- **Para agregar fotos:** suéltalas en la carpeta del año **como vengan** (de Facebook, del celular…). Con
+  `npm run dev` abierto **se organizan solas** en unos segundos y la página se recarga. Si el sitio no está abierto,
+  se organizan la próxima vez que lo abras, o al momento con **`npm run versiones`**.
+- Organizar quiere decir, por cada foto nueva:
+  - deja una copia **liviana** (máximo 1600 px) con el **siguiente número**: `2025-69.jpg`, `2025-70.jpg`…;
+  - guarda la **original**, tal cual, en `originales/versiones/2025/` (respaldo, fuera del sitio).
+  Las que ya tienen número no se tocan. Si una foto se está copiando todavía, espera a que termine.
+- Lo que **no es una foto** (p. ej. la carpeta `…_files` que deja "Guardar página" en Facebook, o un `.html`) se
+  mueve solo a `originales/versiones/<año>/otros/`: dentro de `public/` se publicaría con el sitio.
+- Un año con fotos aparece solo en "Viaje en el tiempo" (aunque no esté en la lista de `src/data/versiones.ts`).
+- Lo hace `scripts/organizar-versiones.mjs` (lo usan el sitio y `npm run versiones`).
+- En la **tarjeta del año**, la foto **cambia sola cada 2.5 s, al azar y sin repetir** hasta que pasaron todas
+  (`src/components/media/FotosRotativas.tsx`). Usa las miniaturas, que se crean solas.
+- La **`AAAA-01`** es la portada (la grande de la ficha del año). Para escoger otra, intercambia los nombres.
+- En la ficha del año (`/versiones/2025`) salen todas en la galería; al tocarlas se ven en grande.
+- El título, el resumen y **de quién son las fotos** van en **`src/data/versiones.textos.ts`**:
+  `credito` (el texto, p. ej. "Fotografías: Nombre del fotógrafo (@usuario)") y `creditoUrl` (su enlace, p. ej.
+  su Facebook). El crédito sale, como enlace, debajo de "Galería AAAA" en la ficha del año, en el visor de cada foto
+  y en Créditos ("Fotografías de cada año", que se arma sola).
+  ⚠️ Si las fotos son de un fotógrafo (traen su marca), hay que tener su permiso; quienes las prestaron pidieron
+  que se los mencione con su enlace.
+- **El visor** (al tocar una foto): la foto sale **completa**, en un recuadro con borde claro y sombra, ajustada
+  a la pantalla (en el computador y en el celular), con flechas ← → (o deslizando) y el contador.
+- 🔒 Las fotos y `versiones.textos.ts` **no se suben a GitHub** por ahora (están en `.git/info/exclude`).
+
 ### Los objetos: modelos 3D, fotos y datos 🏺
 Cada pieza tiene su carpeta en **`public/media/objetos/`**: `objeto-01` … `objeto-20` (el número es el de la pieza: Nº 01).
 - **Solo se muestran las piezas que existen:** las que tienen algo en su carpeta (modelo o fotos) o sus datos en

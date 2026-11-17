@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "modelo": "node scripts/preparar-modelo.mjs",
     "mapa": "node scripts/preparar-mapa.mjs",
-    "escudo": "node scripts/preparar-escudo.mjs"
+    "escudo": "node scripts/preparar-escudo.mjs",
+    "versiones": "node scripts/preparar-versiones.mjs"
   },
   "dependencies": {
     "@fontsource/cinzel": "^5.3.0",

@@ -10,6 +10,8 @@ interface FotosLocales {
   modeloTarjeta: string | null
   /** Copia pequeña de la foto principal (640 px), para mosaicos; la crea vite-fotos.ts */
   miniatura: string | null
+  /** Todas las fotos en orden (la principal primero), con su miniatura si la tiene (en versiones, todas) */
+  todas: { src: string; miniatura: string | null }[]
 }
 
 /** Fotos encontradas en public/media/pasos/paso-NN/ */
@@ -26,6 +28,12 @@ declare module 'virtual:fotos-creadores' {
 
 /** Fotos y modelo 3D encontrados en public/media/objetos/objeto-NN/ */
 declare module 'virtual:fotos-objetos' {
+  const fotos: Record<number, FotosLocales>
+  export default fotos
+}
+
+/** Fotos de cada año del desfile, en public/media/versiones/2025, 2024… (las organiza `npm run versiones`) */
+declare module 'virtual:fotos-versiones' {
   const fotos: Record<number, FotosLocales>
   export default fotos
 }

@@ -20,6 +20,8 @@ export interface Media {
   miniatura?: string
   /** Autor / fuente / archivo de procedencia */
   credito?: string
+  /** Enlace al autor (su Facebook, su página…): el crédito sale como enlace */
+  creditoUrl?: string
 }
 
 /** Un paso del recorrido del desfile. */

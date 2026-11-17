@@ -1,4 +1,6 @@
+import { Link } from 'react-router'
 import { fuentes, textosCreditos, type FuenteCredito } from '@/data/creditos'
+import { versiones } from '@/data/versiones'
 import { cx } from '@/utils/cx'
 import { tituloPagina } from '@/utils/titulo'
 import CabeceraPagina from '@/components/ui/CabeceraPagina'
@@ -8,6 +10,23 @@ import type { PaginaMasProps } from '../paginas'
 import styles from './CreditosPagina.module.css'
 
 const { presentacion, grupos = [], referencias = [], agradecimientos = [], dedicatoria } = textosCreditos
+
+/**
+ * De quién son las fotos de cada año: sale sola de los créditos de cada edición (src/data/versiones.textos.ts →
+ * credito / creditoUrl). Quienes prestaron sus fotos pidieron que se los mencione con su enlace.
+ */
+const fotografias = versiones.flatMap((v) => {
+  const primera = v.galeria[0]
+  if (!primera?.credito) return []
+  return [
+    {
+      anio: v.anio,
+      autor: primera.credito.replace(/^Fotograf[íi]as?:\s*/i, ''),
+      url: primera.creditoUrl,
+      cantidad: v.galeria.length,
+    },
+  ]
+})
 
 /** Abre en otra pestaña sin darle acceso a esta página */
 const externo = { target: '_blank', rel: 'noopener noreferrer' } as const
@@ -83,6 +102,36 @@ export default function CreditosPagina({ seccion }: PaginaMasProps) {
                   <cite className={styles.obra}>{r.titulo}</cite>
                   {(r.autor || r.datos) && <p>{[r.autor, r.datos].filter(Boolean).join(' · ')}</p>}
                   {r.nota && <p className={cx('mono', styles.nota)}>{r.nota}</p>}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {fotografias.length > 0 && (
+          <section className={styles.bloque} aria-labelledby="creditos-fotografias">
+            <h2 id="creditos-fotografias" className={cx('display', styles.titulo)}>
+              Fotografías de cada año
+            </h2>
+            <ul role="list" className={styles.fuentes}>
+              {fotografias.map((f) => (
+                <li key={f.anio} className={styles.fuente}>
+                  <div className={styles.fuenteTexto}>
+                    {f.url ? (
+                      <a href={f.url} className={styles.fuenteNombre} {...externo}>
+                        {f.autor}
+                        <span aria-hidden="true"> ↗</span>
+                      </a>
+                    ) : (
+                      <span className={styles.fuenteNombre}>{f.autor}</span>
+                    )}
+                    <p>
+                      Fotos del desfile {f.anio} ({f.cantidad}).
+                    </p>
+                  </div>
+                  <Link to={`/versiones/${f.anio}`} className={cx('mono', styles.licencia)}>
+                    Ver {f.anio}
+                  </Link>
                 </li>
               ))}
             </ul>

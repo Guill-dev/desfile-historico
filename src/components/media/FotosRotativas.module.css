@@ -1,0 +1,32 @@
+.marco {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: rgb(12 31 20 / 0.08);
+}
+
+.foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* La foto que llega: aparece sobre la anterior, acercándose apenas */
+.entra {
+  animation: aparece 0.9s ease both;
+}
+
+@keyframes aparece {
+  from {
+    opacity: 0;
+    scale: 1.05;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entra {
+    animation: none;
+  }
+}

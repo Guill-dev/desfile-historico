@@ -66,7 +66,8 @@ interface MiniaturaProps {
 function Miniatura({ media, ratio, onAbrir }: MiniaturaProps) {
   return (
     <button type="button" className={styles.miniatura} onClick={onAbrir} aria-label={`Ver en grande: ${media.alt}`}>
-      <Media media={media} ratio={ratio} className={styles.media} />
+      {/* En la cuadrícula, la versión liviana; en el visor, la grande */}
+      <Media media={media.miniatura ? { ...media, src: media.miniatura } : media} ratio={ratio} className={styles.media} />
       <span className={styles.ampliar} aria-hidden="true">⤢</span>
     </button>
   )
