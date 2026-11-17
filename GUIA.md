@@ -106,8 +106,8 @@ La página de inicio es un recorrido de arriba hacia abajo. Cada bloque vive en 
 | 1 | **Portada** oscura con el video, el título y el botón rojo | `sections/Inicio/` | `data/sitio.ts` → `sitio` y `portada` |
 | 2 | **Conoce la historia**: animación del mundo a Gualmatán, que termina en la foto del pueblo + tarjeta oscura | `sections/Historia/` | `data/sitio.ts` → `textos.historia` |
 | 3 | **Los pasos del desfile**: pasos **al azar**, solo de los que ya tienen foto, que cambian solos (6 en 2 filas de 3 en el computador, 4 en 2 × 2 en el celular) + botón "Ver los N pasos" | `sections/Pasos/` | `data/pasos.ts` |
-| 4 | **Quienes lo hicieron posible**: carrusel de retratos | `sections/Creadores/` | `data/creadores.ts` |
-| 5 | **La colección**: vitrina oscura de objetos **al azar** que cambian solos (6 en 2 filas de 3 en el computador, 4 en 2 × 2 en el celular) + botón "Ver las N piezas" | `sections/Objetos/` | `data/objetos.ts` |
+| 4 | **Quienes lo hicieron posible**: página de álbum antiguo con los retratos | `sections/Creadores/` | `data/creadores.ts` |
+| 5 | **La colección**: un **libro** (catálogo de museo) con 2 piezas 3D por página; las hojas se pasan de verdad + botón "Ver las N piezas" | `sections/Objetos/` | `data/objetos.ts` |
 | 6 | **Cada año, el pueblo vuelve a contarla** + línea de años | `sections/Versiones/` | `data/versiones.ts` |
 | — | **Más del archivo** + pie (aparece en todas las páginas) | `components/layout/SiteFooter.tsx` | `data/mas.ts` |
 
@@ -195,6 +195,10 @@ Cada paso tiene su carpeta en **`public/media/pasos/`**: `paso-01`, `paso-02` �
   La invitación está en `src/components/pasos/LineaPasos.tsx` (`PideFoto`).
 - Conviene que pesen poco (menos de 500 KB, unos 1600 px de ancho): así el sitio carga rápido en el celular.
 - Quien hace esto es `vite-fotos.ts`, en la raíz del proyecto.
+- **Miniaturas (solas):** de cada foto `principal` se crea una copia pequeña (640 px, ~50 KB) en
+  `public/media/miniaturas/` (p. ej. `miniaturas/pasos/paso-03.jpg`), para mostrar muchas fotos a la vez sin que
+  el celular se trabe (en el código: `media[0].miniatura`). Se crean al encender o publicar el sitio y se rehacen
+  si cambias la foto: no hay que hacer nada. Si se borra la carpeta `miniaturas`, se vuelve a crear.
 - 🔒 **Por ahora las fotos no se suben a GitHub** (están en `.git/info/exclude`; las carpetas vacías sí).
   Para publicarlas, borra de ese archivo las líneas de `public/media/pasos/` y haz el commit.
 
@@ -206,6 +210,11 @@ Igual que los pasos: cada creador tiene su carpeta en **`public/media/creadores/
 - El nombre y los demás datos (período, rol, descripción…) van en **`src/data/creadores.textos.ts`**,
   con el mismo número. Lo que no se ponga ahí sale como `[pendiente]`.
 - 🔒 Las fotos y `creadores.textos.ts` **no se suben a GitHub** por ahora (están en `.git/info/exclude`).
+- **En el inicio** salen como la **página de un álbum familiar antiguo**: papel negro con el lomo cosido, fotos en
+  sepia con borde blanco y esquineros, un poco torcidas, y el nombre y el rol escritos a mano debajo. Al llegar,
+  las fotos se van pegando una por una; al pasar el mouse (o tocar), la foto se endereza, se levanta y recupera
+  el color, y lleva a la ficha. Quien no tiene foto sale con sus iniciales a mano. Caben 6; si hay más, aparece
+  el botón "Ver los N creadores". Está en `src/sections/Creadores/` (la inclinación de cada foto: `POSES`).
 
 ### Los objetos: modelos 3D, fotos y datos 🏺
 Cada pieza tiene su carpeta en **`public/media/objetos/`**: `objeto-01` … `objeto-20` (el número es el de la pieza: Nº 01).
@@ -243,8 +252,31 @@ El comando está en `scripts/preparar-modelo.mjs` (usa [glTF-Transform](https://
 - El visor es `src/components/media/ModelViewer.tsx` (usa [model-viewer](https://modelviewer.dev), de Google).
   Se descarga solo cuando un modelo está por aparecer en pantalla, no al abrir la página. Los modelos comprimidos
   con Draco necesitan su decodificador, que el sitio trae en `public/draco/` (no depende de servidores externos).
-- En la vitrina del inicio, las tarjetas que salen se quitan de la página al terminar su animación: así nunca
-  giran más modelos de los que se ven.
+
+### La colección en el inicio: el libro antiguo 📖
+En la página de inicio las piezas salen en un **libro antiguo**, como el catálogo de un museo: tapa de **cuero café
+gastado** con filetes dorados, el **escudo de Gualmatán grabado en oro** y el título grabado en oro (letra
+Cinzel), lomo con nervios, hojas amarillentas con
+manchitas de los años y **2 piezas por página**, con su modelo 3D girando, su número (Nº 01) y su nombre.
+- **Al llegar a la sección:** el libro está **cerrado y ladeado** (se ven la tapa, el lomo y el canto de las hojas),
+  se **endereza y se cuadra en el centro**, y **la tapa se abre** sobre el lomo. Por dentro tiene el papel de guarda
+  con la etiqueta *Ex libris*; a la derecha queda la portada ("Catálogo · La colección · N piezas · *pasa la
+  página →*"). Entonces **la esquina de la hoja se levanta tres veces** (la señal para seguir) y aparecen las flechas.
+- **Volver a la tapa:** desde la primera hoja, la flecha ← (o deslizar) **cierra el libro** y se ve la tapa otra
+  vez ("Tapa"); con → o tocando la tapa, se vuelve a abrir. Cerrado, al pasar el mouse la tapa se levanta un poquito.
+- **El escudo** sale del escudo del municipio en Wikimedia Commons (de *Milenioscuro*, licencia CC BY-SA 3.0: su
+  crédito está en Créditos y **no se debe quitar** mientras se use). Lo pasa a oro **`npm run escudo`**
+  (`scripts/preparar-escudo.mjs`) y queda en `src/assets/escudo-gualmatan-oro.webp`.
+- **Computador:** dos páginas a la vista. Al final: "Fin del catálogo" con el botón "Ver las N piezas" y la guarda
+  de atrás. **Celular:** una página a la vez (la tapa se abre y se desvanece).
+- Las hojas **pasan de verdad**: giran sobre el lomo. Se pasan con las flechas ← →, tocando la **esquina doblada**,
+  **deslizando el dedo** o con las flechas del teclado.
+- Orden: primero las piezas con modelo 3D, luego las que tienen foto; dentro de cada grupo, por número.
+- Mientras una hoja gira, sus piezas son una foto del momento (no modelos vivos): así nunca giran más modelos de
+  los que se ven (4 en el computador, 2 en el celular) y no se traba.
+- Está en `src/sections/Objetos/LibroColeccion.tsx`: piezas por página (`POR_PAGINA`), lo que tarda una hoja
+  (`GIRO_MS`), en cuadrarse (`CUADRA_MS`) y en abrirse (`ABRE_MS`). Colores del cuero y del papel, en
+  `LibroColeccion.module.css`.
 
 ### La foto del pueblo y la animación "del mundo a Gualmatán" 🌎
 En el recuadro de "Conoce la historia", cuando la persona llega ahí, empieza sola una animación (unos 9 segundos):
@@ -384,18 +416,29 @@ mientras carga. El original está en `originales/inicio/`.
 descarga hasta ~79 MB.
 
 ### La pantalla de entrada ("telón") 🎭
-Al abrir el sitio aparece, unos **4 segundos**, una pantalla oscura con confeti en los colores de la bandera: la
-bandera de Gualmatán se arma, sube "DESFILE HISTÓRICO" letra por letra, aparece "GUALMATÁN · NARIÑO" y una barra
-tricolor se llena. Después **el telón se abre hacia los lados** y queda la página.
-- Sale **una vez por visita**: si la persona recarga o vuelve al inicio, no se repite (se recuerda en la pestaña).
-  Nunca en `/admin`.
-- **Al tocar el logo de arriba** (en la barra o en el menú) vuelve a salir completa, mientras la página sube al
-  inicio de la principal, desde cualquier página. Si el logo se abre en otra pestaña (Ctrl + clic), no sale.
-  Está en `src/entrada.ts` (`alTocarLogo`).
+Al abrir el sitio aparece una pantalla oscura con confeti en los colores de la bandera, una barra tricolor que se
+llena y, después, **el telón se abre hacia los lados** y queda la página.
+- **Con el poema** (si está `src/data/poema.textos.json`): una **tarjeta de papel antiguo** cae al centro, los
+  versos del poema se escriben uno por uno en letra manuscrita (entre comillas, la primera letra en tinta
+  roja) y la tarjeta **se gira sola** para mostrar el título del poema y
+  a su autor. Dura **~6.4 s** hasta que se abre el telón.
+  - El poema se cambia en ese archivo: `versos` (uno por línea, sin comillas: las pone el sitio), `titulo` y
+    `autor`. (`homenaje` queda guardado ahí, pero la pantalla no lo muestra: no alcanza a leerse.)
+  - Lo pone en la pantalla `vite.config.ts` (`poemaEnEntrada`), al encender o publicar el sitio. Ahí está
+    `DURACION_CON_POEMA` (en milisegundos); el momento en que la tarjeta se gira es el `4.4s` de `.e-tarjeta`
+    en `index.html`.
+  - 🔒 El poema **no se sube a GitHub** (está en `.git/info/exclude`). Sin él, la pantalla muestra la bandera
+    que se arma y "DESFILE HISTÓRICO" letra por letra, ~4 s.
+- **El video de la portada espera** detrás del telón, quieto en su primer cuadro, y **arranca desde el principio
+  justo cuando el telón se abre** (así nadie se pierde el comienzo).
+- Sale **una vez por visita**: si la persona recarga, no se repite (se recuerda en la pestaña). Nunca en `/admin`.
+- **El logo de arriba** (en la barra o en el menú): si ya estás en la página principal, solo **sube suave hasta
+  arriba**, sin pantalla de entrada; **desde otra página**, vuelve a salir la pantalla mientras se llega al inicio.
+  Si el logo se abre en otra pestaña (Ctrl + clic), solo se abre la pestaña. Está en `src/entrada.ts` (`alTocarLogo`).
 - Está en **`index.html`** (así aparece al instante, antes de que cargue lo demás): ahí se cambian textos, colores y
-  animaciones. La cierra `src/entrada.ts`, donde está la duración (`DURACION = 4000`, en milisegundos).
-- Con "reducir movimiento", se ve quieta un momento (1.5 s) y se desvanece.
-- Si algo fallara y nadie la cerrara, se va sola a los 9 segundos.
+  animaciones. La cierra `src/entrada.ts` (`DURACION = 4000` es la de sin poema).
+- Con "reducir movimiento", se ve quieta (la mitad del tiempo) y se desvanece.
+- Si algo fallara y nadie la cerrara, se va sola 5 segundos después de lo que dura.
 
 ### Paso 1 — Preparar el video
 | | Recomendado |
@@ -482,7 +525,7 @@ Todo está en **`src/styles/tokens.css`**. Cambiar un valor ahí lo cambia en to
 |---|---|
 | `--c-verde` | Color principal: fondo de los bloques del recorrido |
 | `--c-rojo` | Botones principales, puntos de la línea de años |
-| `--c-noche` | Portada, vitrina de objetos, menú y pie |
+| `--c-noche` | Portada, sección de la colección, menú y pie |
 | `--c-papel` | Fondo de las fichas (lectura larga) |
 | `--c-verde-claro` | Rótulos pequeños sobre fondo oscuro |
 

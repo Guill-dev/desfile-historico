@@ -3,7 +3,7 @@ import { foto, pendiente } from '@/utils/media'
 import fotos from 'virtual:fotos-pasos'
 
 /**
- * PASOS — las 79 estampas del desfile, en su orden.
+ * PASOS — los 79 pasos del desfile, en su orden (cada paso es una representación en vivo).
  * Campos disponibles: ver `interface Paso` en src/types/contenido.ts
  *
  * Los títulos y descripciones están, por ahora, en src/data/pasos.textos.ts: un archivo que vive solo
@@ -36,7 +36,9 @@ export const pasos: Paso[] = Array.from({ length: TOTAL_PASOS }, (_, i) => i + 1
     resumen: textos[numero]?.resumen ?? '[Descripción pendiente]',
     media: [
       // La primera es la de la tarjeta: la "principal" o, si aún no está, el recuadro de pendiente
-      suyas?.principal ? foto(suyas.principal, nombre) : pendiente(`Fotografía del paso ${numero}`),
+      suyas?.principal
+        ? { ...foto(suyas.principal, nombre), miniatura: suyas.miniatura ?? undefined }
+        : pendiente(`Fotografía del paso ${numero}`),
       ...(suyas?.otras ?? []).map((src, n) => foto(src, `${nombre}: foto ${n + 2}`)),
     ],
   }

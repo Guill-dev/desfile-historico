@@ -16,6 +16,8 @@ export interface Media {
   alt: string
   /** Imagen previa (video o modelo 3D) */
   poster?: string
+  /** Versión pequeña de la foto (640 px), para mostrar muchas fotos a la vez */
+  miniatura?: string
   /** Autor / fuente / archivo de procedencia */
   credito?: string
 }

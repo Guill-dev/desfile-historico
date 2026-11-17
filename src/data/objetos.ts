@@ -31,8 +31,8 @@ const locales = import.meta.glob<{ textosObjetos: Record<number, TextoObjeto> }>
 const textos: Record<number, TextoObjeto> = Object.values(locales)[0]?.textosObjetos ?? {}
 
 /**
- * Para ordenar la vitrina (inicio y /objetos): primero las piezas con modelo 3D, después las que solo tienen
- * foto y al final las que solo tienen datos. Dentro de cada grupo, al azar.
+ * Para ordenar las piezas (el libro del inicio y /objetos): primero las que tienen modelo 3D, después las que solo tienen
+ * foto y al final las que solo tienen datos (dentro de cada grupo: en /objetos al azar, en el libro por número).
  */
 export function prioridadObjeto(objeto: Objeto): number {
   if (tieneArchivo(objeto.modelo3d)) return 2

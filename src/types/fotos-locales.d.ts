@@ -8,6 +8,8 @@ interface FotosLocales {
   modelo: string | null
   /** tarjeta.glb: la versión liviana del modelo, para las tarjetas */
   modeloTarjeta: string | null
+  /** Copia pequeña de la foto principal (640 px), para mosaicos; la crea vite-fotos.ts */
+  miniatura: string | null
 }
 
 /** Fotos encontradas en public/media/pasos/paso-NN/ */

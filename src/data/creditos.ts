@@ -7,6 +7,7 @@
  *     hasta que él lo decida (ver GUIA, sección 6). Si no está, la página muestra [espacios pendientes].
  *  2. Mapas, datos y herramientas (abajo, en `fuentes`): los créditos que piden sus licencias.
  *     ⚠️ El del DANE es OBLIGATORIO (licencia CC BY 4.0): no lo borres mientras se use el mapa animado.
+ *     ⚠️ El del escudo de Gualmatán también (CC BY-SA 3.0): no lo borres mientras esté en la tapa del libro.
  */
 
 /** Una persona (o entidad) en los créditos */
@@ -130,6 +131,18 @@ export const fuentes: GrupoFuentes[] = [
         uso: 'Continentes y países vecinos, en el mapa animado (paquete world-atlas, licencia ISC).',
         url: 'https://www.naturalearthdata.com',
         licencia: DOMINIO_PUBLICO,
+      },
+    ],
+  },
+  {
+    titulo: 'Símbolos',
+    fuentes: [
+      {
+        nombre: 'Escudo de Gualmatán, por Milenioscuro, vía Wikimedia Commons',
+        uso: 'El escudo dorado de la tapa del libro de la colección. Se pasó a color oro para grabarlo en el cuero (esa versión también queda con licencia CC BY-SA 3.0).',
+        url: 'https://commons.wikimedia.org/wiki/File:Escudo_de_Gualmat%C3%A1n.svg',
+        licencia: { nombre: 'CC BY-SA 3.0', url: 'https://creativecommons.org/licenses/by-sa/3.0/deed.es' },
+        obligatorio: true,
       },
     ],
   },

@@ -42,9 +42,8 @@ export default function Inicio() {
         <div className={styles.panel}>
           <p className="mono suave">{sitio.lugar.replaceAll(', ', ' · ')}</p>
           <h1 id="inicio-titulo" className={cx('display', styles.titulo)}>{sitio.nombre}</h1>
-          <p className={styles.lema}>{sitio.lema}</p>
-          <div>
-            <Boton to={{ hash: '#historia' }} variante="primario">
+          <div className={styles.accion}>
+            <Boton to={{ hash: '#historia' }} variante="primario" className={styles.empezar}>
               {sitio.invitacion} ↓
             </Boton>
           </div>

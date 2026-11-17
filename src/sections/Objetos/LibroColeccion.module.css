@@ -1,0 +1,940 @@
+.contenedor {
+  display: grid;
+  justify-items: center;
+  gap: var(--e-4);
+}
+
+/* La mesa: da la perspectiva para ver el libro ladeado */
+.escena {
+  display: grid;
+  justify-items: center;
+  width: 100%;
+  padding-block: clamp(8px, 2vw, 24px);
+  perspective: 2200px;
+  perspective-origin: 50% 15%;
+  /* Los cantos del libro cerrado (y su sombra) no deben ensanchar la página en el celular */
+  overflow-x: clip;
+  overflow-clip-margin: 12px;
+}
+
+/* ── El libro ── */
+.libro {
+  /* Cuero gastado: manchas, rayones, grano y el café de fondo */
+  --fondo-cuero:
+    radial-gradient(30% 22% at 22% 30%, rgb(140 92 50 / 0.35), transparent 70%),
+    radial-gradient(26% 30% at 78% 70%, rgb(30 15 5 / 0.35), transparent 70%),
+    radial-gradient(18% 14% at 65% 22%, rgb(150 100 55 / 0.25), transparent 70%),
+    repeating-linear-gradient(68deg, transparent 0 23px, rgb(210 170 120 / 0.07) 23px 24px, transparent 24px 61px),
+    repeating-linear-gradient(-34deg, transparent 0 37px, rgb(20 10 4 / 0.12) 37px 38px, transparent 38px 83px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.05 0 0 0 0 0 0 0 0 0.45 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E"),
+    linear-gradient(135deg, #6c4527, #4b2e18 55%, #382111);
+  /* Los bordes del cuero, más claros donde se gastó */
+  --gastado:
+    inset 0 0 0 1.5px rgb(25 12 4 / 0.6),
+    inset 0 0 0 3px rgb(170 120 70 / 0.35),
+    inset 0 0 22px 2px rgb(160 110 60 / 0.35);
+  --oro: #cfa95f;
+  --papel: #efe2c4;
+  --tinta: #3a2a18;
+  --tinta-suave: #7d6446;
+  --tinta-roja: #8c1c1c;
+  /* El margen de cuero alrededor de las hojas y el grueso del libro cerrado */
+  --borde: clamp(9px, 1.5vw, 15px);
+  --grosor: clamp(18px, 3vw, 34px);
+
+  position: relative;
+  width: min(100%, 960px);
+  padding: var(--borde);
+  transform-style: preserve-3d;
+  transition: transform var(--cuadra) cubic-bezier(0.25, 0.8, 0.25, 1);
+  touch-action: pan-y;
+  user-select: none;
+}
+
+/* Las dos tapas por dentro (libro abierto): la derecha siempre, debajo de las hojas; la izquierda, al abrirse */
+.libro::before,
+.libro::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--fondo-cuero);
+  box-shadow:
+    var(--gastado),
+    0 34px 60px -30px rgb(0 0 0 / 0.85);
+  transform: translateZ(-1px);
+}
+
+.libro::before {
+  left: 50%;
+  right: 0;
+  border-radius: 4px 12px 12px 4px;
+}
+
+.libro::after {
+  left: 0;
+  right: 50%;
+  border-radius: 12px 4px 4px 12px;
+}
+
+.sencillo::before {
+  left: 0;
+}
+
+.sencillo::after {
+  display: none;
+}
+
+/* Mientras está cerrado no hay tapa izquierda ni página izquierda (está la tapa encima de la derecha) */
+.libro:not(.abierto)::after,
+.libro:not(.abierto) .ranura-izq {
+  visibility: hidden;
+}
+
+/*
+ * LAS FASES. Cerrado, el libro (que es una sola página de ancho) se corre medio libro a la izquierda para quedar
+ * centrado, y está ladeado como sobre una mesa. Al llegar se endereza y se cuadra; al abrirse vuelve a su lugar,
+ * con las dos páginas centradas.
+ */
+/* (Todas con las mismas funciones y en el mismo orden: así el navegador las mezcla una por una y el giro va
+   siempre para el lado correcto) */
+.libro {
+  transform: translateX(0) rotateX(0deg) rotateZ(0deg) scale(1);
+}
+
+.doble.cerrado {
+  transform: translateX(-25%) rotateX(44deg) rotateZ(-17deg) scale(0.8);
+}
+
+.doble.cuadrado,
+.doble.cerrando {
+  transform: translateX(-25%) rotateX(0deg) rotateZ(0deg) scale(1);
+}
+
+.sencillo.cerrado {
+  transform: translateX(0) rotateX(42deg) rotateZ(-12deg) scale(0.82);
+}
+
+.abriendo,
+.cerrando {
+  transition-duration: var(--abre);
+  transition-timing-function: cubic-bezier(0.55, 0, 0.25, 1);
+}
+
+/* ── La tapa: cuero, filetes dorados y el título grabado en oro ── */
+.tapa {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  right: 0;
+  z-index: 3;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  /* Cerrada: rotateY(0). Se abre hacia la IZQUIERDA, como las hojas: rotateY(0 → -180deg) sobre el lomo */
+  transform: rotateY(0deg) translateZ(1px);
+  transition: transform var(--abre) cubic-bezier(0.55, 0, 0.25, 1);
+}
+
+.sencillo .tapa {
+  left: 0;
+}
+
+/* Se abre sobre el lomo y queda a la izquierda, mostrando su revés (la guarda) */
+.abriendo .tapa,
+.abierto .tapa {
+  transform: rotateY(-180deg) translateZ(1px);
+}
+
+/* Abierto, la tapa y el bloque se esconden (a la izquierda ya está la página de guarda, igual a su revés) */
+.abierto .tapa,
+.abierto .bloque {
+  visibility: hidden;
+}
+
+/* En el celular no hay lugar a la izquierda: se abre y se desvanece */
+.sencillo.abriendo .tapa,
+.sencillo.abierto .tapa {
+  transform: rotateY(-115deg) translateZ(1px);
+  opacity: 0;
+  transition:
+    transform var(--abre) cubic-bezier(0.55, 0, 0.25, 1),
+    opacity calc(var(--abre) * 0.55) ease calc(var(--abre) * 0.4);
+}
+
+/* Al cerrarlo en el celular, la tapa aparece desde el principio */
+.sencillo.cerrando .tapa {
+  transition:
+    transform var(--abre) cubic-bezier(0.55, 0, 0.25, 1),
+    opacity calc(var(--abre) * 0.5) ease;
+}
+
+/* Cerrado y de frente: al pasar el mouse la tapa se levanta un poquito (se puede abrir tocándola) */
+.cuadrado .tapa {
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .cuadrado .tapa:hover {
+    transform: rotateY(-9deg) translateZ(1px);
+    transition-duration: 0.5s;
+  }
+}
+
+.tapaFrente,
+.tapaDentro {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background: var(--fondo-cuero);
+  box-shadow: var(--gastado);
+}
+
+.tapaFrente {
+  container-type: inline-size;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: clamp(8px, 2.6cqi, 16px);
+  padding: 11% 12%;
+  border-radius: 4px 12px 12px 4px;
+  text-align: center;
+}
+
+/* Los filetes dorados (doble línea) y la canal de la bisagra junto al lomo */
+.tapaFrente::before {
+  content: '';
+  position: absolute;
+  inset: 7% 7% 7% 9%;
+  border: 1.5px solid rgb(207 169 95 / 0.55);
+  border-radius: 3px;
+  box-shadow:
+    inset 0 0 0 5px transparent,
+    inset 0 0 0 6px rgb(207 169 95 / 0.32),
+    0 1px 0 rgb(0 0 0 / 0.4);
+  pointer-events: none;
+}
+
+.tapaFrente::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 4.5%;
+  width: 3px;
+  background: rgb(15 7 2 / 0.45);
+  box-shadow: 2px 0 0 rgb(200 150 90 / 0.12);
+}
+
+.tapaTitulo,
+.tapaSubtitulo {
+  /* Oro gastado, hundido en el cuero */
+  color: var(--oro);
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-weight: 600;
+  text-shadow:
+    0 1px 0 rgb(0 0 0 / 0.75),
+    0 -1px 0 rgb(255 225 160 / 0.22);
+  text-transform: uppercase;
+}
+
+.tapaTitulo {
+  max-width: 9ch;
+  font-size: clamp(1.5rem, 11cqi, 3rem);
+  line-height: 1.05;
+  letter-spacing: 0.06em;
+}
+
+.tapaSubtitulo {
+  max-width: 18ch;
+  font-size: clamp(0.6875rem, 3.6cqi, 0.95rem);
+  line-height: 1.4;
+  letter-spacing: 0.16em;
+  opacity: 0.9;
+}
+
+.tapaFilete {
+  width: 40%;
+  height: 1px;
+  background: var(--oro);
+  opacity: 0.6;
+}
+
+/* El escudo de Gualmatán grabado en oro (scripts/preparar-escudo.mjs), hundido en el cuero */
+.tapaEscudo {
+  width: min(66cqi, 300px);
+  height: auto;
+  margin-bottom: clamp(4px, 2cqi, 12px);
+  filter: drop-shadow(0 1.5px 0 rgb(0 0 0 / 0.65)) drop-shadow(0 -1px 0 rgb(255 225 160 / 0.18));
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Rombo dorado entre dos líneas */
+.tapaAdorno {
+  position: relative;
+  width: clamp(70px, 26cqi, 120px);
+  height: 10px;
+  background: linear-gradient(var(--oro), var(--oro)) center / 100% 1px no-repeat;
+  opacity: 0.75;
+}
+
+.tapaAdorno::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: var(--oro);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* El revés de la tapa: el cuero que dobla por dentro y, encima, el papel de guarda */
+.tapaDentro {
+  border-radius: 12px 4px 4px 12px;
+  transform: rotateY(180deg);
+}
+
+.tapaDentro > .guarda {
+  position: absolute;
+  inset: var(--borde);
+}
+
+/* ── El bloque de hojas del libro cerrado: lomo con nervios, cantos y contratapa ── */
+.bloque {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  right: 0;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.sencillo .bloque {
+  left: 0;
+}
+
+.bloque > span {
+  position: absolute;
+}
+
+/* El lomo, con sus nervios (las bandas en relieve) */
+.lomo {
+  top: 0;
+  bottom: 0;
+  left: calc(var(--grosor) / -2);
+  width: var(--grosor);
+  border-radius: 8px;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 13%,
+      rgb(15 7 2 / 0.55) 13% 13.8%,
+      rgb(170 120 70 / 0.55) 13.8% 15.6%,
+      rgb(15 7 2 / 0.55) 15.6% 16.4%,
+      transparent 16.4% 20%
+    ),
+    linear-gradient(90deg, rgb(0 0 0 / 0.35), transparent 40%, rgb(0 0 0 / 0.35)),
+    var(--fondo-cuero);
+  transform: translateZ(calc(var(--grosor) / -2)) rotateY(90deg);
+}
+
+/* Los cantos: el borde de las hojas, con sus líneas */
+.cantoDerecho {
+  top: 1.5%;
+  bottom: 1.5%;
+  right: calc(var(--grosor) / -2);
+  width: var(--grosor);
+  background:
+    linear-gradient(90deg, rgb(90 60 25 / 0.35), transparent 30%, transparent 70%, rgb(90 60 25 / 0.35)),
+    repeating-linear-gradient(90deg, #efe2c2 0 1px, #c9b285 1px 2px);
+  transform: translateZ(calc(var(--grosor) / -2)) rotateY(90deg);
+}
+
+.cantoInferior,
+.cantoSuperior {
+  left: 0.5%;
+  right: 1.5%;
+  height: var(--grosor);
+  background:
+    linear-gradient(rgb(90 60 25 / 0.35), transparent 30%, transparent 70%, rgb(90 60 25 / 0.35)),
+    repeating-linear-gradient(180deg, #efe2c2 0 1px, #c9b285 1px 2px);
+}
+
+.cantoInferior {
+  bottom: calc(var(--grosor) / -2);
+  transform: translateZ(calc(var(--grosor) / -2)) rotateX(90deg);
+}
+
+.cantoSuperior {
+  top: calc(var(--grosor) / -2);
+  transform: translateZ(calc(var(--grosor) / -2)) rotateX(90deg);
+}
+
+.contratapa {
+  inset: 0;
+  border-radius: 4px 12px 12px 4px;
+  background: var(--fondo-cuero);
+  box-shadow: 0 40px 60px -20px rgb(0 0 0 / 0.8);
+  transform: translateZ(calc(var(--grosor) * -1));
+}
+
+/* ── Las hojas ── */
+.hojas {
+  position: relative;
+  display: grid;
+  perspective: 2400px;
+}
+
+.doble .hojas {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* El celular: una página; la hoja que se va sale por la izquierda (se recorta) */
+.sencillo .hojas {
+  grid-template-columns: 1fr;
+  overflow: hidden;
+  border-radius: 3px;
+}
+
+.ranura {
+  position: relative;
+  aspect-ratio: 3 / 4;
+}
+
+.sencillo .ranura {
+  aspect-ratio: 2 / 3;
+}
+
+/* ── El papel: amarillento, con manchitas de los años y los bordes más oscuros ── */
+.papel {
+  position: absolute;
+  inset: 0;
+  container-type: inline-size;
+  overflow: hidden;
+  color: var(--tinta);
+  background:
+    radial-gradient(4% 3% at 18% 82%, rgb(140 95 40 / 0.16), transparent 70%),
+    radial-gradient(3% 2.5% at 84% 14%, rgb(140 95 40 / 0.14), transparent 70%),
+    radial-gradient(6% 4% at 72% 92%, rgb(140 95 40 / 0.1), transparent 70%),
+    radial-gradient(135% 120% at 50% 50%, transparent 58%, rgb(120 80 30 / 0.3)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.32 0 0 0 0 0.16 0 0 0 0.13 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E"),
+    linear-gradient(#f2e6ca, #e9d8b3);
+  /* Para los botones que van sobre el papel */
+  --texto: var(--tinta);
+  --hover-fondo: #5a3920;
+  --hover-texto: #f2e6ca;
+}
+
+/* La sombra del lomo (centro del libro) y el canto de las hojas (afuera) */
+.izq {
+  border-radius: 3px 0 0 3px;
+  box-shadow:
+    inset -28px 0 34px -22px rgb(60 35 10 / 0.55),
+    inset 3px 0 0 #dccaa4,
+    inset 5px 0 0 #c9b285;
+}
+
+.der {
+  border-radius: 0 3px 3px 0;
+  box-shadow:
+    inset 28px 0 34px -22px rgb(60 35 10 / 0.55),
+    inset -3px 0 0 #dccaa4,
+    inset -5px 0 0 #c9b285;
+}
+
+.sola {
+  border-radius: 3px;
+  box-shadow:
+    inset 18px 0 26px -20px rgb(60 35 10 / 0.5),
+    inset -3px 0 0 #dccaa4,
+    inset -5px 0 0 #c9b285;
+}
+
+/* El papel de guarda: un dibujo de rombos, como el de los libros viejos */
+.papelGuarda,
+.guarda {
+  background:
+    radial-gradient(135% 120% at 50% 50%, transparent 55%, rgb(80 50 20 / 0.35)),
+    repeating-linear-gradient(45deg, rgb(110 70 30 / 0.12) 0 2px, transparent 2px 14px),
+    repeating-linear-gradient(-45deg, rgb(110 70 30 / 0.12) 0 2px, transparent 2px 14px),
+    #e2cfa6;
+}
+
+.guarda {
+  display: grid;
+  place-items: center;
+  border-radius: 3px;
+}
+
+.papelGuarda > .guarda {
+  position: absolute;
+  inset: 0;
+  background: none;
+}
+
+/* La etiqueta Ex libris: pegada un poco torcida */
+.exLibris {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  width: min(70%, 15rem);
+  padding: 18px 14px 16px;
+  border: 1.5px solid #7d6446;
+  outline: 1px solid rgb(125 100 70 / 0.5);
+  outline-offset: 4px;
+  background: #f3e8cd;
+  box-shadow: 0 3px 10px -4px rgb(60 35 10 / 0.5);
+  color: var(--tinta);
+  text-align: center;
+  rotate: -2deg;
+}
+
+.exLibrisTitulo {
+  color: var(--tinta-roja);
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-weight: 600;
+  font-size: clamp(0.875rem, 1rem + 0.4vw, 1.25rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.exLibrisAdorno {
+  width: 60%;
+  height: 1px;
+  background: #7d6446;
+}
+
+.exLibrisDueno {
+  font-family: 'Dancing Script', 'Segoe Script', cursive;
+  font-weight: 700;
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.3rem);
+  line-height: 1.15;
+}
+
+/* ── La hoja que gira ── */
+.hoja {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  transform-style: preserve-3d;
+  animation-duration: var(--giro);
+  animation-timing-function: cubic-bezier(0.45, 0.05, 0.25, 1);
+  animation-fill-mode: forwards;
+}
+
+/* Computador, hacia adelante: la página derecha se levanta y cae a la izquierda */
+.hojaDerecha {
+  left: 50%;
+  width: 50%;
+  transform-origin: left center;
+}
+
+/* Hacia atrás: la izquierda vuelve a la derecha */
+.hojaIzquierda {
+  left: 0;
+  width: 50%;
+  transform-origin: right center;
+}
+
+.hojaDerecha.adelante {
+  animation-name: pasa-adelante;
+}
+
+.hojaIzquierda.atras {
+  animation-name: pasa-atras;
+}
+
+/* Celular: la página entera gira sobre su borde izquierdo */
+.hojaSola {
+  left: 0;
+  width: 100%;
+  transform-origin: left center;
+}
+
+.hojaSola.adelante {
+  animation-name: pasa-adelante;
+}
+
+.hojaSola.atras {
+  animation-name: vuelve;
+}
+
+@keyframes pasa-adelante {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(-180deg);
+  }
+}
+
+@keyframes pasa-atras {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(180deg);
+  }
+}
+
+@keyframes vuelve {
+  from {
+    transform: rotateY(-180deg);
+  }
+  to {
+    transform: rotateY(0deg);
+  }
+}
+
+.cara {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.reverso {
+  transform: rotateY(180deg);
+}
+
+/* Al levantarse, la hoja se oscurece un poco en el medio del giro (luz que le pasa por encima) */
+.cara::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(40 20 5 / 0.3), transparent 60%);
+  opacity: 0;
+  animation: sombra var(--giro) ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes sombra {
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ── La esquina doblada (abajo a la derecha) ── */
+.esquina {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  width: clamp(42px, 6vw, 60px);
+  aspect-ratio: 1;
+  border-radius: 0 0 3px 0;
+  background: linear-gradient(315deg, #2e1a0d 0 48%, rgb(0 0 0 / 0.2) 49%, #dccaa4 52%, #f4ead2 75%);
+  box-shadow: -3px -3px 6px -3px rgb(40 20 5 / 0.45);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  transform-origin: bottom right;
+  /* Al abrirse el libro: se levanta tres veces bien marcado (la señal para seguir); después, cada tanto */
+  animation:
+    senal 0.9s ease-in-out 0.4s 3,
+    doblez 3.2s ease-in-out 4s infinite;
+  cursor: pointer;
+}
+
+.esquina:hover,
+.esquina:focus-visible {
+  scale: 1.4;
+  animation: none;
+}
+
+.esquina:focus-visible {
+  outline: 2px solid var(--c-blanco);
+  outline-offset: 3px;
+}
+
+@keyframes senal {
+  0%,
+  100% {
+    scale: 1;
+  }
+  45% {
+    scale: 1.9;
+  }
+}
+
+@keyframes doblez {
+  0%,
+  70%,
+  100% {
+    scale: 1;
+  }
+  80% {
+    scale: 1.4;
+  }
+  90% {
+    scale: 1.1;
+  }
+}
+
+/* ── Lo que va en una página de piezas ── */
+.contenido {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: clamp(8px, 2.5cqi, 14px);
+  padding: clamp(14px, 5cqi, 30px) clamp(16px, 7cqi, 40px) clamp(12px, 4cqi, 22px);
+}
+
+.izq .contenido {
+  padding-right: clamp(22px, 8cqi, 46px);
+}
+
+.der .contenido {
+  padding-left: clamp(22px, 8cqi, 46px);
+}
+
+/* El título corrido arriba de cada página */
+.cabecera {
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgb(125 100 70 / 0.4);
+  color: var(--tinta-suave);
+  font-size: clamp(0.5625rem, 2.2cqi, 0.6875rem);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.der .cabecera {
+  text-align: right;
+}
+
+.folio {
+  color: var(--tinta-suave);
+  font-size: clamp(0.6875rem, 2.4cqi, 0.8125rem);
+  text-align: center;
+}
+
+.figuras {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: clamp(10px, 3cqi, 18px);
+  min-height: 0;
+}
+
+.figura {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 8px;
+  min-height: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* La lámina: la pieza sobre un fondo más claro, con un filete fino, como en un catálogo antiguo */
+.lamina {
+  position: relative;
+  min-height: 0;
+  border: 1px solid rgb(125 100 70 / 0.35);
+  border-radius: 2px;
+  outline: 1px solid rgb(125 100 70 / 0.18);
+  outline-offset: 3px;
+  background:
+    radial-gradient(55% 60% at 50% 45%, rgb(255 250 235 / 0.75), transparent 80%),
+    radial-gradient(40% 10% at 50% 88%, rgb(60 35 10 / 0.18), transparent 80%);
+}
+
+.modelo {
+  position: absolute;
+  inset: 4% 0;
+  width: 100%;
+  height: 92%;
+  object-fit: contain;
+  pointer-events: none;
+  transition: scale 0.6s var(--ease-salida);
+}
+
+.foto {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  object-fit: cover;
+}
+
+.figura:hover .modelo,
+.figura:focus-visible .modelo {
+  scale: 1.07;
+}
+
+.figura:focus-visible {
+  outline: none;
+}
+
+.figura:focus-visible .lamina {
+  outline: 2px solid var(--tinta-roja);
+  outline-offset: 3px;
+}
+
+.pie {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  min-width: 0;
+}
+
+.numero {
+  flex: none;
+  color: var(--tinta-roja);
+  font-size: clamp(0.6875rem, 2.6cqi, 0.8125rem);
+}
+
+.nombre {
+  min-width: 0;
+  overflow: hidden;
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-weight: 600;
+  font-size: clamp(0.8125rem, 3.4cqi, 1rem);
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.figura:hover .nombre {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ── Portada interior y cierre ── */
+.portada {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: clamp(10px, 3cqi, 18px);
+  padding: 10%;
+  text-align: center;
+}
+
+.antetitulo {
+  color: var(--tinta-suave);
+  font-size: clamp(0.625rem, 2.4cqi, 0.75rem);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.tituloLibro {
+  color: #4a2d17;
+  font-family: 'Cinzel', 'Times New Roman', serif;
+  font-weight: 600;
+  font-size: clamp(1.75rem, 10cqi, 3rem);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.cantidad {
+  color: var(--tinta-roja);
+  font-weight: 700;
+  font-size: clamp(0.875rem, 3.6cqi, 1.0625rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pista {
+  font-family: 'Dancing Script', 'Segoe Script', cursive;
+  font-weight: 700;
+  font-size: clamp(1.25rem, 6cqi, 1.75rem);
+  color: var(--tinta-suave);
+}
+
+/* La flechita de "pasa la página" empuja hacia la derecha */
+.pistaFlecha {
+  display: inline-block;
+  animation: empuja 1.3s ease-in-out infinite;
+}
+
+@keyframes empuja {
+  50% {
+    translate: 7px 0;
+  }
+}
+
+/* Rayita con un rombo en el medio */
+.adorno {
+  position: relative;
+  width: 100px;
+  height: 9px;
+  background: linear-gradient(var(--tinta-suave), var(--tinta-suave)) center / 100% 1px no-repeat;
+  opacity: 0.7;
+}
+
+.adorno::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--tinta-suave);
+  background: var(--papel);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* ── Flechas y "Hojas 2 de 6": aparecen cuando el libro ya se abrió ── */
+.controles {
+  display: flex;
+  align-items: center;
+  gap: var(--e-3);
+  opacity: 0;
+  translate: 0 10px;
+  transition:
+    opacity 0.6s,
+    translate 0.6s var(--ease-salida);
+}
+
+.controlesListos {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.flecha {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    opacity 0.2s;
+}
+
+.flecha:hover:not(:disabled) {
+  background: var(--c-blanco);
+  color: var(--c-noche);
+}
+
+.flecha:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.cuenta {
+  min-width: 9.5em;
+  font-size: var(--t-xs);
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .libro,
+  .tapa {
+    transition: none;
+  }
+
+  .esquina,
+  .pistaFlecha {
+    animation: none;
+  }
+}

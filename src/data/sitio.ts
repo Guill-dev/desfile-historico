@@ -9,7 +9,6 @@ import type { Capitulo, IdCapitulo, Portada } from '@/types/contenido'
 export const sitio = {
   nombre: 'Desfile Histórico de Gualmatán',
   lugar: 'Gualmatán, Nariño, Colombia',
-  lema: '[Frase de portada sobre memoria, tradición y pueblo]',
   invitacion: 'Comenzar el recorrido',
 }
 

@@ -10,6 +10,8 @@ import type { Plugin } from 'vite'
  *   - otras: el resto de fotos de la carpeta, en orden por nombre → para verlo a fondo
  *   - modelo: el modelo 3D (modelo.glb, o el .glb que haya) → en los objetos, reemplaza a la foto
  *   - modeloTarjeta: tarjeta.glb, la versión liviana del modelo para las tarjetas (ver scripts/preparar-modelo.mjs)
+ *   - miniatura: una copia pequeña (640 px, ~50 KB) de la foto principal, para mosaicos como el vitral de los
+ *     pasos. Se crea SOLA en public/media/miniaturas/ (con sharp), y se vuelve a crear si se cambia la foto.
  *
  *   public/media/pasos/paso-01 … paso-79           → import fotos from 'virtual:fotos-pasos'      (src/data/pasos.ts)
  *   public/media/creadores/creador-01 … creador-06 → import fotos from 'virtual:fotos-creadores'  (src/data/creadores.ts)
@@ -37,11 +39,38 @@ interface Fotos {
   otras: string[]
   modelo: string | null
   modeloTarjeta: string | null
+  miniatura: string | null
 }
 
-function leerFotos(carpeta: string, coleccion: Coleccion): Record<number, Fotos> {
+/** Lado mayor de las miniaturas, en píxeles */
+const LADO_MINIATURA = 640
+
+/**
+ * Crea (o actualiza, si la foto es más nueva) la miniatura de una foto. Devuelve false si no se pudo
+ * (p. ej. si sharp no está instalado): en ese caso el sitio usa la foto grande.
+ */
+async function crearMiniatura(origen: string, destino: string): Promise<boolean> {
+  try {
+    if (fs.existsSync(destino) && fs.statSync(destino).mtimeMs >= fs.statSync(origen).mtimeMs) return true
+    const { default: sharp } = await import('sharp')
+    fs.mkdirSync(path.dirname(destino), { recursive: true })
+    await sharp(origen)
+      .rotate() // respeta la orientación con que se tomó la foto
+      .resize({ width: LADO_MINIATURA, height: LADO_MINIATURA, fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 72, mozjpeg: true })
+      .toFile(destino)
+    return true
+  } catch (e) {
+    console.warn(`[fotos] No se pudo crear la miniatura de ${path.basename(path.dirname(origen))}:`, (e as Error).message)
+    return false
+  }
+}
+
+async function leerFotos(media: string, coleccion: Coleccion): Promise<Record<number, Fotos>> {
+  const carpeta = path.join(media, coleccion)
   const fotos: Record<number, Fotos> = {}
   if (!fs.existsSync(carpeta)) return fotos
+  const pendientes: Promise<void>[] = []
 
   for (const sub of fs.readdirSync(carpeta, { withFileTypes: true })) {
     const coincide = sub.isDirectory() ? COLECCIONES[coleccion].exec(sub.name) : null
@@ -61,13 +90,29 @@ function leerFotos(carpeta: string, coleccion: Coleccion): Record<number, Fotos>
       return `/media/${coleccion}/${sub.name}/${encodeURIComponent(archivo)}?v=${version}`
     }
     const principal = archivos.find((a) => /^principal\./i.test(a))
-    fotos[Number(coincide[1])] = {
+    const item: Fotos = {
       principal: principal ? url(principal) : null,
       otras: archivos.filter((a) => a !== principal).map(url),
       modelo: modelo ? url(modelo) : null,
       modeloTarjeta: tarjeta ? url(tarjeta) : null,
+      miniatura: null,
+    }
+    fotos[Number(coincide[1])] = item
+
+    // La miniatura: public/media/miniaturas/pasos/paso-03.jpg
+    if (principal) {
+      const origen = path.join(dir, principal)
+      const destino = path.join(media, 'miniaturas', coleccion, `${sub.name}.jpg`)
+      pendientes.push(
+        crearMiniatura(origen, destino).then((ok) => {
+          if (!ok) return
+          const version = Math.round(fs.statSync(destino).mtimeMs).toString(36)
+          item.miniatura = `/media/miniaturas/${coleccion}/${sub.name}.jpg?v=${version}`
+        }),
+      )
     }
   }
+  await Promise.all(pendientes)
   return fotos
 }
 
@@ -87,9 +132,9 @@ export function fotosLocales(): Plugin {
     resolveId(id) {
       return coleccionDe(id) && !id.startsWith('\0') ? '\0' + id : undefined
     },
-    load(id) {
+    async load(id) {
       const coleccion = id.startsWith('\0') ? coleccionDe(id) : null
-      return coleccion ? `export default ${JSON.stringify(leerFotos(path.join(media, coleccion), coleccion))}` : undefined
+      return coleccion ? `export default ${JSON.stringify(await leerFotos(media, coleccion))}` : undefined
     },
     configureServer(server) {
       for (const coleccion of Object.keys(COLECCIONES)) server.watcher.add(path.join(media, coleccion))

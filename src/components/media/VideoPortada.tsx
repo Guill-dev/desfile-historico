@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type SyntheticEvent } from 'react'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
+import { EVENTO_TELON, telonCerrado } from '@/entrada'
 import styles from './VideoPortada.module.css'
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
  * - Avisa su proporción real con `onProporcion` para que la portada se acomode.
  * - Si la persona pidió "reducir movimiento", empieza pausado (se ve el poster).
  * - Se pausa solo cuando sale de pantalla y se reanuda al volver (salvo que lo hayan pausado a mano).
+ * - Si está la pantalla de entrada, espera detrás de ella y arranca desde el principio cuando se abre el telón.
  * - En celular usa `srcMovil` si existe.
  */
 export default function VideoPortada({ src, srcMovil, poster, onProporcion }: Props) {
@@ -35,12 +37,28 @@ export default function VideoPortada({ src, srcMovil, poster, onProporcion }: Pr
       return
     }
 
+    let enPantalla = false
+    // Mientras la pantalla de entrada lo tapa, espera quieto en el primer cuadro
+    const intentar = () => {
+      if (enPantalla && !pausaManual.current && !telonCerrado()) v.play().catch(() => {})
+    }
     const observer = new IntersectionObserver(([entrada]) => {
-      if (entrada.isIntersecting && !pausaManual.current) v.play().catch(() => {})
-      else if (!entrada.isIntersecting) v.pause()
+      enPantalla = entrada.isIntersecting
+      if (enPantalla) intentar()
+      else v.pause()
     })
     observer.observe(v)
-    return () => observer.disconnect()
+
+    // Arranca desde el principio justo cuando se abre el telón
+    const alAbrirTelon = () => {
+      v.currentTime = 0
+      intentar()
+    }
+    window.addEventListener(EVENTO_TELON, alAbrirTelon)
+    return () => {
+      observer.disconnect()
+      window.removeEventListener(EVENTO_TELON, alAbrirTelon)
+    }
   }, [fuente, reducirMovimiento])
 
   const alternar = () => {

@@ -23,7 +23,7 @@ y que el sitio las lea de ahí: cronología de cada persona, buscador por nombre
 
 | Tabla | Campos | Notas |
 |---|---|---|
-| **pasos** | número (1–79), nombre, descripción | Los 79 pasos (estampas) del desfile |
+| **pasos** | número (1–79), nombre, descripción | Los 79 pasos del desfile (cada paso, una representación en vivo) |
 | **personajes** | paso, nombre, tipo (principal / secundario) | Cada personaje pertenece a un paso |
 | **ediciones** | año, título, resumen, portada | Un registro por año del desfile (hoy "Versiones" en el sitio) |
 | **personas** | nombre completo, nombre normalizado | El normalizado (sin tildes ni mayúsculas) evita duplicados |

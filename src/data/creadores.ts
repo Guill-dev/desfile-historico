@@ -42,7 +42,7 @@ export const creadores: Creador[] = Array.from({ length: TOTAL_CREADORES }, (_, 
     id: `creador-${numero}`,
     nombre,
     retrato: suyas?.principal
-      ? foto(suyas.principal, retratoAlt ?? `Retrato de ${nombre}`)
+      ? { ...foto(suyas.principal, retratoAlt ?? `Retrato de ${nombre}`), miniatura: suyas.miniatura ?? undefined }
       : pendiente('Retrato del creador'),
     galeria: suyas?.otras.length ? suyas.otras.map((src, n) => foto(src, `${nombre}: foto ${n + 2}`)) : undefined,
   }
