@@ -11,9 +11,9 @@ const cap = capitulo('objetos')
 const enOrden = [...objetos].sort((a, b) => prioridadObjeto(b) - prioridadObjeto(a) || a.numero - b.numero)
 
 /**
- * La colección, como un libro (un catálogo de museo): 2 piezas por página, con sus modelos 3D girando.
- * En el computador se ven dos páginas a la vez; en el celular, una. Cada pieza abre su ficha, y
- * "Ver las N piezas" lleva a /objetos.
+ * La colección, como un libro (un catálogo de museo): una pieza por página, con su modelo 3D girando (que se
+ * puede girar y acercar ahí mismo) y un texto breve. En el computador se ven dos páginas a la vez; en el
+ * celular, una. "Ver su ficha" abre la ficha de cada pieza, y "Ver las N piezas" lleva a /objetos.
  */
 export default function Objetos() {
   const doble = useMediaQuery('(min-width: 900px)')

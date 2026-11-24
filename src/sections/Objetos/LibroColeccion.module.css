@@ -714,18 +714,16 @@
 
 .figuras {
   display: grid;
-  grid-template-rows: 1fr 1fr;
-  gap: clamp(10px, 3cqi, 18px);
+  grid-template-rows: minmax(0, 1fr);
   min-height: 0;
 }
 
+/* Una pieza por página: la lámina grande, y debajo su número y nombre, el texto breve y el enlace a la ficha */
 .figura {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: 8px;
+  grid-template-rows: minmax(0, 1fr) auto auto auto;
+  gap: clamp(6px, 2cqi, 10px);
   min-height: 0;
-  color: inherit;
-  text-decoration: none;
 }
 
 /* La lámina: la pieza sobre un fondo más claro, con un filete fino, como en un catálogo antiguo */
@@ -743,12 +741,34 @@
 
 .modelo {
   position: absolute;
-  inset: 4% 0;
+  inset: 3% 0 8%;
   width: 100%;
-  height: 92%;
+  height: 89%;
   object-fit: contain;
+}
+
+/* La foto del momento (debajo): mientras el modelo carga o la hoja gira. Se esconde cuando el modelo ya está */
+.instantanea {
   pointer-events: none;
-  transition: scale 0.6s var(--ease-salida);
+}
+
+.lamina:has(.vivo[data-listo]) .instantanea {
+  visibility: hidden;
+  transition: visibility 0s linear 0.45s;
+}
+
+/* El modelo vivo: se gira arrastrando y se acerca pellizcando (o Ctrl + rueda). Aparece suave al cargar */
+.vivo {
+  cursor: grab;
+  transition: opacity 0.45s ease;
+}
+
+.vivo:active {
+  cursor: grabbing;
+}
+
+.vivo:not([data-listo]) {
+  opacity: 0;
 }
 
 .foto {
@@ -758,18 +778,36 @@
   object-fit: cover;
 }
 
-.figura:hover .modelo,
-.figura:focus-visible .modelo {
-  scale: 1.07;
+/* Cómo se usa: en pequeño, abajo de la lámina. En el computador habla del mouse; en el celular, del dedo */
+.ayuda {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  max-width: calc(100% - 12px);
+  padding: 3px 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(255 250 235 / 0.82);
+  color: var(--tinta-suave);
+  font-size: clamp(0.5625rem, 2.3cqi, 0.6875rem);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  translate: -50% 0;
+  pointer-events: none;
 }
 
-.figura:focus-visible {
-  outline: none;
+.ayudaDedo {
+  display: none;
 }
 
-.figura:focus-visible .lamina {
-  outline: 2px solid var(--tinta-roja);
-  outline-offset: 3px;
+@media (hover: none) {
+  .ayudaMouse {
+    display: none;
+  }
+
+  .ayudaDedo {
+    display: inline;
+  }
 }
 
 .pie {
@@ -790,16 +828,39 @@
   overflow: hidden;
   font-family: 'Cinzel', 'Times New Roman', serif;
   font-weight: 600;
-  font-size: clamp(0.8125rem, 3.4cqi, 1rem);
+  font-size: clamp(0.9375rem, 4.4cqi, 1.3125rem);
   line-height: 1.15;
   text-overflow: ellipsis;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
-.figura:hover .nombre {
+/* El texto breve de lo que es: letra de libro, hasta 4 renglones */
+.descripcion {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--tinta);
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(0.75rem, 3cqi, 0.9375rem);
+  line-height: 1.45;
+  text-wrap: pretty;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+}
+
+.verFicha {
+  justify-self: start;
+  color: var(--tinta-roja);
+  font-size: clamp(0.6875rem, 2.7cqi, 0.8125rem);
+  font-weight: 700;
   text-decoration: underline;
+  text-decoration-thickness: 1px;
   text-underline-offset: 3px;
+}
+
+a.verFicha:hover {
+  text-decoration-thickness: 2px;
 }
 
 /* ── Portada interior y cierre ── */

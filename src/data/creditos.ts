@@ -157,6 +157,14 @@ export const fuentes: GrupoFuentes[] = [
         obligatorio: true,
         nota: 'Plantilla gratuita de Figma Community (las plantillas gratuitas se publican con licencia CC BY 4.0).',
       },
+      {
+        nombre: 'PocketMuse — XR based Cultural Heritage Museum App (Figma Community)',
+        uso: 'La pantalla "Artifacts" inspira la vitrina giratoria de "Quienes lo hicieron posible": el carrusel 3D con la persona del centro de frente y el panel con quién es. No se usaron sus imágenes ni sus textos.',
+        url: 'https://www.figma.com/community/search?resource_type=mixed&sort_by=relevancy&query=PocketMuse',
+        licencia: CC_BY_4,
+        obligatorio: true,
+        nota: 'Plantilla gratuita de Figma Community (licencia CC BY 4.0). [Autor de la plantilla pendiente]',
+      },
     ],
   },
   {

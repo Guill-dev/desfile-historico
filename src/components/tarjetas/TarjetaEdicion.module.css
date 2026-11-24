@@ -31,37 +31,20 @@
   scale: 1.03;
 }
 
-.info {
+/* "107 fotos": una pastilla de vidrio abajo a la izquierda de la foto */
+.cuantas {
   position: absolute;
-  inset: auto 10px 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 10px 12px;
+  left: 10px;
+  bottom: 10px;
+  padding: 7px 13px;
   border: 1px solid rgb(255 255 255 / 0.6);
   border-radius: var(--r-m);
   background: var(--vidrio);
   color: var(--c-tinta);
-  backdrop-filter: var(--vidrio-blur);
-  -webkit-backdrop-filter: var(--vidrio-blur);
-}
-
-.titulo {
-  overflow: hidden;
   font-family: var(--f-display);
   font-size: var(--t-s);
   font-weight: 800;
   letter-spacing: -0.01em;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.cuantas {
-  flex-shrink: 0;
-  padding: 4px 10px;
-  border-radius: var(--r-m);
-  background: var(--c-blanco);
-  font-size: 0.8125rem;
-  font-weight: 700;
+  backdrop-filter: var(--vidrio-blur);
+  -webkit-backdrop-filter: var(--vidrio-blur);
 }

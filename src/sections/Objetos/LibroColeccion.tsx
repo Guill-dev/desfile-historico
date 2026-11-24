@@ -11,8 +11,8 @@ import Boton from '@/components/ui/Boton'
 import escudo from '@/assets/escudo-gualmatan-oro.webp'
 import styles from './LibroColeccion.module.css'
 
-/** Cuántas piezas van en cada página */
-const POR_PAGINA = 2
+/** Cuántas piezas van en cada página: una, grande, con su texto */
+const POR_PAGINA = 1
 /** Lo que tarda una hoja en pasar (milisegundos) */
 const GIRO_MS = 950
 /** Al llegar: lo que tarda el libro cerrado en enderezarse y cuadrarse en el centro… */
@@ -38,7 +38,7 @@ type Fase = 'cerrado' | 'cuadrado' | 'abriendo' | 'abierto' | 'cerrando'
 
 /**
  * Las páginas del libro.
- * Computador (dos a la vista): guarda (el revés de la tapa) | portada · piezas de 2 en 2 · cierre | contraguarda.
+ * Computador (dos a la vista): guarda (el revés de la tapa) | portada · una pieza por página · cierre | contraguarda.
  * Si hace falta, una página en blanco antes del cierre, para que todo quede en pares.
  * Celular (una a la vista): portada · piezas · cierre.
  */
@@ -54,26 +54,44 @@ function armarPaginas(objetos: Objeto[], doble: boolean): Pagina[] {
   return paginas
 }
 
-/** Fotos del momento de los modelos 3D que se ven, para la hoja que gira (que no lleva modelos vivos) */
-function capturar(raiz: HTMLElement | null): Record<string, string> {
-  const fotos: Record<string, string> = {}
+/**
+ * Fotos del momento de cada pieza (de su modelo 3D), por id. Las usa la hoja que gira y la página que se
+ * destapa mientras gira (que no llevan modelos vivos: así el giro no se traba). Se guardan para toda la
+ * visita: al volver a una pieza, mientras su modelo carga, se ve su última foto y no un hueco.
+ */
+const instantaneas = new Map<string, string>()
+
+/** Toma la foto del momento de las piezas vivas dentro de `raiz` (solo la página que va a girar) */
+function capturar(raiz: Element | null): void {
   raiz?.querySelectorAll<HTMLElement>('[data-pieza]').forEach((figura) => {
     const visor = figura.querySelector('model-viewer') as
       (HTMLElement & { loaded?: boolean; toDataURL?: () => string }) | null
     try {
-      if (visor?.loaded && visor.toDataURL) fotos[figura.dataset.pieza ?? ''] = visor.toDataURL()
+      if (visor?.loaded && visor.toDataURL) instantaneas.set(figura.dataset.pieza ?? '', visor.toDataURL())
     } catch {
-      /* sin foto: la hoja muestra el papel */
+      /* sin foto: se ve el papel */
     }
   })
-  return fotos
+}
+
+/**
+ * Descarga sin apuro los modelos de las páginas que vienen (y la anterior): cuando se pase la hoja, el modelo
+ * ya está en el navegador y aparece enseguida. Cada uno se pide una sola vez.
+ */
+const pedidos = new Set<string>()
+function adelantar(piezas: Objeto[]): void {
+  for (const o of piezas) {
+    const src = o.modeloTarjeta ?? o.modelo3d.src
+    if (!src || pedidos.has(src)) continue
+    pedidos.add(src)
+    void fetch(src, { priority: 'low' } as RequestInit).catch(() => pedidos.delete(src))
+  }
 }
 
 interface Giro {
   /** 1: hacia adelante · -1: hacia atrás */
   hacia: 1 | -1
   desde: number
-  fotos: Record<string, string>
 }
 
 interface Props {
@@ -85,11 +103,15 @@ interface Props {
 
 /**
  * LA COLECCIÓN COMO UN LIBRO ANTIGUO: tapa de cuero gastado con filetes dorados, lomo con nervios y hojas
- * amarillentas, con 2 piezas por página (sus modelos 3D girando).
+ * amarillentas, con una pieza por página: su modelo 3D girando (que también se puede girar arrastrando y
+ * acercar pellizcando o con Ctrl + rueda), su número, su nombre y un texto breve de lo que es.
  * Al llegar a la sección, el libro está cerrado y ladeado; se endereza, se cuadra en el centro y la tapa se abre.
  * Después, la esquina de la hoja se levanta para invitar a seguir. Las hojas pasan de verdad, girando sobre el
- * lomo: con las flechas, tocando la esquina, deslizando el dedo o con ← → del teclado.
- * Mientras una hoja gira, sus piezas son fotos del momento (no modelos vivos): así no se traba.
+ * lomo: con las flechas, tocando la esquina, deslizando el dedo (fuera del modelo) o con ← → del teclado.
+ *
+ * Para que pasar la hoja sea fluido: mientras gira, la hoja y la página que se destapa muestran fotos del
+ * momento (no modelos vivos), los modelos que vienen se descargan antes, y el modelo de la página nueva se
+ * enciende cuando la hoja terminó de pasar, apareciendo suave sobre su foto.
  */
 export default function LibroColeccion({ objetos, doble, titulo }: Props) {
   const reducirMovimiento = usePrefersReducedMotion()
@@ -151,7 +173,10 @@ export default function LibroColeccion({ objetos, doble, titulo }: Props) {
       setVista(destino)
       return
     }
-    setGiro({ hacia, desde: vista, fotos: capturar(hojas.current) })
+    // Solo la página que gira necesita su foto del momento (en el computador, la de ese lado)
+    const ladoQueGira = doble ? (hacia === 1 ? 'der' : 'izq') : 'sola'
+    capturar(hojas.current?.querySelector(`[data-lado="${ladoQueGira}"]`) ?? null)
+    setGiro({ hacia, desde: vista })
   }
 
   // Cuando la hoja terminó de pasar, queda la nueva página (con un reloj y no con el fin de la animación:
@@ -165,8 +190,13 @@ export default function LibroColeccion({ objetos, doble, titulo }: Props) {
     return () => clearTimeout(t)
   }, [giro])
 
-  // Deslizar el dedo (o arrastrar el mouse) hacia un lado pasa la página
+  // Deslizar el dedo (o arrastrar el mouse) hacia un lado pasa la página. Si empieza sobre un modelo 3D,
+  // no: ese arrastre es para girar la pieza
   const alBajar = (e: PointerEvent) => {
+    if ((e.target as Element).closest('model-viewer')) {
+      toque.current = null
+      return
+    }
     toque.current = { x: e.clientX, y: e.clientY, arrastro: false }
   }
   const alSubir = (e: PointerEvent) => {
@@ -225,8 +255,22 @@ export default function LibroColeccion({ objetos, doble, titulo }: Props) {
     hoja = { frente: pagina(giro.desde - 1), reverso: null, ladoFrente: 'sola', ladoReverso: 'sola' }
   }
 
+  // Mientras gira la hoja, solo sigue viva la página que se queda quieta (la de la izquierda al ir adelante,
+  // la de la derecha al volver); la que se destapa se enciende cuando la hoja terminó de pasar
+  const quieta = doble && giro ? (giro.hacia === 1 ? izq(giro.desde) : der(giro.desde)) : null
   const hayMas = vista < total - 1
   const comun = { titulo, total: objetos.length }
+
+  // Los modelos de las páginas vecinas (la que viene y la anterior) se descargan antes de que hagan falta
+  const vecinas = doble ? [izq(vista + 1), der(vista + 1), izq(vista - 1), der(vista - 1)] : [pagina(vista + 1), pagina(vista - 1)]
+  const claveVecinas = vecinas.map((p) => paginas.indexOf(p)).join(',')
+  useEffect(() => {
+    if (!abierto) return
+    const t = window.setTimeout(() => adelantar(vecinas.flatMap((p) => (p.tipo === 'piezas' ? p.piezas : []))), 400)
+    return () => clearTimeout(t)
+    // vecinas sale de claveVecinas (las mismas páginas dan la misma clave)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [abierto, claveVecinas])
 
   return (
     <div ref={escena} className={styles.contenedor}>
@@ -244,6 +288,8 @@ export default function LibroColeccion({ objetos, doble, titulo }: Props) {
           onPointerUp={alSubir}
           onClickCapture={alHacerClic}
           onKeyDown={(e) => {
+            // Con un modelo enfocado, las flechas lo giran a él (no pasan la página)
+            if ((e.target as Element).closest('model-viewer')) return
             if (e.key === 'ArrowRight') ir(1)
             if (e.key === 'ArrowLeft') ir(-1)
           }}
@@ -251,8 +297,8 @@ export default function LibroColeccion({ objetos, doble, titulo }: Props) {
           {/* Las hojas */}
           <div ref={hojas} className={styles.hojas} inert={!abierto}>
             {base.map(({ pagina: p, lado }) => (
-              <div key={lado} className={cx(styles.ranura, styles[`ranura-${lado}`])}>
-                <PaginaLibro key={n(p)} pagina={p} lado={lado} {...comun} vivo={abierto} />
+              <div key={lado} className={cx(styles.ranura, styles[`ranura-${lado}`])} data-lado={lado}>
+                <PaginaLibro key={n(p)} pagina={p} lado={lado} {...comun} vivo={abierto && (!giro || p === quieta)} />
               </div>
             ))}
 
@@ -266,7 +312,7 @@ export default function LibroColeccion({ objetos, doble, titulo }: Props) {
                 aria-hidden="true"
               >
                 <div className={styles.cara}>
-                  <PaginaLibro pagina={hoja.frente} lado={hoja.ladoFrente} {...comun} fotos={giro.fotos} />
+                  <PaginaLibro pagina={hoja.frente} lado={hoja.ladoFrente} {...comun} />
                 </div>
                 <div className={cx(styles.cara, styles.reverso)}>
                   {hoja.reverso ? (
@@ -357,12 +403,11 @@ interface PaginaProps {
   titulo: string
   /** Cuántas piezas hay en total */
   total: number
-  /** true: con los modelos 3D vivos · false: la hoja que gira (fotos del momento o solo el papel) */
+  /** true: con los modelos 3D vivos · false: mientras gira una hoja (fotos del momento o solo el papel) */
   vivo?: boolean
-  fotos?: Record<string, string>
 }
 
-function PaginaLibro({ pagina, lado, titulo, total, vivo = false, fotos = {} }: PaginaProps) {
+function PaginaLibro({ pagina, lado, titulo, total, vivo = false }: PaginaProps) {
   if (pagina.tipo === 'guarda' || pagina.tipo === 'contraguarda') {
     return (
       <div className={cx(styles.papel, styles[lado], styles.papelGuarda)}>{pagina.tipo === 'guarda' && <Guarda />}</div>
@@ -394,7 +439,7 @@ function PaginaLibro({ pagina, lado, titulo, total, vivo = false, fotos = {} }: 
           </span>
           <div className={styles.figuras}>
             {pagina.piezas.map((o) => (
-              <Figura key={o.id} objeto={o} vivo={vivo} foto={fotos[o.id]} />
+              <Figura key={o.id} objeto={o} vivo={vivo} />
             ))}
           </div>
           <span className={cx('mono', styles.folio)}>{pagina.folio}</span>
@@ -412,43 +457,53 @@ function PaginaLibro({ pagina, lado, titulo, total, vivo = false, fotos = {} }: 
   )
 }
 
-/** Una pieza en su página: el modelo 3D girando sobre una lámina, y debajo su número y nombre */
-function Figura({ objeto, vivo, foto }: { objeto: Objeto; vivo: boolean; foto?: string }) {
+/**
+ * Una pieza en su página: el modelo 3D girando sobre una lámina (se puede girar y acercar ahí mismo), y debajo
+ * su número, su nombre, un texto breve de lo que es y el enlace a su ficha.
+ * Sin `vivo` (mientras pasa una hoja) se ve su foto del momento en vez del modelo, y el texto igual.
+ */
+function Figura({ objeto, vivo }: { objeto: Objeto; vivo: boolean }) {
   const modelo = objeto.modelo3d
   const conModelo = tieneArchivo(modelo)
-  const pie = (
-    <span className={styles.pie}>
-      <span className={cx('mono', styles.numero)}>Nº {String(objeto.numero).padStart(2, '0')}</span>
-      <span className={styles.nombre}>{objeto.nombre}</span>
-    </span>
-  )
-
-  if (!vivo) {
-    return (
-      <div className={styles.figura} data-pieza={objeto.id}>
-        <span className={styles.lamina}>{foto && <img src={foto} alt="" className={styles.modelo} />}</span>
-        {pie}
-      </div>
-    )
-  }
+  const foto = instantaneas.get(objeto.id)
+  const ficha = `/objetos/${objeto.id}`
 
   return (
-    <Link to={`/objetos/${objeto.id}`} className={styles.figura} data-pieza={objeto.id}>
+    <div className={styles.figura} data-pieza={objeto.id}>
       <span className={styles.lamina}>
-        {conModelo ? (
+        {/* La foto del momento queda debajo: mientras el modelo carga (o gira la hoja) no se ve un hueco */}
+        {foto && <img src={foto} alt="" className={cx(styles.modelo, styles.instantanea)} />}
+        {conModelo && vivo && (
           <ModelViewer
             src={objeto.modeloTarjeta ?? modelo.src}
             poster={modelo.poster}
             alt={modelo.alt}
             ratio="auto"
-            interactivo={false}
-            className={styles.modelo}
+            aviso={false}
+            girarYa
+            className={cx(styles.modelo, styles.vivo)}
           />
-        ) : (
-          <Media media={objeto.imagenes[0]} ratio="auto" className={styles.foto} />
+        )}
+        {!conModelo && <Media media={objeto.imagenes[0]} ratio="auto" className={styles.foto} />}
+        {conModelo && (
+          <span className={styles.ayuda} aria-hidden="true">
+            <span className={styles.ayudaMouse}>↻ Arrastra para girarlo · Ctrl + rueda para acercar</span>
+            <span className={styles.ayudaDedo}>↻ Desliza sobre él para girarlo · pellizca para acercar</span>
+          </span>
         )}
       </span>
-      {pie}
-    </Link>
+      <span className={styles.pie}>
+        <span className={cx('mono', styles.numero)}>Nº {String(objeto.numero).padStart(2, '0')}</span>
+        <span className={styles.nombre}>{objeto.nombre}</span>
+      </span>
+      <p className={styles.descripcion}>{objeto.descripcion}</p>
+      {vivo ? (
+        <Link to={ficha} className={styles.verFicha}>
+          Ver su ficha →
+        </Link>
+      ) : (
+        <span className={styles.verFicha}>Ver su ficha →</span>
+      )}
+    </div>
   )
 }

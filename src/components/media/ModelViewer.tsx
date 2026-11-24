@@ -16,6 +16,13 @@ interface Props {
    * false (tarjeta, que ya es un enlace): solo da vueltas despacio.
    */
   interactivo?: boolean
+  /** Con `interactivo`: la manito de model-viewer que invita a girarlo (false si la página ya lo explica) */
+  aviso?: boolean
+  /**
+   * Con `interactivo`: empieza a dar vueltas apenas aparece (como en las tarjetas), en vez de esperar 2.5 s.
+   * Después de que la persona lo gira con la mano, sí espera 2.5 s antes de seguir solo.
+   */
+  girarYa?: boolean
 }
 
 let visor: Promise<unknown> | null = null
@@ -26,13 +33,26 @@ function cargarVisor() {
     // Los modelos van comprimidos con Draco: su decodificador se sirve desde el propio sitio (public/draco/)
     const global = self as typeof self & { ModelViewerElement?: Record<string, unknown> }
     global.ModelViewerElement = { ...global.ModelViewerElement, dracoDecoderLocation: `${import.meta.env.BASE_URL}draco/` }
-    visor = import('@google/model-viewer')
+    visor = import('@google/model-viewer').then((m) => {
+      // Guarda en memoria los últimos 24 modelos (y no 5): volver a una pieza ya vista es instantáneo
+      m.ModelViewerElement.modelCacheSize = 24
+      return m
+    })
   }
   return visor
 }
 
 /** Visor de modelos 3D (.glb). Sin archivo, muestra el recuadro de pendiente. */
-export default function ModelViewer({ src, poster, alt, ratio = '1 / 1', className, interactivo = true }: Props) {
+export default function ModelViewer({
+  src,
+  poster,
+  alt,
+  ratio = '1 / 1',
+  className,
+  interactivo = true,
+  aviso = interactivo,
+  girarYa = false,
+}: Props) {
   const elemento = useRef<HTMLElement>(null)
   const reducirMovimiento = usePrefersReducedMotion()
 
@@ -52,6 +72,28 @@ export default function ModelViewer({ src, poster, alt, ratio = '1 / 1', classNa
     observador.observe(el)
     return () => observador.disconnect()
   }, [src])
+
+  // Cuando el modelo terminó de cargar se marca (data-listo): así puede aparecer suave, sin saltos
+  useEffect(() => {
+    const el = elemento.current
+    if (!el || !src) return
+    const alCargar = () => el.setAttribute('data-listo', '')
+    el.addEventListener('load', alCargar)
+    return () => el.removeEventListener('load', alCargar)
+  }, [src])
+
+  // girarYa: la primera vez que la persona lo mueve, desde ahí espera 2.5 s antes de volver a girar solo
+  useEffect(() => {
+    const el = elemento.current
+    if (!el || !src || !interactivo || !girarYa) return
+    const alMover = (e: Event) => {
+      if ((e as CustomEvent<{ source?: string }>).detail?.source !== 'user-interaction') return
+      el.setAttribute('auto-rotate-delay', '2500')
+      el.removeEventListener('camera-change', alMover)
+    }
+    el.addEventListener('camera-change', alMover)
+    return () => el.removeEventListener('camera-change', alMover)
+  }, [src, interactivo, girarYa])
 
   // La rueda del mouse sigue bajando la página; para acercar: Ctrl + rueda (o pellizcar en el celular y el trackpad)
   useEffect(() => {
@@ -77,9 +119,9 @@ export default function ModelViewer({ src, poster, alt, ratio = '1 / 1', classNa
       style={{ aspectRatio: ratio }}
       camera-controls={interactivo ? '' : undefined}
       auto-rotate={reducirMovimiento ? undefined : ''}
-      auto-rotate-delay={interactivo ? '2500' : '0'}
-      rotation-per-second={interactivo ? '18deg' : '24deg'}
-      interaction-prompt={interactivo ? 'auto' : 'none'}
+      auto-rotate-delay={interactivo && !girarYa ? '2500' : '0'}
+      rotation-per-second={interactivo && !girarYa ? '18deg' : '24deg'}
+      interaction-prompt={interactivo && aviso ? 'auto' : 'none'}
       touch-action="pan-y"
       shadow-intensity="1"
       exposure="1.05"

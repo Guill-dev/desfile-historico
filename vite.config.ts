@@ -64,8 +64,8 @@ function poemaEnEntrada(): Plugin {
 
 /**
  * Al publicar: pide las letras principales apenas se abre la página (la pantalla de entrada ya las usa),
- * en vez de esperar a que llegue la hoja de estilos. Rubik 400 y 700, IBM Plex Mono 500 y, si hay poema,
- * la letra manuscrita (Dancing Script 500 y 700).
+ * en vez de esperar a que llegue la hoja de estilos. Plus Jakarta Sans 800, Lato 400 y 700 y, si hay poema,
+ * Lato 400 en cursiva (la de los versos).
  */
 function precargarLetras(): Plugin {
   let base = '/'
@@ -79,7 +79,7 @@ function precargarLetras(): Plugin {
       order: 'post',
       handler(_html, ctx) {
         const letras = leerPoema()
-          ? /(plus-jakarta-sans-latin-800|lato-latin-(400|700)|dancing-script-latin-(500|700))-normal-[\w-]+\.woff2$/
+          ? /(plus-jakarta-sans-latin-800-normal|lato-latin-(400|700)-normal|lato-latin-400-italic)-[\w-]+\.woff2$/
           : /(plus-jakarta-sans-latin-800|lato-latin-(400|700))-normal-[\w-]+\.woff2$/
         return Object.keys(ctx.bundle ?? {})
           .filter((f) => letras.test(f))

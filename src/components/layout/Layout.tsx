@@ -9,9 +9,9 @@ import { precargarPaginas } from '@/app/paginasDiferidas'
 
 /** Mientras carga una página: un aviso y el título general en la pestaña */
 const cargando = (
-  <p className="contenedor cargando mono">
+  <p className="tema-papel cargando" role="status">
     <title>{tituloPagina()}</title>
-    Cargando…
+    <span>Cargando…</span>
   </p>
 )
 

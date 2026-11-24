@@ -7,8 +7,8 @@ import FotosRotativas from '@/components/media/FotosRotativas'
 import styles from './TarjetaEdicion.module.css'
 
 /**
- * Una edición del desfile: el año en grande y su foto, con el título en un recuadro de vidrio encima;
- * abre la ficha del año.
+ * Una edición del desfile: el año en grande y su foto, con cuántas fotos tiene en una pastilla de vidrio
+ * encima; abre la ficha del año.
  * Si el año tiene varias fotos, van cambiando solas cada 2.5 s, al azar y sin repetir (FotosRotativas).
  */
 export default function TarjetaEdicion({ version }: { version: Version }) {
@@ -23,11 +23,8 @@ export default function TarjetaEdicion({ version }: { version: Version }) {
         ) : (
           <Media media={version.portada} ratio="16 / 10" className={styles.foto} />
         )}
-        {/* Recuadro de vidrio sobre la foto: el título y cuántas fotos tiene */}
-        <span className={styles.info}>
-          <span className={styles.titulo}>{version.titulo}</span>
-          {conFotos && <span className={styles.cuantas}>{version.galeria.length} fotos</span>}
-        </span>
+        {/* Una pastilla de vidrio sobre la foto: cuántas fotos tiene ese año */}
+        {conFotos && <span className={styles.cuantas}>{version.galeria.length} fotos</span>}
       </span>
     </Link>
   )

@@ -132,9 +132,50 @@ a {
   padding-block: clamp(56px, 7vw, 96px);
 }
 
+/* Mientras abre una página: una pastilla blanca con un aro que gira, al centro (casi nunca se ve: las
+   páginas se descargan antes, ver app/paginasDiferidas.ts) */
 .cargando {
+  display: grid;
+  place-content: center;
   min-height: 70vh;
-  padding-top: calc(var(--alto-header) + var(--e-6));
+  padding-top: var(--alto-header);
+}
+
+.cargando span {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: var(--c-blanco);
+  color: var(--c-tinta);
+  box-shadow: var(--sombra-chica);
+  font-weight: 700;
+  font-size: var(--t-s);
+  animation: aparece-cargando 0.3s ease 0.25s backwards;
+}
+
+.cargando span::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2.5px solid var(--c-niebla);
+  border-top-color: var(--c-tinta);
+  border-radius: 50%;
+  animation: gira-cargando 0.8s linear infinite;
+}
+
+/* Solo aparece si tarda: un cambio rápido de página no alcanza a mostrarla */
+@keyframes aparece-cargando {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes gira-cargando {
+  to {
+    rotate: 1turn;
+  }
 }
 
 /* Solo para lectores de pantalla */

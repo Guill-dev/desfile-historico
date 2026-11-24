@@ -106,8 +106,8 @@ La página de inicio es un recorrido de arriba hacia abajo. Cada bloque vive en 
 | 1 | **Portada** oscura con el video, el título y el botón rojo | `sections/Inicio/` | `data/sitio.ts` → `sitio` y `portada` |
 | 2 | **Conoce la historia**: animación del mundo a Gualmatán, que termina en la foto del pueblo + tarjeta oscura | `sections/Historia/` | `data/sitio.ts` → `textos.historia` |
 | 3 | **Los pasos del desfile**: pasos **al azar**, solo de los que ya tienen foto, que cambian solos (6 en 2 filas de 3 en el computador, 4 en 2 × 2 en el celular) + botón "Ver los N pasos" | `sections/Pasos/` | `data/pasos.ts` |
-| 4 | **Quienes lo hicieron posible**: página de álbum antiguo con los retratos | `sections/Creadores/` | `data/creadores.ts` |
-| 5 | **La colección**: un **libro** (catálogo de museo) con 2 piezas 3D por página; las hojas se pasan de verdad + botón "Ver las N piezas" | `sections/Objetos/` | `data/objetos.ts` |
+| 4 | **Quienes lo hicieron posible**: vitrina giratoria 3D con los retratos y un panel con quién es cada uno | `sections/Creadores/` | `data/creadores.ts` |
+| 5 | **La colección**: un **libro** (catálogo de museo) con una pieza 3D por página (se gira y se acerca ahí mismo) y su texto breve; las hojas se pasan de verdad + botón "Ver las N piezas" | `sections/Objetos/` | `data/objetos.ts` |
 | 6 | **Cada año, el pueblo vuelve a contarla** + línea de años | `sections/Versiones/` | `data/versiones.ts` |
 | — | **Más del archivo** + pie (aparece en todas las páginas) | `components/layout/SiteFooter.tsx` | `data/mas.ts` |
 
@@ -210,11 +210,14 @@ Igual que los pasos: cada creador tiene su carpeta en **`public/media/creadores/
 - El nombre y los demás datos (período, rol, descripción…) van en **`src/data/creadores.textos.ts`**,
   con el mismo número. Lo que no se ponga ahí sale como `[pendiente]`.
 - 🔒 Las fotos y `creadores.textos.ts` **no se suben a GitHub** por ahora (están en `.git/info/exclude`).
-- **En el inicio** salen como la **página de un álbum familiar antiguo**: papel negro con el lomo cosido, fotos en
-  sepia con borde blanco y esquineros, un poco torcidas, y el nombre y el rol escritos a mano debajo. Al llegar,
-  las fotos se van pegando una por una; al pasar el mouse (o tocar), la foto se endereza, se levanta y recupera
-  el color, y lleva a la ficha. Quien no tiene foto sale con sus iniciales a mano. Caben 6; si hay más, aparece
-  el botón "Ver los N creadores". Está en `src/sections/Creadores/` (la inclinación de cada foto: `POSES`).
+- **En el inicio** salen en una **vitrina giratoria** (como la de "Artifacts" de la plantilla *PocketMuse* de
+  Figma Community, con el estilo claro del sitio): un carrusel 3D con la persona del centro grande y de frente y
+  las de los lados inclinadas y más atrás, su nombre debajo y, al lado (debajo en el celular), un **panel** con
+  su rol y año, su descripción, su aporte y el botón "Ver su ficha". Pasa sola cada 5 s (se detiene con el mouse
+  o el dedo encima, fuera de la pantalla o con "reducir movimiento"); también con las flechas, los puntitos,
+  tocando una foto de los lados, deslizando o con ← →. Quien no tiene foto sale con sus iniciales (o "?").
+  Caben 9; si hay más, aparece el botón "Ver los N creadores". Está en `src/sections/Creadores/`
+  (`EN_EL_CARRUSEL`, `CADA_MS`).
 
 ### Las fotos de cada año (versiones) 📅
 Cada edición del desfile tiene su carpeta en **`public/media/versiones/`** con el año: `2025`, `2024`…
@@ -286,7 +289,11 @@ El comando está en `scripts/preparar-modelo.mjs` (usa [glTF-Transform](https://
 En la página de inicio las piezas salen en un **libro antiguo**, como el catálogo de un museo: tapa de **cuero café
 gastado** con filetes dorados, el **escudo de Gualmatán grabado en oro** y el título grabado en oro (letra
 Cinzel), lomo con nervios, hojas amarillentas con
-manchitas de los años y **2 piezas por página**, con su modelo 3D girando, su número (Nº 01) y su nombre.
+manchitas de los años y **una pieza por página**: su modelo 3D girando, su número (Nº 01), su nombre, un **texto
+breve** de lo que es (el campo `descripcion` de `src/data/objetos.textos.ts`) y el enlace "Ver su ficha →".
+- **La pieza se puede girar y acercar ahí mismo:** arrastrándola con el mouse o deslizando el dedo sobre ella, y
+  acercándola con Ctrl + rueda o pellizcando. Sigue dando vueltas sola y, si alguien la mueve, espera 2.5 s y sigue.
+  Deslizar el dedo **fuera** de la pieza pasa la página.
 - **Al llegar a la sección:** el libro está **cerrado y ladeado** (se ven la tapa, el lomo y el canto de las hojas),
   se **endereza y se cuadra en el centro**, y **la tapa se abre** sobre el lomo. Por dentro tiene el papel de guarda
   con la etiqueta *Ex libris*; a la derecha queda la portada ("Catálogo · La colección · N piezas · *pasa la
@@ -301,8 +308,9 @@ manchitas de los años y **2 piezas por página**, con su modelo 3D girando, su 
 - Las hojas **pasan de verdad**: giran sobre el lomo. Se pasan con las flechas ← →, tocando la **esquina doblada**,
   **deslizando el dedo** o con las flechas del teclado.
 - Orden: primero las piezas con modelo 3D, luego las que tienen foto; dentro de cada grupo, por número.
-- Mientras una hoja gira, sus piezas son una foto del momento (no modelos vivos): así nunca giran más modelos de
-  los que se ven (4 en el computador, 2 en el celular) y no se traba.
+- **Para que pasar la hoja sea fluido:** mientras gira, la hoja y la página que se destapa muestran una foto del
+  momento de su pieza (no modelos vivos); los modelos de las páginas vecinas se descargan antes, y el de la página
+  nueva se enciende cuando la hoja terminó de pasar, apareciendo suave. Nunca hay más de 2 modelos vivos (1 en el celular).
 - Está en `src/sections/Objetos/LibroColeccion.tsx`: piezas por página (`POR_PAGINA`), lo que tarda una hoja
   (`GIRO_MS`), en cuadrarse (`CUADRA_MS`) y en abrirse (`ABRE_MS`). Colores del cuero y del papel, en
   `LibroColeccion.module.css`.
@@ -445,19 +453,20 @@ mientras carga. El original está en `originales/inicio/`.
 descarga hasta ~79 MB.
 
 ### La pantalla de entrada ("telón") 🎭
-Al abrir el sitio aparece una pantalla oscura con confeti en los colores de la bandera, una barra tricolor que se
-llena y, después, **el telón se abre hacia los lados** y queda la página.
-- **Con el poema** (si está `src/data/poema.textos.json`): una **tarjeta de papel antiguo** cae al centro, los
-  versos del poema se escriben uno por uno en letra manuscrita (entre comillas, la primera letra en tinta
-  roja) y la tarjeta **se gira sola** para mostrar el título del poema y
+Al abrir el sitio aparece una pantalla clara, con el estilo del resto de la página (tarjeta blanca de esquinas
+redondeadas, sombra suave, letra Plus Jakarta Sans), confeti en los colores de la bandera y una barra que se llena;
+después, **el telón se abre hacia los lados** y queda la página.
+- **Con el poema** (si está `src/data/poema.textos.json`): una **tarjeta blanca** llega al centro, los
+  versos del poema aparecen uno por uno, como si se escribieran, con la letra de la página en cursiva (Lato),
+  que se lee fácil (entre comillas, la primera letra en el verde de la bandera) y la tarjeta **se gira sola** para mostrar el título del poema y
   a su autor. Dura **~6.4 s** hasta que se abre el telón.
   - El poema se cambia en ese archivo: `versos` (uno por línea, sin comillas: las pone el sitio), `titulo` y
     `autor`. (`homenaje` queda guardado ahí, pero la pantalla no lo muestra: no alcanza a leerse.)
   - Lo pone en la pantalla `vite.config.ts` (`poemaEnEntrada`), al encender o publicar el sitio. Ahí está
     `DURACION_CON_POEMA` (en milisegundos); el momento en que la tarjeta se gira es el `4.4s` de `.e-tarjeta`
     en `index.html`.
-  - 🔒 El poema **no se sube a GitHub** (está en `.git/info/exclude`). Sin él, la pantalla muestra la bandera
-    que se arma y "DESFILE HISTÓRICO" letra por letra, ~4 s.
+  - 🔒 El poema **no se sube a GitHub** (está en `.git/info/exclude`). Sin él, la pantalla muestra, en una
+    tarjeta blanca, la bandera que se arma y "Desfile Histórico" letra por letra, ~4 s.
 - **El video de la portada espera** detrás del telón, quieto en su primer cuadro, y **arranca desde el principio
   justo cuando el telón se abre** (así nadie se pierde el comienzo).
 - Sale **una vez por visita**: si la persona recarga, no se repite (se recuerda en la pestaña). Nunca en `/admin`.
