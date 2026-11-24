@@ -11,22 +11,26 @@ import styles from './CreditosPagina.module.css'
 
 const { presentacion, grupos = [], referencias = [], agradecimientos = [], dedicatoria } = textosCreditos
 
+interface AutorFotos {
+  nombre: string
+  url?: string
+  /** Los años de los que son sus fotos, con cuántas */
+  anios: { anio: number; cantidad: number }[]
+}
+
 /**
- * De quién son las fotos de cada año: sale sola de los créditos de cada edición (src/data/versiones.textos.ts →
- * credito / creditoUrl). Quienes prestaron sus fotos pidieron que se los mencione con su enlace.
+ * Los autores de las fotos de cada año: salen solos de cada edición (src/data/versiones.textos.ts →
+ * autorFotos / autorFotosUrl). Un autor con fotos de varios años sale una vez, con todos sus años.
+ * Quienes prestaron sus fotos pidieron que se los mencione con su enlace.
  */
-const fotografias = versiones.flatMap((v) => {
-  const primera = v.galeria[0]
-  if (!primera?.credito) return []
-  return [
-    {
-      anio: v.anio,
-      autor: primera.credito.replace(/^Fotograf[íi]as?:\s*/i, ''),
-      url: primera.creditoUrl,
-      cantidad: v.galeria.length,
-    },
-  ]
-})
+const autoresFotos = versiones.reduce<AutorFotos[]>((lista, v) => {
+  if (!v.autorFotos) return lista
+  const ya = lista.find((a) => a.nombre === v.autorFotos?.nombre && a.url === v.autorFotos?.url)
+  const anio = { anio: v.anio, cantidad: v.galeria.length }
+  if (ya) ya.anios.push(anio)
+  else lista.push({ ...v.autorFotos, anios: [anio] })
+  return lista
+}, [])
 
 /** Abre en otra pestaña sin darle acceso a esta página */
 const externo = { target: '_blank', rel: 'noopener noreferrer' } as const
@@ -108,30 +112,36 @@ export default function CreditosPagina({ seccion }: PaginaMasProps) {
           </section>
         )}
 
-        {fotografias.length > 0 && (
+        {autoresFotos.length > 0 && (
           <section className={styles.bloque} aria-labelledby="creditos-fotografias">
             <h2 id="creditos-fotografias" className={cx('display', styles.titulo)}>
-              Fotografías de cada año
+              Fotos tomadas de los siguientes autores
             </h2>
             <ul role="list" className={styles.fuentes}>
-              {fotografias.map((f) => (
-                <li key={f.anio} className={styles.fuente}>
+              {autoresFotos.map((autor) => (
+                <li key={autor.nombre + (autor.url ?? '')} className={styles.fuente}>
                   <div className={styles.fuenteTexto}>
-                    {f.url ? (
-                      <a href={f.url} className={styles.fuenteNombre} {...externo}>
-                        {f.autor}
+                    {autor.url ? (
+                      <a href={autor.url} className={styles.fuenteNombre} {...externo}>
+                        {autor.nombre}
                         <span aria-hidden="true"> ↗</span>
                       </a>
                     ) : (
-                      <span className={styles.fuenteNombre}>{f.autor}</span>
+                      <span className={styles.fuenteNombre}>{autor.nombre}</span>
                     )}
                     <p>
-                      Fotos del desfile {f.anio} ({f.cantidad}).
+                      Fotos del desfile{' '}
+                      {autor.anios.map((a, n) => `${n > 0 ? (n === autor.anios.length - 1 ? ' y ' : ', ') : ''}${a.anio}`).join('')} (
+                      {autor.anios.reduce((s, a) => s + a.cantidad, 0)} fotos).
                     </p>
                   </div>
-                  <Link to={`/versiones/${f.anio}`} className={cx('mono', styles.licencia)}>
-                    Ver {f.anio}
-                  </Link>
+                  <span className={styles.verAnios}>
+                    {autor.anios.map((a) => (
+                      <Link key={a.anio} to={`/versiones/${a.anio}`} className={cx('mono', styles.licencia)}>
+                        Ver {a.anio}
+                      </Link>
+                    ))}
+                  </span>
                 </li>
               ))}
             </ul>

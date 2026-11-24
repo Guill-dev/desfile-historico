@@ -18,6 +18,11 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const FOTO = /\.(jpe?g|png|webp|avif|heic|heif|tiff?)$/i
+/**
+ * Descargas que van a medias (Chrome: "Sin confirmar 123.crdownload"; Firefox: .part; Edge, Opera…): NO se tocan.
+ * Si se movieran, la descarga se rompería. Cuando terminan, el navegador les pone su nombre y se organizan.
+ */
+const DESCARGANDO = /(\.(crdownload|part|partial|download|opdownload|tmp)$)|^(sin confirmar|unconfirmed)\b/i
 const LADO_MAXIMO = 1600
 /** Una foto modificada hace menos de esto puede estar copiándose todavía */
 const RECIENTE_MS = 1500
@@ -69,7 +74,11 @@ export async function organizarVersiones({ raiz, avisar = console.log }) {
   for (const anio of anios) {
     const carpeta = path.join(versiones, anio)
     const ordenada = new RegExp(`^${anio}-(\\d{2,3})\\.jpg$`)
-    const entradas = fs.readdirSync(carpeta, { withFileTypes: true })
+    const todas = fs.readdirSync(carpeta, { withFileTypes: true })
+    // Las descargas a medias se dejan quietas y se vuelve a mirar después
+    const descargando = todas.filter((e) => DESCARGANDO.test(e.name))
+    pendientes += descargando.length
+    const entradas = todas.filter((e) => !DESCARGANDO.test(e.name))
     const nuevas = entradas.filter((e) => e.isFile() && FOTO.test(e.name) && !ordenada.test(e.name)).map((e) => e.name)
     const ajenas = entradas.filter((e) => e.name !== '.gitkeep' && e.name !== '.organizando' && (e.isDirectory() || !FOTO.test(e.name)))
     if (nuevas.length === 0 && ajenas.length === 0) continue
@@ -90,8 +99,12 @@ export async function organizarVersiones({ raiz, avisar = console.log }) {
     try {
       // Lo que no es foto, fuera de public/
       for (const e of ajenas) {
-        moverSinPisar(path.join(carpeta, e.name), path.join(originales, anio, 'otros'))
-        avisar(`[versiones] ${anio}: "${e.name}" no es una foto; se movió a originales/versiones/${anio}/otros/`)
+        try {
+          moverSinPisar(path.join(carpeta, e.name), path.join(originales, anio, 'otros'))
+          avisar(`[versiones] ${anio}: "${e.name}" no es una foto; se movió a originales/versiones/${anio}/otros/`)
+        } catch {
+          pendientes++ // ocupado: se intenta en la próxima vuelta
+        }
       }
 
       const { default: sharp } = await import('sharp')
@@ -108,19 +121,35 @@ export async function organizarVersiones({ raiz, avisar = console.log }) {
           continue
         }
         const nombre = `${anio}-${String(siguiente).padStart(2, '0')}.jpg`
+        // 1) PRIMERO la original va al respaldo. Si Windows dice que está ocupada (p. ej. el navegador todavía la
+        //    tiene abierta), no se hace nada y se intenta en la próxima vuelta: así nunca sale una foto repetida
+        let respaldo
         try {
-          await sharp(origen)
+          respaldo = moverSinPisar(origen, path.join(originales, anio))
+        } catch {
+          pendientes++
+          continue
+        }
+        // 2) Después, la copia liviana para la web, hecha desde el respaldo
+        try {
+          await sharp(respaldo)
             .rotate() // respeta la orientación con que se tomó la foto
             .resize({ width: LADO_MAXIMO, height: LADO_MAXIMO, fit: 'inside', withoutEnlargement: true })
             .jpeg({ quality: 80, mozjpeg: true })
             .toFile(path.join(carpeta, nombre))
         } catch (e) {
+          // No es una imagen que se pueda leer: vuelve a su lugar, tal cual
+          try {
+            fs.renameSync(respaldo, origen)
+          } catch {
+            /* se queda en el respaldo */
+          }
+          fs.rmSync(path.join(carpeta, nombre), { force: true })
           avisar(`[versiones] ${anio}: no se pudo leer "${archivo}" (${e.message}); se deja como está`)
           continue
         }
-        antes += fs.statSync(origen).size
+        antes += fs.statSync(respaldo).size
         despues += fs.statSync(path.join(carpeta, nombre)).size
-        moverSinPisar(origen, path.join(originales, anio))
         siguiente++
         hechas++
       }

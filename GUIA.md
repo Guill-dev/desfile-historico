@@ -234,11 +234,13 @@ Cada edición del desfile tiene su carpeta en **`public/media/versiones/`** con 
 - La **`AAAA-01`** es la portada (la grande de la ficha del año). Para escoger otra, intercambia los nombres.
 - En la ficha del año (`/versiones/2025`) salen todas en la galería; al tocarlas se ven en grande.
 - El título, el resumen y **de quién son las fotos** van en **`src/data/versiones.textos.ts`**:
-  `credito` (el texto, p. ej. "Fotografías: Nombre del fotógrafo (@usuario)") y `creditoUrl` (su enlace, p. ej.
-  su Facebook). El crédito sale, como enlace, debajo de "Galería AAAA" en la ficha del año, en el visor de cada foto
-  y en Créditos ("Fotografías de cada año", que se arma sola).
+  `autorFotos` (su nombre, p. ej. "Nombre del fotógrafo (@usuario)") y `autorFotosUrl` (su enlace, p. ej. su
+  Facebook). **No salen en las fotos**: salen en Créditos, en "Fotos tomadas de los siguientes autores" (se arma
+  sola; un autor con fotos de varios años sale una vez, con todos sus años).
   ⚠️ Si las fotos son de un fotógrafo (traen su marca), hay que tener su permiso; quienes las prestaron pidieron
   que se los mencione con su enlace.
+- **Descargando directo en la carpeta** (Chrome: "Sin confirmar 123.crdownload"): las descargas en curso no se
+  tocan; cuando terminan, se organizan.
 - **El visor** (al tocar una foto): la foto sale **completa**, en un recuadro con borde claro y sombra, ajustada
   a la pantalla (en el computador y en el celular), con flechas ← → (o deslizando) y el contador.
 - 🔒 Las fotos y `versiones.textos.ts` **no se suben a GitHub** por ahora (están en `.git/info/exclude`).

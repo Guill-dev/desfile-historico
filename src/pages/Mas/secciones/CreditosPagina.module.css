@@ -264,3 +264,17 @@
     padding: var(--e-4);
   }
 }
+
+/* Los botones "Ver 2025", "Ver 2024" de un autor con fotos de varios años */
+.verAnios {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+@media (max-width: 560px) {
+  .verAnios {
+    justify-content: flex-start;
+  }
+}

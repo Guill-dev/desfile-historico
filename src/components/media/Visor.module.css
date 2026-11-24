@@ -91,13 +91,6 @@
   animation: entrar 0.35s var(--ease-salida);
 }
 
-/* El crédito de la foto, con enlace al autor si lo hay */
-.credito a {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
 .pendiente {
   width: min(100%, 960px, calc((100dvh - 220px) * 4 / 3));
   border-radius: var(--r-l);

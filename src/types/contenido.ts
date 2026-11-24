@@ -20,8 +20,6 @@ export interface Media {
   miniatura?: string
   /** Autor / fuente / archivo de procedencia */
   credito?: string
-  /** Enlace al autor (su Facebook, su página…): el crédito sale como enlace */
-  creditoUrl?: string
 }
 
 /** Un paso del recorrido del desfile. */
@@ -101,6 +99,8 @@ export interface Version {
   /** Elementos destacados de la edición */
   destacados: string[]
   galeria: Media[]
+  /** De quién son las fotos del año (sale en Créditos, no en las fotos) */
+  autorFotos?: { nombre: string; url?: string }
 }
 
 /* ───────────── Página de Historia (/mas/historia) ───────────── */

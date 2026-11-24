@@ -10,7 +10,7 @@ import fotos from 'virtual:fotos-versiones'
  * `npm run versiones`, que guarda las originales en originales/ y deja copias livianas con nombre ordenado
  * (2025-01.jpg, 2025-02.jpg…; la 01 es la portada). Un año con fotos aparece solo, aunque no esté en la lista.
  *
- * TEXTOS (título, resumen, crédito de las fotos…): en src/data/versiones.textos.ts, un archivo que vive solo en
+ * TEXTOS (título, resumen, autor de las fotos…): en src/data/versiones.textos.ts, un archivo que vive solo en
  * el computador del administrador y no se sube a GitHub hasta que él lo decida (ver GUIA, sección 6).
  */
 
@@ -18,12 +18,12 @@ import fotos from 'virtual:fotos-versiones'
 const ANIOS_BASE = [2026, 2025, 2024, 2023]
 
 /**
- * Lo que puede decir versiones.textos.ts de cada año. `credito`: de quién son las fotos de ese año;
- * `creditoUrl`: su enlace (Facebook…), para que el crédito sea un enlace.
+ * Lo que puede decir versiones.textos.ts de cada año. `autorFotos`: de quién son las fotos de ese año;
+ * `autorFotosUrl`: su enlace (Facebook…). Salen en Créditos ("Fotos tomadas de los siguientes autores").
  */
 export type TextoVersion = Partial<Pick<Version, 'titulo' | 'resumen' | 'personajes' | 'cambios' | 'destacados'>> & {
-  credito?: string
-  creditoUrl?: string
+  autorFotos?: string
+  autorFotosUrl?: string
 }
 
 // import.meta.glob no falla si el archivo no existe: en ese caso devuelve un objeto vacío
@@ -36,12 +36,10 @@ const anios = [...new Set([...ANIOS_BASE, ...Object.keys(fotos).map(Number)])].s
 
 /** Ordenadas de la más reciente a la más antigua */
 export const versiones: Version[] = anios.map((anio) => {
-  const { credito, creditoUrl, ...texto } = textos[anio] ?? {}
+  const { autorFotos, autorFotosUrl, ...texto } = textos[anio] ?? {}
   const suyas: Media[] = (fotos[anio]?.todas ?? []).map((f, n) => ({
     ...foto(f.src, `Desfile Histórico de Gualmatán ${anio}, foto ${n + 1}`),
     miniatura: f.miniatura ?? undefined,
-    credito,
-    creditoUrl,
   }))
 
   return {
@@ -55,5 +53,6 @@ export const versiones: Version[] = anios.map((anio) => {
     anio,
     portada: suyas[0] ?? pendiente(`Fotografía del desfile ${anio}`),
     galeria: suyas.length > 0 ? suyas : [1, 2, 3, 4, 5, 6].map((n) => pendiente(`Foto ${n} de la edición ${anio}`)),
+    autorFotos: autorFotos && suyas.length > 0 ? { nombre: autorFotos, url: autorFotosUrl } : undefined,
   }
 })
