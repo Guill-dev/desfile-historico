@@ -17,10 +17,20 @@ export function useSeccionActiva(ids: readonly string[]): string | null {
     const medir = () => {
       cuadro = 0
       const linea = window.innerHeight * 0.35
+      // Las secciones van en orden hacia abajo: en vez de medirlas todas (79 pasos) en cada movimiento,
+      // se busca partiendo la lista a la mitad una y otra vez (unas 7 medidas)
+      let desde = 0
+      let hasta = lista.length - 1
       let actual: string | null = null
-      for (const id of lista) {
-        const el = document.getElementById(id)
-        if (el && el.getBoundingClientRect().top <= linea) actual = id
+      while (desde <= hasta) {
+        const medio = (desde + hasta) >> 1
+        const el = document.getElementById(lista[medio])
+        if (el && el.getBoundingClientRect().top <= linea) {
+          actual = lista[medio]
+          desde = medio + 1
+        } else {
+          hasta = medio - 1
+        }
       }
       setActiva(actual)
     }

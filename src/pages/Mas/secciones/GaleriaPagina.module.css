@@ -27,7 +27,6 @@
 .enlace {
   font-weight: 600;
   font-size: var(--t-s);
-  text-transform: uppercase;
   text-decoration: none;
 }
 

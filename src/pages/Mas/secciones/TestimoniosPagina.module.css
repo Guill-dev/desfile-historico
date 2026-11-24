@@ -71,7 +71,7 @@
   display: grid;
   gap: var(--e-4);
   padding-top: var(--e-3);
-  border-top: 2px solid currentColor;
+  border-top: 1.5px solid var(--linea);
 }
 
 .filtros {
@@ -89,7 +89,6 @@
   border-radius: var(--r-m);
   font-weight: 600;
   font-size: var(--t-s);
-  text-transform: uppercase;
   cursor: pointer;
   transition:
     background var(--dur-corta),
@@ -180,8 +179,8 @@
 }
 
 .nombre {
-  font-weight: 700;
-  text-transform: uppercase;
+  font-family: var(--f-display);
+  font-weight: 800;
   line-height: 1.2;
 }
 

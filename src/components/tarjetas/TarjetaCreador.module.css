@@ -8,17 +8,19 @@
 
 .retrato {
   border-radius: var(--r-l);
-  transition: border-radius var(--dur-media) var(--ease-salida);
+  box-shadow: var(--sombra-chica);
+  transition: scale var(--dur-media) var(--ease-salida);
 }
 
 .persona:hover .retrato {
-  border-radius: min(80px, 25cqw);
+  scale: 1.03;
 }
 
 .nombre {
-  font-weight: 700;
+  font-family: var(--f-display);
+  font-weight: 800;
   font-size: clamp(0.9375rem, 0.55rem + 4cqw, 1.125rem);
-  line-height: 1.1;
-  text-transform: uppercase;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
   overflow-wrap: break-word;
 }

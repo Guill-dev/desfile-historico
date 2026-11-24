@@ -33,9 +33,24 @@
   text-decoration: none;
 }
 
+/* Cerrar: el mismo botón cuadrado del menú, con una x */
 .cerrar {
-  font-size: 32px;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--r-m);
+  background: rgb(255 255 255 / 0.1);
+  font-size: 26px;
   line-height: 1;
+  transition:
+    background-color var(--dur-corta),
+    color var(--dur-corta);
+}
+
+.cerrar:hover {
+  background: var(--c-blanco);
+  color: var(--c-noche);
 }
 
 .cuerpo {
@@ -69,10 +84,11 @@
   display: inline-flex;
   align-items: baseline;
   gap: 14px;
-  font-weight: 700;
+  font-family: var(--f-display);
+  font-weight: 800;
   font-size: clamp(2.25rem, 1.4rem + 3.5vw, 4rem);
   line-height: 1.05;
-  text-transform: uppercase;
+  letter-spacing: -0.03em;
   text-decoration: none;
   transition: color var(--dur-corta);
 }

@@ -1,25 +1,39 @@
+/* Una tarjeta oscura grande con un margen pequeño alrededor (como el video del inicio); la barra flota encima */
 .cabecera {
-  border-radius: 0 0 var(--r-xl) var(--r-xl);
+  margin: 12px 12px 0;
+  border-radius: var(--r-xl);
+  background:
+    radial-gradient(80% 90% at 100% 0%, rgb(143 211 164 / 0.12), transparent 65%),
+    var(--fondo);
+  box-shadow: var(--sombra);
 }
 
 .contenido {
   display: grid;
   gap: var(--e-3);
-  padding-top: calc(var(--alto-header) + clamp(32px, 5vw, 64px));
+  padding-top: calc(var(--alto-header) + clamp(20px, 4vw, 52px));
   padding-bottom: clamp(40px, 5vw, 64px);
 }
 
+/* "← Inicio": una pastilla de vidrio, como el botón de volver de las apps */
 .volver {
   justify-self: start;
   margin-bottom: var(--e-2);
-  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: var(--r-m);
+  background: rgb(255 255 255 / 0.1);
+  font-family: var(--f-display);
+  font-weight: 700;
   font-size: var(--t-s);
-  text-transform: uppercase;
   text-decoration: none;
+  transition:
+    background-color var(--dur-corta),
+    color var(--dur-corta);
 }
 
 .volver:hover {
-  text-decoration: underline;
+  background: var(--c-blanco);
+  color: var(--c-noche);
 }
 
 .titulo {

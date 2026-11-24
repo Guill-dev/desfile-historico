@@ -12,8 +12,8 @@ interface Opciones {
  * Devuelve [ref, visible]: la ref se pone en el elemento a observar.
  */
 export function useInView<T extends Element = HTMLElement>({
-  threshold = 0.15,
-  rootMargin = '0px 0px -10% 0px',
+  threshold = 0.1,
+  rootMargin = '0px 0px -6% 0px',
   once = true,
 }: Opciones = {}): [RefObject<T | null>, boolean] {
   const ref = useRef<T>(null)

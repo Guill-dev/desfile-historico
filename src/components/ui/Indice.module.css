@@ -17,8 +17,9 @@
   align-items: baseline;
   gap: 8px;
   padding: 8px 12px;
-  border: 1.5px solid var(--linea);
+  border: 1.5px solid transparent;
   border-radius: var(--r-m);
+  background: color-mix(in srgb, currentColor 6%, transparent);
   font-weight: 600;
   font-size: var(--t-s);
   white-space: nowrap;
@@ -64,24 +65,25 @@
     overflow-x: visible;
   }
 
+  /* En la columna: renglones que se rellenan suavemente al pasar el mouse; el activo, en una pastilla blanca */
   .indice a {
     display: flex;
     white-space: normal;
     border-color: transparent;
-    border-radius: 0;
-    padding-inline: 0;
+    background: none;
+    padding: 7px 10px;
   }
 
   .indice a:hover {
-    background: none;
+    background: color-mix(in srgb, currentColor 6%, transparent);
     color: inherit;
-    text-decoration: underline;
   }
 
-  /* En la columna: una raya del color de acento delante de la sección activa */
   .indice a.activa {
     border-color: transparent;
-    box-shadow: inset 3px 0 0 var(--acento);
-    padding-left: 14px;
+    background: var(--superficie);
+    box-shadow:
+      inset 3px 0 0 var(--acento),
+      var(--sombra-chica);
   }
 }

@@ -5,36 +5,54 @@ html {
 /*
  * TEMAS DE SECCIÓN. Cada bloque del sitio usa uno: define fondo, texto y
  * los colores de interacción que heredan botones, líneas y rótulos.
+ * Estilo moderno: fondos claros y suaves; las fotos ponen el color y la bandera queda en los acentos.
  */
 :root,
 .tema-verde {
-  --fondo: var(--c-verde);
-  --texto: var(--c-blanco);
-  --texto-suave: var(--c-blanco);
-  --linea: rgb(255 255 255 / 0.35);
-  --hover-fondo: var(--c-blanco);
-  --hover-texto: var(--c-verde-oscuro);
-  --acento: var(--c-blanco);
+  --fondo: var(--c-menta);
+  --texto: var(--c-tinta);
+  --texto-suave: var(--c-verde-oscuro);
+  --linea: rgb(66 66 66 / 0.12);
+  --hover-fondo: var(--c-verde-oscuro);
+  --hover-texto: var(--c-blanco);
+  --acento: var(--c-verde);
+  /* Tarjetas y recuadros sobre el fondo */
+  --superficie: var(--c-blanco);
+  /* Botón principal */
+  --primario-fondo: var(--c-tinta);
+  --primario-texto: var(--c-blanco);
+  --primario-hover: var(--c-verde-oscuro);
+  --primario-texto-hover: var(--c-blanco);
 }
 
 .tema-noche {
   --fondo: var(--c-noche);
   --texto: var(--c-blanco);
-  --texto-suave: var(--c-verde-claro);
-  --linea: rgb(255 255 255 / 0.18);
+  --texto-suave: rgb(255 255 255 / 0.72);
+  --linea: rgb(255 255 255 / 0.14);
   --hover-fondo: var(--c-blanco);
   --hover-texto: var(--c-noche);
-  --acento: var(--c-rojo);
+  --acento: var(--c-verde-claro);
+  --superficie: rgb(255 255 255 / 0.06);
+  --primario-fondo: var(--c-blanco);
+  --primario-texto: var(--c-tinta);
+  --primario-hover: var(--c-verde-claro);
+  --primario-texto-hover: var(--c-noche);
 }
 
 .tema-papel {
   --fondo: var(--c-papel);
-  --texto: var(--c-noche);
-  --texto-suave: var(--c-verde-oscuro);
-  --linea: rgb(12 31 20 / 0.16);
-  --hover-fondo: var(--c-verde-oscuro);
+  --texto: var(--c-tinta);
+  --texto-suave: var(--c-tinta-suave);
+  --linea: rgb(66 66 66 / 0.12);
+  --hover-fondo: var(--c-tinta);
   --hover-texto: var(--c-blanco);
-  --acento: var(--c-rojo);
+  --acento: var(--c-verde);
+  --superficie: var(--c-blanco);
+  --primario-fondo: var(--c-tinta);
+  --primario-texto: var(--c-blanco);
+  --primario-hover: var(--c-verde-oscuro);
+  --primario-texto-hover: var(--c-blanco);
 }
 
 .tema-verde,
@@ -56,8 +74,9 @@ h1,
 h2,
 h3 {
   font-family: var(--f-display);
-  font-weight: 700;
-  line-height: 1.05;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
@@ -70,7 +89,7 @@ a {
 }
 
 ::selection {
-  background: var(--c-rojo);
+  background: var(--c-verde);
   color: var(--c-blanco);
 }
 
@@ -79,23 +98,21 @@ a {
   outline-offset: 3px;
 }
 
-/* Títulos grandes en mayúsculas */
+/* Títulos grandes: letra gruesa y redondeada, en minúsculas, apretadita */
 .display {
   font-family: var(--f-display);
-  font-weight: 700;
-  text-transform: uppercase;
-  line-height: 0.95;
-  letter-spacing: -0.01em;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 
-/* Rótulos de archivo: años, números de pieza, capítulos */
+/* Rótulos pequeños: años, números de pieza, capítulos */
 .mono {
   font-family: var(--f-mono);
-  font-weight: 500;
-  font-size: var(--t-xs);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
 }
 
 .suave {

@@ -1,14 +1,16 @@
 .linea {
   display: grid;
-  gap: clamp(40px, 5vw, 72px);
+  gap: clamp(16px, 2vw, 24px);
 }
 
-/* Número, texto y foto, separados del paso anterior por una raya */
+/* Cada paso, una tarjeta blanca con el número, el texto y la foto */
 .paso {
   display: grid;
   gap: 16px;
-  padding-top: 20px;
-  border-top: 2px solid currentColor;
+  padding: clamp(16px, 2.4vw, 28px);
+  border-radius: var(--r-xl);
+  background: var(--superficie);
+  box-shadow: var(--sombra-chica);
 }
 
 .bloque {
@@ -18,8 +20,9 @@
 }
 
 .numero {
-  font-size: clamp(3.5rem, 2rem + 4vw, 6rem);
+  font-size: clamp(3rem, 2rem + 3vw, 4.75rem);
   line-height: 0.85;
+  color: var(--acento);
 }
 
 .texto {
@@ -37,8 +40,7 @@
 
 .titulo {
   font-size: clamp(1.25rem, 1rem + 1vw, 1.625rem);
-  text-transform: uppercase;
-  line-height: 1.1;
+  line-height: 1.15;
 }
 
 .foto {
@@ -56,9 +58,9 @@
   aspect-ratio: 3 / 2;
   min-width: 0;
   padding: clamp(20px, 4vw, 40px);
-  border: 2px dashed rgb(255 255 255 / 0.4);
+  border: 2px dashed color-mix(in srgb, currentColor 22%, transparent);
   border-radius: var(--r-l);
-  background: rgb(255 255 255 / 0.06);
+  background: color-mix(in srgb, currentColor 4%, transparent);
   text-align: center;
 }
 
@@ -73,10 +75,11 @@
 }
 
 .pregunta {
-  font-weight: 700;
+  font-family: var(--f-display);
+  font-weight: 800;
   font-size: clamp(1.0625rem, 0.9rem + 0.6vw, 1.3125rem);
   line-height: 1.2;
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
 }
 
 /* Gana a ".texto p" (justificado) aunque no esté dentro de .texto: centrado y angosto */

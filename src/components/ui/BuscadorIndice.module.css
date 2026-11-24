@@ -17,9 +17,9 @@
   width: 100%;
   min-height: 44px;
   padding: 10px 42px 10px 40px;
-  border: 1.5px solid var(--linea);
+  border: 1.5px solid transparent;
   border-radius: var(--r-m);
-  background: rgb(255 255 255 / 0.1);
+  background: color-mix(in srgb, currentColor 7%, transparent);
   /* 16 px: con menos, el iPhone acerca la página al escribir */
   font-size: 1rem;
   font-weight: 500;
@@ -35,12 +35,12 @@
 }
 
 .campo input:hover {
-  border-color: rgb(255 255 255 / 0.6);
+  border-color: color-mix(in srgb, currentColor 25%, transparent);
 }
 
 .campo input:focus-visible {
-  border-color: var(--c-blanco);
-  background: rgb(255 255 255 / 0.16);
+  border-color: currentColor;
+  background: color-mix(in srgb, currentColor 4%, transparent);
   outline-offset: 2px;
 }
 
@@ -80,7 +80,7 @@
 }
 
 .borrar:hover {
-  background: rgb(255 255 255 / 0.16);
+  background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
 .borrar svg {
@@ -98,9 +98,9 @@
 .resultados mark,
 .coincide {
   border-radius: 3px;
-  background: rgb(255 255 255 / 0.24);
+  background: color-mix(in srgb, var(--acento) 22%, transparent);
   color: inherit;
-  box-shadow: 0 0 0 1.5px rgb(255 255 255 / 0.24);
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--acento) 22%, transparent);
 }
 
 .resultados mark {
@@ -132,7 +132,7 @@
 }
 
 .buscador:not(.oscuro) .campo:focus-within ~ .resultados .primero {
-  background: rgb(255 255 255 / 0.12);
+  background: color-mix(in srgb, currentColor 7%, transparent);
   padding-inline: 10px;
   border-radius: var(--r-s);
 }

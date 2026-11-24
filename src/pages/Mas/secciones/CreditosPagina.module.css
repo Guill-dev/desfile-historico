@@ -24,19 +24,17 @@
   font-size: var(--t-h2);
 }
 
-/* Rótulo pequeño de cada grupo: "FOTOGRAFÍA", "MAPAS"… */
+/* Rótulo pequeño de cada grupo: "Fotografía", "Mapas"… */
 .rol {
   margin: 0;
   color: var(--texto-suave);
-  font-size: var(--t-xs);
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: 0.8125rem;
+  font-weight: 700;
 }
 
 /*
  * Quiénes la hicieron: como la pared de créditos de una exposición.
- * Cada grupo con una línea arriba; en el computador, tres columnas.
+ * Cada grupo en una tarjeta blanca; en el computador, tres columnas.
  */
 .equipo {
   display: grid;
@@ -48,8 +46,10 @@
   display: grid;
   align-content: start;
   gap: var(--e-3);
-  padding-top: var(--e-3);
-  border-top: 2px solid currentColor;
+  padding: var(--e-4);
+  border-radius: var(--r-l);
+  background: var(--superficie);
+  box-shadow: var(--sombra-chica);
 }
 
 .personas {
@@ -65,8 +65,9 @@
 .nombre {
   font-family: var(--f-display);
   font-size: var(--t-l);
-  font-weight: 600;
+  font-weight: 800;
   line-height: 1.25;
+  letter-spacing: -0.01em;
 }
 
 .detalle {

@@ -27,17 +27,18 @@ Stack: Vite 8 · React 19 · **TypeScript 6** (modo estricto) · React Router 8 
 
 ## Identidad visual
 
-Inspirada en el sitio del Frans Hals Museum (tipografía, bloques de color, formas redondeadas), con los colores de la **bandera de Gualmatán**:
+Estilo moderno inspirado en la plantilla *AR Museum Guide* de Nickelfox (Figma Community, CC BY 4.0): fondos claros, letra redondeada, esquinas suaves, sombras suaves y recuadros de vidrio sobre las fotos. Los colores de la **bandera de Gualmatán** quedan en los acentos:
 
 | Color | Hex | Uso |
 |---|---|---|
-| Verde bandera | `#078930` | Color principal: fondo de los bloques del recorrido |
-| Rojo bandera | `#da121a` | Acción principal (botones), puntos de la línea de tiempo, acentos |
-| Blanco | `#ffffff` | Texto sobre verde y noche |
-| Noche | `#0c1f14` | Portada, vitrina de objetos, menú y pie (verde casi negro) |
-| Papel | `#f7f5f0` | Fichas y bloques de lectura larga |
+| Papel | `#f3f8f9` | Fondo claro principal |
+| Menta | `#e8f2ec` | Bloques del recorrido (claro, con un toque de verde) |
+| Tinta | `#424242` | Texto y botones principales |
+| Noche | `#1e2422` | Colección, cabeceras de las páginas, menú y pie |
+| Verde bandera | `#078930` | Acentos: rótulos, años, sección activa |
+| Rojo bandera | `#da121a` | Acentos: puntos de la línea de tiempo, insignias |
 
-- Tipografía: **Rubik** (títulos en mayúsculas y texto) + **IBM Plex Mono** (rótulos de archivo: años, números de pieza, capítulos). Ambas de Google Fonts.
+- Tipografía: **Plus Jakarta Sans** (títulos) + **Lato** (texto, rótulos y números). Ambas de Google Fonts, servidas desde el propio sitio.
 - Cada bloque usa un tema (`tema-verde`, `tema-noche`, `tema-papel` en `styles/base.css`); botones, líneas y rótulos se adaptan solos.
 - Todos los valores viven en `src/styles/tokens.css`.
 
@@ -122,7 +123,7 @@ El sitio usa rutas reales (`/objetos/...`). El hosting debe redirigir toda ruta 
 
 1. ✅ Análisis del proyecto
 2. ✅ Arquitectura y estructura
-3. ✅ Identidad visual (bandera de Gualmatán + estilo Frans Hals Museum)
+3. ✅ Identidad visual (bandera de Gualmatán + estilo moderno con recuadros de vidrio)
 4. ✅ Inicio (portada + ilustración animada de Gualmatán)
 5. ✅ Navegación y sistema de páginas (barra que se oculta, menú a pantalla completa)
 6. ✅ Pasos, Creadores, Objetos, Versiones (estructura y diseño; contenido pendiente)

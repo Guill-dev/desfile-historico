@@ -1,54 +1,72 @@
 /*
- * Muestras que cambian solas (pasos y piezas al azar en el inicio).
- * Cada casilla tiene encima la tarjeta que se va (.sale) y debajo la que llega (.cambio): la vieja gira y
- * se apaga mientras la nueva entra girando, como una carta que se voltea. Nunca queda la casilla vacía.
+ * Muestras que cambian solas (pasos al azar en el inicio).
+ * Cada casilla tiene encima la tarjeta que se va (.sale) y debajo la que llega (.cambio). Se voltea como una
+ * carta de verdad: la vieja gira hasta quedar de canto (90°, ya no se ve) y desde ahí la nueva termina el
+ * giro hasta quedar de frente. Sin achicarse ni desvanecerse a mitad de camino: solo gira.
+ * La perspectiva es fija y la pone la casilla (no va dentro de la animación): así la tarjeta no se deforma
+ * ni "se estira" mientras gira. Nunca queda la casilla vacía.
  * La que se va flota sobre la casilla (absolute), así el alto lo da solo la nueva.
  * El retraso escalonado entre casillas va en --retraso-cambio.
  */
 .casilla {
   position: relative;
+  perspective: 1600px;
 }
 
-.sale {
+.sale,
+.cambio {
+  backface-visibility: hidden;
+}
+
+/* ".casilla > .sale" (y no solo ".sale"): así le gana a cualquier "position" que traiga la propia tarjeta.
+   Si la que se va no flotara, las dos tarjetas quedarían una encima de otra y la fila se estiraría al doble */
+.casilla > .sale {
   position: absolute;
   inset: 0;
   z-index: 1;
-  animation: salir 0.4s ease-in both;
+}
+
+.sale {
+  /* Arranca suave y se acelera hasta quedar de canto */
+  animation: salir 0.32s cubic-bezier(0.5, 0, 0.9, 0.5) both;
   animation-delay: var(--retraso-cambio, 0ms);
   pointer-events: none;
 }
 
 .cambio {
-  animation: entrar 0.5s var(--ease-salida) both;
-  animation-delay: calc(var(--retraso-cambio, 0ms) + 0.22s);
+  /* Sale de canto rápido y frena suave al quedar de frente */
+  animation: entrar 0.48s cubic-bezier(0.1, 0.5, 0.4, 1) both;
+  animation-delay: calc(var(--retraso-cambio, 0ms) + 0.32s);
 }
 
 @keyframes salir {
   from {
-    opacity: 1;
-    transform: none;
+    transform: rotateY(0deg);
   }
 
-  /* Se apaga antes de terminar de girar: así los textos de las dos tarjetas casi no se cruzan */
-  60% {
-    opacity: 0;
+  /* Ya de canto: se apaga del todo para que no quede ni una rayita */
+  99% {
+    opacity: 1;
   }
 
   to {
     opacity: 0;
-    transform: perspective(900px) rotateY(70deg) scale(0.96);
+    transform: rotateY(90deg);
   }
 }
 
 @keyframes entrar {
   from {
     opacity: 0;
-    transform: perspective(900px) rotateY(-70deg) scale(0.96);
+    transform: rotateY(-90deg);
+  }
+
+  1% {
+    opacity: 1;
   }
 
   to {
-    opacity: 1;
-    transform: none;
+    transform: rotateY(0deg);
   }
 }
 

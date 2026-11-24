@@ -147,6 +147,19 @@ export const fuentes: GrupoFuentes[] = [
     ],
   },
   {
+    titulo: 'Diseño',
+    fuentes: [
+      {
+        nombre: 'AR Museum Guide, de Nickelfox (Figma Community)',
+        uso: 'La plantilla en la que se inspira el estilo del sitio: fondos claros, letra redondeada, esquinas suaves y recuadros de vidrio sobre las fotos. Se adaptó a la web y a los colores de Gualmatán; no se usaron sus imágenes ni sus textos.',
+        url: 'https://www.nickelfox.com',
+        licencia: CC_BY_4,
+        obligatorio: true,
+        nota: 'Plantilla gratuita de Figma Community (las plantillas gratuitas se publican con licencia CC BY 4.0).',
+      },
+    ],
+  },
+  {
     titulo: 'Herramientas y tipografías',
     fuentes: [
       {
@@ -181,15 +194,15 @@ export const fuentes: GrupoFuentes[] = [
         nota: 'Cada logo es marca registrada de su dueño.',
       },
       {
-        nombre: 'Rubik, de Hubert & Fischer',
-        uso: 'La letra de los títulos y los textos.',
-        url: 'https://fonts.google.com/specimen/Rubik',
+        nombre: 'Plus Jakarta Sans, de Tokotype',
+        uso: 'La letra de los títulos.',
+        url: 'https://fonts.google.com/specimen/Plus+Jakarta+Sans',
         licencia: OFL,
       },
       {
-        nombre: 'IBM Plex Mono, de IBM',
-        uso: 'La letra de los rótulos y los números.',
-        url: 'https://fonts.google.com/specimen/IBM+Plex+Mono',
+        nombre: 'Lato, de Łukasz Dziedzic',
+        uso: 'La letra de los textos, los rótulos y los números.',
+        url: 'https://fonts.google.com/specimen/Lato',
         licencia: OFL,
       },
       {

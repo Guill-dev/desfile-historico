@@ -26,7 +26,8 @@
   position: absolute;
   inset: 0 0 auto;
   height: 2px;
-  background: var(--texto);
+  border-radius: 2px;
+  background: var(--linea);
 }
 
 .edicion::after {
@@ -38,6 +39,7 @@
   height: 14px;
   border-radius: 50%;
   background: var(--c-rojo);
+  box-shadow: 0 0 0 4px var(--fondo);
 }
 
 /* En el celular, de a dos por fila, igual que en el inicio */

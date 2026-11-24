@@ -16,7 +16,8 @@
   left: 0;
   right: -24px;
   height: 2px;
-  background: var(--texto);
+  border-radius: 2px;
+  background: var(--linea);
 }
 
 .edicion::after {
@@ -28,6 +29,7 @@
   height: 14px;
   border-radius: 50%;
   background: var(--c-rojo);
+  box-shadow: 0 0 0 4px var(--fondo);
   transition: transform var(--dur-corta) var(--ease-salida);
 }
 

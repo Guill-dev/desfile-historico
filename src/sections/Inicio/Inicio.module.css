@@ -44,7 +44,7 @@
 }
 
 /*
- * "Comenzar el recorrido": late (crece y vuelve) con un aro rojo que se abre, para invitar a tocarlo.
+ * "Comenzar el recorrido": late (crece y vuelve) con un aro que se abre, para invitar a tocarlo.
  * Igual en computador y celular. Al pasar el mouse se queda quieto, un poco más grande.
  */
 .empezar {
@@ -61,15 +61,15 @@
   0%,
   100% {
     scale: 1;
-    box-shadow: 0 0 0 0 rgb(218 18 26 / 0.6);
+    box-shadow: 0 0 0 0 rgb(66 66 66 / 0.45);
   }
 
   45% {
-    scale: 1.09;
+    scale: 1.08;
   }
 
   70% {
-    box-shadow: 0 0 0 16px rgb(218 18 26 / 0);
+    box-shadow: 0 0 0 16px rgb(66 66 66 / 0);
   }
 }
 
@@ -99,27 +99,31 @@
 
 /*
  * PORTADA CON VIDEO (o foto)
- * Barra oscura arriba → debajo el video COMPLETO, a todo el ancho y con su forma real.
- * La portada ocupa al menos toda la pantalla, así no se asoma el bloque verde de abajo.
- * El título va encima del video, en la parte baja de lo que se ve al entrar.
+ * El video, COMPLETO (sin recorte) y con su forma real, como una tarjeta grande de esquinas redondeadas
+ * con un margen pequeño alrededor; la barra de vidrio flota encima. El título va en un recuadro de
+ * vidrio esmerilado, abajo a la izquierda de lo que se ve al entrar.
  */
 .conFondo {
   container-type: inline-size; /* permite calcular el alto del video a partir del ancho */
   display: block;
-  align-content: start; /* el video siempre pegado a la barra, aunque sobre espacio abajo */
-  min-height: 100svh;
-  padding-top: var(--alto-header);
+  min-height: 0;
+  padding: var(--marco) var(--marco) 0;
+  border-radius: 0;
 
+  --marco: 12px;
   /* Alto del video según su forma (--proporcion = ancho / alto, la calcula el sitio solo) */
   --alto-video: calc(100cqw / var(--proporcion, 1.7778));
   /* Lo que se ve del video al entrar (sin pasar del alto de la pantalla) */
-  --alto-visible: min(var(--alto-video), calc(100svh - var(--alto-header)));
-  --margen-portada: clamp(32px, 5vw, 72px);
+  --alto-visible: min(var(--alto-video), calc(100svh - 2 * var(--marco)));
+  --margen-portada: clamp(16px, 2.6vw, 36px);
 }
 
 .conFondo .fondo {
   position: relative;
   inset: auto;
+  overflow: hidden;
+  border-radius: var(--r-xl);
+  box-shadow: var(--sombra);
 }
 
 /* Foto de portada (cuando no hay video): también completa, sin recorte */
@@ -130,42 +134,57 @@
   object-fit: contain;
 }
 
-/* Sombra suave al lado izquierdo, detrás del título. Su fuerza sale de `oscuridad` en data/sitio.ts */
+/* Sombra muy suave abajo, para que el recuadro de vidrio se asiente. Su fuerza sale de `oscuridad` en data/sitio.ts */
 .velo {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(to right, rgb(12 31 20 / var(--oscuridad, 0.55)) 0%, rgb(12 31 20 / 0) 60%);
+  background: linear-gradient(to top, rgb(30 36 34 / calc(var(--oscuridad, 0.55) * 0.6)) 0%, rgb(30 36 34 / 0) 45%);
 }
 
 .conFondo .contenido {
   position: absolute;
-  top: calc(var(--alto-header) + var(--alto-visible));
-  left: 0;
-  right: 0;
+  top: calc(var(--marco) + var(--alto-visible));
+  left: var(--marco);
+  right: var(--marco);
+  width: auto;
+  max-width: none;
   transform: translateY(-100%);
-  padding-block: 0 var(--margen-portada);
+  padding: 0 var(--margen-portada) var(--margen-portada);
 }
 
-/* Sombra suave en los textos que van sobre el video (rótulo y frase) */
+/* El recuadro de vidrio con el rótulo, el título y el botón */
 .conFondo .panel {
-  text-shadow: 0 1px 12px rgb(0 0 0 / 0.55);
+  gap: 14px;
+  max-width: min(600px, 100%);
+  padding: clamp(20px, 2.4vw, 32px);
+  border: 1px solid rgb(255 255 255 / 0.6);
+  border-radius: var(--r-l);
+  background: var(--vidrio);
+  box-shadow: var(--sombra-chica);
+  backdrop-filter: var(--vidrio-blur);
+  -webkit-backdrop-filter: var(--vidrio-blur);
 }
 
-/* Con video, el título es un poco más compacto para no tapar tanto */
 .conFondo .titulo {
-  font-size: clamp(2.5rem, 1rem + 4.6vw, 5.25rem);
-  text-shadow: 0 0px 18px rgb(4, 71, 10);
+  max-width: 14ch;
+  font-size: clamp(2rem, 1rem + 3vw, 3.75rem);
+}
+
+.conFondo .accion {
+  margin-top: 6px;
 }
 
 /*
  * CELULAR / TABLETA EN VERTICAL (y pantallas muy bajitas):
- * el video es pequeño para ponerle el título encima, así que el título va debajo.
+ * el video es pequeño para ponerle el título encima, así que el recuadro va debajo.
  */
 @media (orientation: portrait) and (max-width: 1024px), (max-height: 520px) {
+  /* El video, debajo de la barra (es bajito: la barra le taparía mucho) */
   .conFondo {
-    min-height: 0;
     --margen-portada: 12px;
+
+    padding-top: var(--alto-header);
   }
 
   .conFondo .velo {
@@ -175,7 +194,14 @@
   .conFondo .contenido {
     position: relative;
     top: auto;
+    left: auto;
+    right: auto;
     transform: none;
-    padding-block: var(--e-5) var(--e-6);
+    margin-top: 12px;
+    padding: 0 0 var(--e-5);
+  }
+
+  .conFondo .panel {
+    max-width: none;
   }
 }

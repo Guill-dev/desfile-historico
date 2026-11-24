@@ -4,14 +4,16 @@
   gap: var(--e-4);
   margin-top: var(--e-6);
   padding-top: var(--e-4);
-  border-top: 2px solid var(--linea);
+  border-top: 1.5px solid var(--linea);
 }
 
 .enlace {
   display: grid;
   gap: var(--e-2);
-  font-weight: 700;
-  text-transform: uppercase;
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: var(--t-l);
+  letter-spacing: -0.02em;
   text-decoration: none;
   transition: color var(--dur-corta);
 }
@@ -25,9 +27,9 @@
 }
 
 .rotulo {
-  font-family: var(--f-mono);
-  font-weight: 500;
-  font-size: var(--t-xs);
-  letter-spacing: 0.1em;
+  font-family: var(--f-texto);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0;
   color: var(--texto-suave);
 }

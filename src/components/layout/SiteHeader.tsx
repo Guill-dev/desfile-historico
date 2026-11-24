@@ -9,8 +9,8 @@ import MenuPantalla from './MenuPantalla'
 import styles from './SiteHeader.module.css'
 
 /**
- * Barra superior fija y oscura: se oculta al bajar y reaparece al subir.
- * "Menú" abre el menú a pantalla completa.
+ * Barra superior fija: una franja de vidrio que flota sobre la página, con las esquinas redondeadas.
+ * Se oculta al bajar y reaparece al subir. "Menú" abre el menú a pantalla completa.
  */
 export default function SiteHeader() {
   const [menuAbierto, setMenuAbierto] = useState(false)
@@ -21,7 +21,7 @@ export default function SiteHeader() {
   return (
     <>
       <header className={cx(styles.header, oculta && styles.oculta)}>
-        <div className={cx('contenedor', styles.barra)}>
+        <div className={styles.barra}>
           {/* Siempre lleva al inicio (arriba de todo) y vuelve a salir la pantalla de entrada */}
           <Link to="/" onClick={alTocarLogo} className={styles.marca} aria-label="Inicio — Desfile Histórico de Gualmatán">
             <Marca />
@@ -52,8 +52,8 @@ export default function SiteHeader() {
             aria-controls="menu-pantalla"
             onClick={() => setMenuAbierto(true)}
           >
-            <span className={styles.lineas} aria-hidden="true"><i /><i /></span>
-            Menú
+            <span className={styles.lineas} aria-hidden="true"><i /><i /><i /></span>
+            <span className={styles.textoMenu}>Menú</span>
           </button>
         </div>
       </header>

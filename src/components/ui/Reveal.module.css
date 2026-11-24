@@ -1,6 +1,6 @@
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
+  transform: translateY(16px);
   transition:
     opacity var(--dur-larga) var(--ease-salida) var(--reveal-retraso, 0ms),
     transform var(--dur-larga) var(--ease-salida) var(--reveal-retraso, 0ms);

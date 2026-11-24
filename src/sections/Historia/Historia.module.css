@@ -53,7 +53,9 @@
   display: grid;
   gap: 18px;
   padding: clamp(28px, 3.5vw, 44px);
-  border-radius: var(--r-l);
+  border-radius: var(--r-xl);
+  background: var(--c-blanco);
+  box-shadow: var(--sombra);
 }
 
 .titulo {

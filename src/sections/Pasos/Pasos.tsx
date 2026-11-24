@@ -4,8 +4,9 @@ import type { Paso } from '@/types/contenido'
 import { capitulo, rotulo } from '@/data/sitio'
 import { pasos } from '@/data/pasos'
 import { cx } from '@/utils/cx'
-import { tieneArchivo } from '@/utils/media'
+import { precargarFoto, tieneArchivo } from '@/utils/media'
 import { useMuestraRotativa } from '@/hooks/useMuestraRotativa'
+import { useInView } from '@/hooks/useInView'
 import SectionHeader from '@/components/ui/SectionHeader'
 import Reveal from '@/components/ui/Reveal'
 import Boton from '@/components/ui/Boton'
@@ -26,19 +27,25 @@ const CADA_MS = 3000
  */
 const conFoto = pasos.filter((p) => tieneArchivo(p.media[0]))
 const candidatos = conFoto.length > 0 ? conFoto : pasos
+/** Antes de voltear las tarjetas se deja lista la foto de cada paso que entra */
+const precargarPaso = (p: Paso) => precargarFoto(p.media[0])
 
 /**
  * Entrada a los Pasos dentro del recorrido: unos pocos pasos al azar (de los que tienen foto) que
  * cambian solos y el acceso a la página completa (/pasos), donde salen todos en orden.
  */
 export default function Pasos() {
+  // Cerca de la pantalla (o en ella): los pasos cambian. Lejos: se quedan quietos hasta que se vuelva
+  const [ref, aLaVista] = useInView<HTMLElement>({ once: false, threshold: 0, rootMargin: '200px 0px' })
   const { visibles, anteriores, ronda, puedeGirar, pausada, alternarPausa } = useMuestraRotativa(candidatos, {
     cantidad: MUESTRA,
     cadaMs: CADA_MS,
+    aLaVista,
+    precargar: precargarPaso,
   })
 
   return (
-    <section id="pasos" className="tema-verde capitulo" aria-labelledby="pasos-titulo">
+    <section ref={ref} id="pasos" className="tema-verde capitulo" aria-labelledby="pasos-titulo">
       <div className="contenedor">
         <SectionHeader
           id="pasos-titulo"
@@ -91,9 +98,15 @@ function TarjetaPaso({ paso, className, style, fantasma }: TarjetaPasoProps) {
       inert={fantasma}
       aria-hidden={fantasma || undefined}
     >
-      <span className={cx('display', styles.numero)}>{String(paso.numero).padStart(2, '0')}</span>
-      <h3 className={styles.titulo}>{paso.titulo}</h3>
-      <Media media={paso.media[0]} ratio="4 / 3" className={styles.foto} />
+      <Media media={paso.media[0]} ratio="4 / 5" className={styles.foto} />
+      {/* Recuadro de vidrio sobre la foto: el título, el número y "Ver" */}
+      <div className={styles.info}>
+        <h3 className={styles.titulo}>{paso.titulo}</h3>
+        <div className={styles.pie}>
+          <span className={styles.numero}>Paso {paso.numero}</span>
+          <span className={styles.ver} aria-hidden="true">Ver</span>
+        </div>
+      </div>
     </Link>
   )
 }

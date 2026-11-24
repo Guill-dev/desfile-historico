@@ -43,7 +43,7 @@ export default function Historia() {
           />
         </Reveal>
 
-        <Reveal retraso={150} className={cx('tema-noche', styles.tarjeta)}>
+        <Reveal retraso={150} className={cx('tema-papel', styles.tarjeta)}>
           <p className="mono suave">Capítulo 00</p>
           <h2 id="historia-titulo" className={cx('display', styles.titulo)}>{interludios.antesDePasos}</h2>
           <p className={styles.entradilla}>{textos.historia}</p>

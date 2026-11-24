@@ -550,19 +550,29 @@ Deja `video: null` y pon la foto en `poster`. Se verá la foto a pantalla comple
 
 Todo está en **`src/styles/tokens.css`**. Cambiar un valor ahí lo cambia en todo el sitio.
 
+El estilo es **moderno**: fondos claros, letra gruesa y redondeada (sin mayúsculas), esquinas suaves, sombras
+grandes y muy suaves, y **recuadros de vidrio** sobre las fotos. Se inspira en la plantilla gratuita *AR Museum
+Guide* de Nickelfox (Figma Community, licencia CC BY 4.0: su crédito está en Créditos y no se debe quitar).
+Los colores de la bandera quedan en los acentos.
+
 | Nombre | Para qué se usa |
 |---|---|
-| `--c-verde` | Color principal: fondo de los bloques del recorrido |
-| `--c-rojo` | Botones principales, puntos de la línea de años |
-| `--c-noche` | Portada, sección de la colección, menú y pie |
-| `--c-papel` | Fondo de las fichas (lectura larga) |
-| `--c-verde-claro` | Rótulos pequeños sobre fondo oscuro |
+| `--c-papel` | Fondo claro principal (gris azulado muy suave) |
+| `--c-menta` | Fondo claro con un toque de verde (bloques del recorrido) |
+| `--c-tinta` | Texto y botones principales (gris carbón) |
+| `--c-niebla` | Buscadores, botones de ícono, etiquetas |
+| `--c-noche` | Secciones oscuras: la colección, cabeceras de las páginas, menú y pie |
+| `--c-verde`, `--c-rojo` | Acentos de la bandera: rótulos, años, puntos de la línea de tiempo, insignias |
+| `--vidrio`, `--vidrio-blur` | Los recuadros de vidrio sobre las fotos |
+| `--sombra`, `--sombra-chica` | Sombras de tarjetas |
 
-- Letras: **Rubik** (títulos y texto) e **IBM Plex Mono** (rótulos tipo archivo). Vienen de los paquetes
-  `@fontsource/rubik` y `@fontsource/ibm-plex-mono` y se sirven desde el propio sitio (no se le piden a Google:
+- Letras: **Plus Jakarta Sans** (títulos) y **Lato** (texto, rótulos y números). Vienen de los paquetes
+  `@fontsource/plus-jakarta-sans` y `@fontsource/lato` y se sirven desde el propio sitio (no se le piden a Google:
   carga más rápido y es más privado). Se cargan en `src/main.tsx`; para otro grosor, agrega su línea ahí.
-- Cada bloque usa un **tema** (`tema-verde`, `tema-noche`, `tema-papel`), definido en `src/styles/base.css`: los botones y textos cambian de color solos según el fondo.
-- 💡 Al cambiar un color, revisa que el texto encima **se siga leyendo bien** (buen contraste), sobre todo el texto blanco sobre el verde.
+- Cada bloque usa un **tema** (`tema-verde`, `tema-noche`, `tema-papel`), definido en `src/styles/base.css`: los botones, tarjetas (`--superficie`) y textos cambian de color solos según el fondo.
+- **En celulares y tabletas** el vidrio no desenfoca lo de atrás (es un blanco casi opaco): desenfocar fotos que
+  cambian o el video en cada cuadro es lo que más le cuesta a un teléfono. Se ve casi igual y va mucho más fluido.
+- 💡 Al cambiar un color, revisa que el texto encima **se siga leyendo bien** (buen contraste).
 
 ---
 

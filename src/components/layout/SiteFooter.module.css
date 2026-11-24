@@ -6,9 +6,12 @@
   border-radius: var(--r-xl) var(--r-xl) 0 0;
 }
 
+/* Las secciones de "Más": tarjetas de vidrio oscuro con una flechita en un cuadrito, como las listas de las apps */
 .lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 12px;
   margin-top: var(--e-4);
-  border-top: 1px solid var(--linea);
 }
 
 .lista a {
@@ -16,21 +19,44 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--e-3);
-  padding-block: clamp(16px, 2vw, 24px);
-  border-bottom: 1px solid var(--linea);
-  font-weight: 700;
-  font-size: clamp(1.625rem, 1rem + 2.6vw, 3rem);
-  line-height: 1;
-  text-transform: uppercase;
+  height: 100%;
+  padding: 20px 18px 20px 24px;
+  border: 1px solid var(--linea);
+  border-radius: var(--r-l);
+  background: linear-gradient(-55deg, rgb(255 255 255 / 0.1) 40%, rgb(255 255 255 / 0.02) 90%);
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(1.25rem, 1rem + 0.9vw, 1.625rem);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
   text-decoration: none;
   transition:
-    color var(--dur-corta),
-    padding var(--dur-media) var(--ease-salida);
+    background-color var(--dur-corta),
+    translate var(--dur-media) var(--ease-salida);
+}
+
+.lista a span {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-s);
+  background: rgb(255 255 255 / 0.1);
+  font-size: 1.125rem;
+  transition:
+    background-color var(--dur-corta),
+    color var(--dur-corta);
 }
 
 .lista a:hover {
-  color: var(--acento);
-  padding-left: 12px;
+  background-color: rgb(255 255 255 / 0.08);
+  translate: 0 -3px;
+}
+
+.lista a:hover span {
+  background: var(--c-blanco);
+  color: var(--c-noche);
 }
 
 .pie {

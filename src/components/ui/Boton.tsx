@@ -21,7 +21,7 @@ interface Props {
 /**
  * Botón del sitio. Variantes:
  *  - 'contorno' (por defecto): borde del color del texto; al pasar el mouse se invierte según el tema.
- *  - 'primario': rojo de la bandera. Uno por bloque, para la acción principal.
+ *  - 'primario': gris carbón (blanco en las secciones oscuras). Uno por bloque, para la acción principal.
  * Con `to` es un enlace interno; con `href`, externo; sin ninguno, un <button>.
  */
 export default function Boton({ to, href, variante = 'contorno', llamativo, className, onClick, children }: Props) {

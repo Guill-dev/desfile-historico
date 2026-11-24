@@ -366,7 +366,15 @@ export function iniciarMedicion(): () => void {
   if (!permitido()) return () => {}
 
   const opcionesPasivas = { passive: true, capture: true } as const
-  const cambios = new MutationObserver(() => buscarSecciones())
+  // La página cambia seguido (fotos que rotan, tarjetas que entran): se busca como mucho cada medio segundo
+  let busquedaPendiente = 0
+  const cambios = new MutationObserver(() => {
+    if (busquedaPendiente) return
+    busquedaPendiente = window.setTimeout(() => {
+      busquedaPendiente = 0
+      buscarSecciones()
+    }, 500)
+  })
   cambios.observe(document.body, { childList: true, subtree: true })
   const intervalo = window.setInterval(() => enviar(), MS_ENVIO)
 
@@ -382,6 +390,7 @@ export function iniciarMedicion(): () => void {
 
   return () => {
     cambios.disconnect()
+    clearTimeout(busquedaPendiente)
     clearInterval(intervalo)
     document.removeEventListener('click', alTocar, true)
     document.removeEventListener('play', alAvanzarMedio, true)

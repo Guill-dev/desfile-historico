@@ -22,3 +22,15 @@ export function tieneArchivo(media: Media | undefined): media is Media & { src: 
 export function esPendiente(media: Media | undefined): boolean {
   return !tieneArchivo(media)
 }
+
+/**
+ * Descarga y decodifica una foto antes de mostrarla: cuando la etiqueta <img> la pida, ya está lista y aparece
+ * de una (sin verse en blanco ni a pedazos). Devuelve una promesa que se cumple cuando está lista (o si falla).
+ */
+export function precargarFoto(media: Media | undefined): Promise<void> | undefined {
+  if (!tieneArchivo(media) || media.tipo !== 'imagen') return undefined
+  const img = new Image()
+  img.decoding = 'async'
+  img.src = media.src
+  return img.decode().catch(() => {})
+}

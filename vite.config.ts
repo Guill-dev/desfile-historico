@@ -79,8 +79,8 @@ function precargarLetras(): Plugin {
       order: 'post',
       handler(_html, ctx) {
         const letras = leerPoema()
-          ? /(rubik-latin-(400|700)|ibm-plex-mono-latin-500|dancing-script-latin-(500|700))-normal-[\w-]+\.woff2$/
-          : /(rubik-latin-(400|700)|ibm-plex-mono-latin-500)-normal-[\w-]+\.woff2$/
+          ? /(plus-jakarta-sans-latin-800|lato-latin-(400|700)|dancing-script-latin-(500|700))-normal-[\w-]+\.woff2$/
+          : /(plus-jakarta-sans-latin-800|lato-latin-(400|700))-normal-[\w-]+\.woff2$/
         return Object.keys(ctx.bundle ?? {})
           .filter((f) => letras.test(f))
           .map((f) => ({

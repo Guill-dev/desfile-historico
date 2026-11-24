@@ -16,6 +16,7 @@
 
 .media {
   border-radius: var(--r-l);
+  box-shadow: var(--sombra-chica);
 }
 
 .columna {
@@ -33,7 +34,6 @@
 .bloque h2,
 .bloqueAncho h2 {
   font-size: var(--t-h3);
-  text-transform: uppercase;
 }
 
 .bloqueAncho {
@@ -54,15 +54,14 @@
   gap: var(--e-2) var(--e-4);
   padding: var(--e-4);
   border-radius: var(--r-l);
-  background: color-mix(in srgb, currentColor 6%, transparent);
+  background: var(--superficie);
+  box-shadow: var(--sombra-chica);
 }
 
 .datos dt {
-  font-family: var(--f-mono);
-  font-weight: 500;
-  font-size: var(--t-xs);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-family: var(--f-texto);
+  font-weight: 700;
+  font-size: 0.8125rem;
   color: var(--texto-suave);
   padding-top: 0.2em;
 }
@@ -71,7 +70,7 @@
   display: grid;
   gap: var(--e-2);
   padding-left: var(--e-4);
-  border-left: 4px solid var(--c-rojo);
+  border-left: 4px solid var(--acento);
   font-size: var(--t-l);
 }
 
