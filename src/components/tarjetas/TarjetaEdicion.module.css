@@ -22,8 +22,15 @@
   box-shadow: var(--sombra-chica);
 }
 
+/*
+ * Las fotos casi nunca caben enteras en el recuadro: se muestra la parte de ARRIBA (un poco más abajo del borde),
+ * que es donde suelen estar las caras de la gente del desfile, y no el centro (que corta las cabezas)
+ */
 .foto {
+  --enfoque: 50% 18%;
+
   display: block;
+  object-position: var(--enfoque);
   transition: scale var(--dur-media) var(--ease-salida);
 }
 

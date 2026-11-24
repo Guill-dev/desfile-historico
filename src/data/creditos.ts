@@ -139,7 +139,7 @@ export const fuentes: GrupoFuentes[] = [
     fuentes: [
       {
         nombre: 'Escudo de Gualmatán, por Milenioscuro, vía Wikimedia Commons',
-        uso: 'El escudo dorado de la tapa del libro de la colección. Se pasó a color oro para grabarlo en el cuero (esa versión también queda con licencia CC BY-SA 3.0).',
+        uso: 'El escudo de la tapa del libro de la colección, en blanco sobre la tapa verde. Se le cambió el color (esa versión también queda con licencia CC BY-SA 3.0).',
         url: 'https://commons.wikimedia.org/wiki/File:Escudo_de_Gualmat%C3%A1n.svg',
         licencia: { nombre: 'CC BY-SA 3.0', url: 'https://creativecommons.org/licenses/by-sa/3.0/deed.es' },
         obligatorio: true,

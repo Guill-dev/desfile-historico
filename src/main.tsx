@@ -10,11 +10,6 @@ import '@fontsource/plus-jakarta-sans/latin-800.css'
 import '@fontsource/lato/latin-400.css'
 import '@fontsource/lato/latin-400-italic.css'
 import '@fontsource/lato/latin-700.css'
-// Letra manuscrita del poema de la pantalla de entrada (solo se descarga si hay poema)
-import '@fontsource/dancing-script/latin-500.css'
-import '@fontsource/dancing-script/latin-700.css'
-// Letra de grabado clásico, para la tapa del libro de la colección (solo se descarga al llegar ahí)
-import '@fontsource/cinzel/latin-600.css'
 import '@/styles/index.css'
 import { cerrarEntrada } from '@/entrada'
 

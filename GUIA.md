@@ -285,24 +285,25 @@ El comando está en `scripts/preparar-modelo.mjs` (usa [glTF-Transform](https://
   Se descarga solo cuando un modelo está por aparecer en pantalla, no al abrir la página. Los modelos comprimidos
   con Draco necesitan su decodificador, que el sitio trae en `public/draco/` (no depende de servidores externos).
 
-### La colección en el inicio: el libro antiguo 📖
-En la página de inicio las piezas salen en un **libro antiguo**, como el catálogo de un museo: tapa de **cuero café
-gastado** con filetes dorados, el **escudo de Gualmatán grabado en oro** y el título grabado en oro (letra
-Cinzel), lomo con nervios, hojas amarillentas con
-manchitas de los años y **una pieza por página**: su modelo 3D girando, su número (Nº 01), su nombre, un **texto
+### La colección en el inicio: el libro (catálogo) 📖
+En la página de inicio las piezas salen en un **libro**, como el catálogo de un museo, con el estilo moderno del
+sitio: tapa **lisa en el verde de la bandera** con un brillo suave, el **escudo de Gualmatán en blanco**, el título
+con la letra de la página y una pastillita con la bandera; hojas **blancas** de esquinas suaves y **una pieza por
+página**, sobre un fondo gris claro (como los objetos de AR Museum Guide): su modelo 3D girando, su número (Nº 01), su nombre, un **texto
 breve** de lo que es (el campo `descripcion` de `src/data/objetos.textos.ts`) y el enlace "Ver su ficha →".
 - **La pieza se puede girar y acercar ahí mismo:** arrastrándola con el mouse o deslizando el dedo sobre ella, y
   acercándola con Ctrl + rueda o pellizcando. Sigue dando vueltas sola y, si alguien la mueve, espera 2.5 s y sigue.
   Deslizar el dedo **fuera** de la pieza pasa la página.
 - **Al llegar a la sección:** el libro está **cerrado y ladeado** (se ven la tapa, el lomo y el canto de las hojas),
-  se **endereza y se cuadra en el centro**, y **la tapa se abre** sobre el lomo. Por dentro tiene el papel de guarda
-  con la etiqueta *Ex libris*; a la derecha queda la portada ("Catálogo · La colección · N piezas · *pasa la
+  se **endereza y se cuadra en el centro**, y **la tapa se abre** sobre el lomo. Por dentro tiene la guarda (menta
+  con puntitos) con una tarjeta blanca "Catálogo digital · Desfile Histórico de Gualmatán"; a la derecha queda la portada ("Catálogo · La colección · N piezas · *pasa la
   página →*"). Entonces **la esquina de la hoja se levanta tres veces** (la señal para seguir) y aparecen las flechas.
 - **Volver a la tapa:** desde la primera hoja, la flecha ← (o deslizar) **cierra el libro** y se ve la tapa otra
   vez ("Tapa"); con → o tocando la tapa, se vuelve a abrir. Cerrado, al pasar el mouse la tapa se levanta un poquito.
 - **El escudo** sale del escudo del municipio en Wikimedia Commons (de *Milenioscuro*, licencia CC BY-SA 3.0: su
   crédito está en Créditos y **no se debe quitar** mientras se use). Lo pasa a oro **`npm run escudo`**
-  (`scripts/preparar-escudo.mjs`) y queda en `src/assets/escudo-gualmatan-oro.webp`.
+  (`scripts/preparar-escudo.mjs`) y queda en `src/assets/escudo-gualmatan-oro.webp`; en la tapa se muestra en
+  blanco (lo hace la hoja de estilos, `.tapaEscudo`).
 - **Computador:** dos páginas a la vista. Al final: "Fin del catálogo" con el botón "Ver las N piezas" y la guarda
   de atrás. **Celular:** una página a la vez (la tapa se abre y se desvanece).
 - Las hojas **pasan de verdad**: giran sobre el lomo. Se pasan con las flechas ← →, tocando la **esquina doblada**,

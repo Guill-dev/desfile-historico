@@ -11,6 +11,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* Qué parte de la foto se ve cuando no cabe entera (quien la usa puede cambiarlo con --enfoque) */
+  object-position: var(--enfoque, 50% 50%);
 }
 
 /* La foto que llega: aparece sobre la anterior, acercándose apenas */

@@ -102,8 +102,8 @@ interface Props {
 }
 
 /**
- * LA COLECCIÓN COMO UN LIBRO ANTIGUO: tapa de cuero gastado con filetes dorados, lomo con nervios y hojas
- * amarillentas, con una pieza por página: su modelo 3D girando (que también se puede girar arrastrando y
+ * LA COLECCIÓN COMO UN LIBRO (un catálogo moderno, con el estilo del sitio): tapa lisa en el verde de la bandera
+ * con el escudo en blanco, hojas blancas de esquinas suaves y una pieza por página: su modelo 3D girando (que también se puede girar arrastrando y
  * acercar pellizcando o con Ctrl + rueda), su número, su nombre y un texto breve de lo que es.
  * Al llegar a la sección, el libro está cerrado y ladeado; se endereza, se cuadra en el centro y la tapa se abre.
  * Después, la esquina de la hoja se levanta para invitar a seguir. Las hojas pasan de verdad, girando sobre el
@@ -384,14 +384,14 @@ export default function LibroColeccion({ objetos, doble, titulo }: Props) {
   )
 }
 
-/** El revés de la tapa: papel de guarda con la etiqueta del dueño del libro (Ex libris) */
+/** El revés de la tapa: la guarda (menta con puntitos) con una tarjeta blanca de quién es el catálogo */
 function Guarda() {
   return (
     <div className={styles.guarda}>
       <span className={styles.exLibris}>
-        <span className={styles.exLibrisTitulo}>Ex libris</span>
-        <span className={styles.exLibrisAdorno} />
+        <span className={styles.exLibrisTitulo}>Catálogo digital</span>
         <span className={styles.exLibrisDueno}>Desfile Histórico de Gualmatán</span>
+        <span className={styles.exLibrisAdorno} />
       </span>
     </div>
   )
