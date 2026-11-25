@@ -1,6 +1,7 @@
 import type { Media, Version } from '@/types/contenido'
 import { foto, pendiente } from '@/utils/media'
 import fotos from 'virtual:fotos-versiones'
+import { historia } from './historia'
 
 /**
  * VERSIONES — cada edición (año) del desfile. El pueblo es el protagonista.
@@ -56,3 +57,13 @@ export const versiones: Version[] = anios.map((anio) => {
     autorFotos: autorFotos && suyas.length > 0 ? { nombre: autorFotos, url: autorFotosUrl } : undefined,
   }
 })
+
+/**
+ * El año del primer desfile, para el comienzo de la regla del tiempo del inicio. Sale del dato "Primera edición"
+ * de la historia (src/data/historia.textos.ts); si no está, la regla empieza en el año más antiguo que haya.
+ */
+const primeraEdicion = Number(historia.datos.find((d) => /primera edici/i.test(d.etiqueta))?.valor)
+export const primerAnio = Math.min(
+  Number.isInteger(primeraEdicion) && primeraEdicion > 1900 ? primeraEdicion : Infinity,
+  ...versiones.map((v) => v.anio),
+)

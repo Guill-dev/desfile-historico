@@ -70,13 +70,13 @@ src/
   components/
     layout/               Layout, SiteHeader, MenuPantalla, SiteFooter (incluye "Más"), ScrollManager
     media/                Media (imagen/video/audio/3D), Galeria + Visor (fotos en grande), VideoPortada, MediaPlaceholder, ModelViewer
-    ui/                   Boton, SectionHeader, CabeceraPagina, Indice, Flechas, Carrusel, Reveal, Interludio, PrevNext
+    ui/                   Boton, SectionHeader, CabeceraPagina, Indice, Reveal, Interludio, PrevNext
     marca/                Bandera de Gualmatán + Marca (logo provisional)
     tarjetas/             TarjetaCreador, TarjetaObjeto, TarjetaEdicion (iguales en el inicio y en los listados)
     ilustraciones/        GualmatanAereo: el pueblo desde el aire, animado (SVG)
     pasos/                LineaPasos (lista completa en /pasos)
   estadisticas/           Medición anónima (rastreador), envío/lectura (almacen), cálculos del panel, sesión del administrador
-  hooks/                  useInView, useSeccionActiva, usePrefersReducedMotion, useMediaQuery, useCarrusel, useEstadoScroll
+  hooks/                  useInView, useSeccionActiva, usePrefersReducedMotion, useMediaQuery, useMuestraRotativa, useEstadoScroll
   types/                  contenido.ts (forma de cada dato), react-css.d.ts (variables CSS en style)
   styles/                 tokens.css (diseño), reset.css, base.css
   utils/                  media.ts (pendiente(), tieneArchivo()), titulo.ts (título de pestaña), cx.ts

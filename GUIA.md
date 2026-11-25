@@ -108,7 +108,7 @@ La página de inicio es un recorrido de arriba hacia abajo. Cada bloque vive en 
 | 3 | **Los pasos del desfile**: pasos **al azar**, solo de los que ya tienen foto, que cambian solos (6 en 2 filas de 3 en el computador, 4 en 2 × 2 en el celular) + botón "Ver los N pasos" | `sections/Pasos/` | `data/pasos.ts` |
 | 4 | **Quienes lo hicieron posible**: vitrina giratoria 3D con los retratos y un panel con quién es cada uno | `sections/Creadores/` | `data/creadores.ts` |
 | 5 | **La colección**: un **libro** (catálogo de museo) con una pieza 3D por página (se gira y se acerca ahí mismo) y su texto breve; las hojas se pasan de verdad + botón "Ver las N piezas" | `sections/Objetos/` | `data/objetos.ts` |
-| 6 | **Cada año, el pueblo vuelve a contarla** + línea de años | `sections/Versiones/` | `data/versiones.ts` |
+| 6 | **Cada año, el pueblo vuelve a contarla** + la **regla del tiempo** (un año en grande y una regla que se arrastra) | `sections/Versiones/` | `data/versiones.ts` |
 | — | **Más del archivo** + pie (aparece en todas las páginas) | `components/layout/SiteFooter.tsx` | `data/mas.ts` |
 
 Para **cambiar el orden** o **quitar un bloque**, edita `src/pages/Recorrido/Recorrido.tsx`: es una lista con los bloques en orden.
@@ -231,9 +231,21 @@ Cada edición del desfile tiene su carpeta en **`public/media/versiones/`** con 
 - Lo que **no es una foto** (p. ej. la carpeta `…_files` que deja "Guardar página" en Facebook, o un `.html`) se
   mueve solo a `originales/versiones/<año>/otros/`: dentro de `public/` se publicaría con el sitio.
 - Un año con fotos aparece solo en "Viaje en el tiempo" (aunque no esté en la lista de `src/data/versiones.ts`).
+- **"Viaje en el tiempo" en el inicio es una regla del tiempo:** arriba, el año en grande (una foto suya y un
+  recuadro de vidrio con el año, cuántas fotos tiene y "Ver la galería"); abajo, una regla que empieza en el
+  **primer desfile** (el dato "Primera edición" de `historia.textos.ts`), con una marca por cada año con edición,
+  a la misma distancia; los tramos de años que todavía no tienen fotos se ven **punteados**.
+  - **Sola, es como una barra de carga:** muestra una foto de 2022, la barra se llena hasta 2023, muestra una de
+    2023… hasta el final, y vuelve a empezar (cada año, 3.5 s: `PASO_MS`). Las fotos de cada año salen **al azar y
+    sin repetirse** hasta que salieron todas las de ese año; entonces se barajan otra vez (`sacarFoto`).
+  - **A mano:** el botón se **arrastra**, o se toca un año, o ← → del teclado, o las flechas (en el computador).
+    Al tocarla, el recorrido se detiene y sigue solo **8 s** después; el botón ❚❚ lo detiene del todo. Fuera de
+    la pantalla o con "reducir movimiento", no avanza solo.
+  - Está en `src/sections/Versiones/`.
 - Lo hace `scripts/organizar-versiones.mjs` (lo usan el sitio y `npm run versiones`).
-- En la **tarjeta del año**, la foto **cambia sola cada 2.5 s, al azar y sin repetir** hasta que pasaron todas
-  (`src/components/media/FotosRotativas.tsx`). Usa las miniaturas, que se crean solas.
+- En la **tarjeta del año** (página "Ver todas las ediciones") y en la regla del tiempo, la foto **cambia sola, al
+  azar y sin repetir** hasta que pasaron todas (`src/components/media/FotosRotativas.tsx`). Usa las miniaturas,
+  que se crean solas. Si la foto no cabe entera, se ve su parte de arriba (donde suelen estar las caras).
 - La **`AAAA-01`** es la portada (la grande de la ficha del año). Para escoger otra, intercambia los nombres.
 - En la ficha del año (`/versiones/2025`) salen todas en la galería; al tocarlas se ven en grande.
 - El título, el resumen y **de quién son las fotos** van en **`src/data/versiones.textos.ts`**:

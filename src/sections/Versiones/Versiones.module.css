@@ -1,49 +1,310 @@
-/* Línea de tiempo: un riel continuo con un punto rojo por año */
-.linea {
-  --ancho-item: clamp(250px, 30vw, 380px);
-  padding-top: 10px;
-}
+/*
+ * VIAJE EN EL TIEMPO
+ * Arriba, el año elegido en grande (sus fotos cambiando solas y un recuadro de vidrio); abajo, la regla del
+ * tiempo con las flechas a los lados.
+ */
 
-.edicion {
+/* ── El año elegido: un recuadro mediano y centrado (más grande, las fotos se verían estiradas) ── */
+.escenario {
   position: relative;
-  padding-top: 30px;
+  max-width: 860px;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: var(--r-xl);
+  background: var(--c-niebla);
+  box-shadow: var(--sombra);
 }
 
-.edicion::before {
-  content: '';
+/* La foto del año. Cuando cambia, la nueva aparece con un fundido sobre la anterior */
+.marco {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+/* Las fotos casi nunca caben enteras: se ve la parte de arriba (las caras), no el centro */
+.capa,
+.foto {
+  display: block;
+  width: 100%;
+  object-position: 50% 18%;
+}
+
+.capa {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  object-fit: cover;
+}
+
+.entra {
+  animation: llega 0.7s ease both;
+}
+
+@keyframes llega {
+  from {
+    opacity: 0;
+    scale: 1.03;
+  }
+}
+
+/* El recuadro de vidrio: el año, cuántas fotos y el botón a su página */
+.info {
+  position: absolute;
+  left: clamp(12px, 2vw, 24px);
+  bottom: clamp(12px, 2vw, 24px);
+  display: grid;
+  justify-items: start;
+  gap: 8px;
+  max-width: calc(100% - 24px);
+  padding: clamp(16px, 2vw, 24px);
+  border: 1px solid rgb(255 255 255 / 0.6);
+  border-radius: var(--r-l);
+  background: var(--vidrio);
+  color: var(--c-tinta);
+  box-shadow: var(--sombra-chica);
+  backdrop-filter: var(--vidrio-blur);
+  -webkit-backdrop-filter: var(--vidrio-blur);
+}
+
+.anio {
+  font-size: clamp(2.5rem, 1.5rem + 3vw, 4rem);
+  line-height: 0.9;
+}
+
+.cuantas {
+  color: var(--c-tinta-suave);
+  font-weight: 700;
+}
+
+.ver {
+  margin-top: 4px;
+}
+
+/* ── La regla del tiempo ── */
+.controles {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1.5vw, 16px);
+  max-width: 980px;
+  margin: clamp(18px, 2.6vw, 28px) auto 0;
+}
+
+.flecha {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--superficie);
+  box-shadow: var(--sombra-chica);
+  color: var(--c-tinta);
+  font-size: 1.125rem;
+  transition:
+    background-color var(--dur-corta),
+    color var(--dur-corta);
+}
+
+.flecha:hover {
+  background: var(--c-tinta);
+  color: var(--c-blanco);
+}
+
+/* La regla: una tarjeta blanca; se arrastra de lado (de arriba abajo sigue moviendo la página) */
+.regla {
+  flex: 1;
+  min-width: 0;
+  padding: 44px clamp(26px, 4vw, 44px) 40px;
+  border-radius: var(--r-l);
+  background: var(--superficie);
+  box-shadow: var(--sombra-chica);
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.regla:focus-visible {
+  outline: 2px solid var(--c-tinta);
+  outline-offset: 3px;
+}
+
+.arrastrando {
+  cursor: grabbing;
+}
+
+.riel {
+  position: relative;
+  height: 4px;
+}
+
+/* Cada tramo entre dos marcas; punteado si faltan años en el medio; verde hasta el año elegido */
+.tramo {
   position: absolute;
   top: 0;
-  left: 0;
-  right: -24px;
-  height: 2px;
-  border-radius: 2px;
-  background: var(--linea);
+  left: calc(var(--desde) * 100%);
+  width: calc((var(--hasta) - var(--desde)) * 100%);
+  height: 4px;
+  border-radius: 999px;
+  background: #dde5e8;
+  transition: background 0.3s;
 }
 
-.edicion::after {
-  content: '';
+.faltan {
+  background: repeating-linear-gradient(90deg, #cdd7da 0 6px, transparent 6px 12px);
+}
+
+.recorrido {
+  background: var(--c-verde);
+}
+
+.faltan.recorrido {
+  background: repeating-linear-gradient(90deg, var(--c-verde) 0 6px, transparent 6px 12px);
+}
+
+/* La barra que se llena hasta el siguiente año (como una barra de carga), en cada paso del recorrido */
+.cargando {
   position: absolute;
-  top: -6px;
-  left: 0;
+  top: 0;
+  left: calc(var(--desde) * 100%);
+  width: calc((var(--hasta) - var(--desde)) * 100%);
+  height: 4px;
+  border-radius: 999px;
+  background: var(--c-verde);
+  transform-origin: left center;
+  animation: llena var(--paso) linear both;
+}
+
+@keyframes llena {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+/* Las marcas de los años */
+.marca {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--en) * 100%);
   width: 14px;
   height: 14px;
+  border: 2px solid #cdd7da;
   border-radius: 50%;
-  background: var(--c-rojo);
-  box-shadow: 0 0 0 4px var(--fondo);
-  transition: transform var(--dur-corta) var(--ease-salida);
+  background: var(--c-blanco);
+  translate: -50% -50%;
 }
 
-.edicion:hover::after {
-  transform: scale(1.4);
+/* El primer desfile, todavía sin fotos: hueca y punteada */
+.sinEdicion {
+  border-style: dashed;
+  background: var(--c-papel);
 }
 
-/* En el celular (2 × 2), el riel une las dos tarjetas de cada fila */
-@media (max-width: 899px) {
-  .edicion::before {
-    right: 0;
+.etiqueta {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  display: grid;
+  justify-items: center;
+  color: var(--c-tinta-suave);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  translate: -50% 0;
+  transition: opacity 0.2s;
+}
+
+.etiqueta small {
+  font-size: 0.6875rem;
+  font-weight: 400;
+}
+
+/* La del primer año, pegada a la izquierda (si se centrara, se saldría de la regla) */
+.primera .etiqueta {
+  left: -7px;
+  justify-items: start;
+  translate: 0 0;
+}
+
+/* La del año elegido no hace falta: el año ya está en la burbuja de arriba */
+.elegida .etiqueta {
+  opacity: 0;
+}
+
+/* El botón que se arrastra, con el año en una burbuja encima */
+.mano {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--en) * 100%);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--c-tinta);
+  box-shadow:
+    0 0 0 4px var(--c-blanco),
+    0 4px 14px rgb(66 66 66 / 0.35);
+  translate: -50% -50%;
+  pointer-events: none;
+  transition: left 0.45s var(--ease-salida);
+}
+
+.arrastrando .mano {
+  transition: none;
+}
+
+.burbuja {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  padding: 4px 10px;
+  border-radius: var(--r-m);
+  background: var(--c-tinta);
+  color: var(--c-blanco);
+  font-family: var(--f-display);
+  font-size: 0.875rem;
+  font-weight: 800;
+  white-space: nowrap;
+  translate: -50% 0;
+}
+
+.burbuja::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border: 5px solid transparent;
+  border-top-color: var(--c-tinta);
+  translate: -50% 0;
+}
+
+/* Celular: la regla a todo el ancho (ahí se arrastra o se toca; las flechas sobran) */
+@media (max-width: 767px) {
+  .flecha {
+    display: none;
   }
 
-  .edicion:nth-child(odd):not(:last-child)::before {
-    right: -12px;
+  .regla {
+    padding-inline: 24px;
+  }
+
+  /* El recuadro de vidrio, más compacto: que tape poco la foto */
+  .info {
+    gap: 6px;
+    padding: 14px 16px;
+  }
+
+  .anio {
+    font-size: 2.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entra {
+    animation: none;
+  }
+
+  .mano {
+    transition: none;
   }
 }

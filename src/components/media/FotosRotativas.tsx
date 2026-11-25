@@ -12,10 +12,19 @@ interface Props {
   cadaMs?: number
   ratio?: string
   className?: string
+  /**
+   * Qué tan ancho se ve el recuadro (como el atributo `sizes` de <img>, p. ej. '(max-width: 767px) 92vw, 880px').
+   * Con esto, el navegador escoge solo entre la miniatura (640 px) y la foto completa: en un recuadro grande o
+   * en una pantalla nítida usa la completa, así la foto no se ve pixelada. Sin esto, siempre la miniatura.
+   */
+  sizes?: string
 }
 
 /** La versión liviana si existe (las tarjetas son pequeñas) */
 const fuente = (m: Media) => m.miniatura ?? m.src ?? undefined
+
+/** Las dos versiones de la foto para el navegador: la miniatura (640 px) y la completa (hasta 1600 px) */
+const juego = (m: Media) => (m.miniatura && m.src ? `${m.miniatura} 640w, ${m.src} 1600w` : undefined)
 
 /**
  * Una foto que cambia sola cada `cadaMs`, AL AZAR Y SIN REPETIR: las fotos salen de una "bolsa" barajada y no
@@ -24,7 +33,7 @@ const fuente = (m: Media) => m.miniatura ?? m.src ?? undefined
  * Cada una empieza con un desfase al azar, para que si hay varias en pantalla no cambien todas a la vez.
  * Se detiene fuera de pantalla y con "reducir movimiento".
  */
-export default function FotosRotativas({ fotos, cadaMs = 2500, ratio = '16 / 10', className }: Props) {
+export default function FotosRotativas({ fotos, cadaMs = 2500, ratio = '16 / 10', className, sizes }: Props) {
   const reducirMovimiento = usePrefersReducedMotion()
   const marco = useRef<HTMLSpanElement>(null)
   const bolsa = useRef<number[]>([])
@@ -61,8 +70,12 @@ export default function FotosRotativas({ fotos, cadaMs = 2500, ratio = '16 / 10'
         actualRef.current = n
         reloj = window.setTimeout(siguiente, cadaMs)
       }
-      // Se cambia cuando la nueva ya está lista para verse
+      // Se cambia cuando la nueva ya está lista para verse (la misma versión que va a mostrar la página)
       const img = new Image()
+      if (sizes && juego(fotos[n])) {
+        img.sizes = sizes
+        img.srcset = juego(fotos[n]) ?? ''
+      }
       img.src = fuente(fotos[n]) ?? ''
       img.decode().then(mostrar, mostrar)
     }
@@ -72,7 +85,7 @@ export default function FotosRotativas({ fotos, cadaMs = 2500, ratio = '16 / 10'
       vivo = false
       clearTimeout(reloj)
     }
-  }, [enPantalla, reducirMovimiento, fotos, cadaMs])
+  }, [enPantalla, reducirMovimiento, fotos, cadaMs, sizes])
 
   const foto = fotos[actual]
 
@@ -80,11 +93,20 @@ export default function FotosRotativas({ fotos, cadaMs = 2500, ratio = '16 / 10'
     <span ref={marco} className={cx(styles.marco, className)} style={{ aspectRatio: ratio }}>
       {/* La anterior se queda debajo (con la misma clave que tenía: no se vuelve a cargar) */}
       {anterior !== null && (
-        <img key={`${anterior}-${ronda - 1}`} src={fuente(fotos[anterior])} alt="" className={styles.foto} />
+        <img
+          key={`${anterior}-${ronda - 1}`}
+          src={fuente(fotos[anterior])}
+          srcSet={sizes ? juego(fotos[anterior]) : undefined}
+          sizes={sizes}
+          alt=""
+          className={styles.foto}
+        />
       )}
       <img
         key={`${actual}-${ronda}`}
         src={fuente(foto)}
+        srcSet={sizes ? juego(foto) : undefined}
+        sizes={sizes}
         alt={foto.alt}
         loading={ronda === 0 ? 'lazy' : undefined}
         decoding="async"
