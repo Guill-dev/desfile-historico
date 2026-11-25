@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { alAzarDe, barajar } from '@/utils/azar'
+import { barajar } from '@/utils/azar'
 import { usePrefersReducedMotion } from './usePrefersReducedMotion'
 
 interface Opciones<T> {
@@ -53,24 +53,52 @@ function repartir(prioridades: number[], cantidad: number): Reparto {
 }
 
 /**
- * Nueva muestra. Los fijos conservan su casilla, para que no se muevan cuando cambian los demás.
- * Entran los que estaban esperando su turno; si son menos que las casillas que giran (p. ej. 5 piezas
- * para 4 casillas), solo cambian esas casillas y las demás se quedan como están.
+ * LA BOLSA: los que todavía no han salido en esta vuelta, barajados. Se sacan de ahí y no vuelve a salir ninguno
+ * hasta que salieron todos; entonces se baraja otra vez (sin los que se están viendo, para que siempre cambien).
+ * Devuelve los sacados y lo que queda en la bolsa.
  */
-function elegir({ fijos, rotan }: Reparto, cantidad: number, anterior?: number[]): number[] {
-  if (!anterior) return [...barajar(fijos), ...alAzarDe(rotan, Math.max(0, cantidad - fijos.length))]
-  const esperando = barajar(rotan.filter((i) => !anterior.includes(i)))
-  const casillas = barajar(anterior.flatMap((i, c) => (fijos.includes(i) ? [] : [c]))).slice(0, esperando.length)
-  const nueva = [...anterior]
-  casillas.forEach((c, k) => {
-    nueva[c] = esperando[k]
-  })
-  return nueva
+function sacar(bolsa: readonly number[], rotan: readonly number[], cuantos: number, evitar: readonly number[]) {
+  const tomados: number[] = []
+  let resto = [...bolsa]
+  while (tomados.length < cuantos) {
+    if (resto.length === 0) {
+      // Salieron todos: nueva vuelta, al azar. Los que se están viendo (y los recién sacados) también entran, pero
+      // al fondo de la bolsa: salen de últimos, así ninguno se repite pronto y en cada vuelta salen todos
+      const recientes = rotan.filter((i) => evitar.includes(i) || tomados.includes(i))
+      resto = [...barajar(recientes), ...barajar(rotan.filter((i) => !recientes.includes(i)))]
+      if (resto.every((i) => evitar.includes(i) || tomados.includes(i))) break
+    }
+    const n = resto.pop() as number
+    if (!evitar.includes(n) && !tomados.includes(n)) tomados.push(n)
+  }
+  return { tomados, resto }
 }
 
 /**
- * Una muestra al azar de una lista que se renueva sola cada cierto tiempo (p. ej. 4 de los 79 pasos).
- * Cada vez que alguien entra ve otros, y cada `cadaMs` cambian por otros que no estaban.
+ * Nueva muestra, sacada de la bolsa (ver sacar). Los fijos conservan su casilla, para que no se muevan cuando
+ * cambian los demás. Si quedan menos para entrar que casillas que giran (p. ej. 5 piezas para 4 casillas), solo
+ * cambian esas casillas y las demás se quedan como están.
+ */
+function elegir({ fijos, rotan }: Reparto, cantidad: number, bolsa: readonly number[], anterior?: number[]) {
+  if (!anterior) {
+    const { tomados, resto } = sacar(bolsa, rotan, Math.max(0, cantidad - fijos.length), [])
+    return { muestra: [...barajar(fijos), ...tomados], bolsa: resto }
+  }
+  const casillas = anterior.flatMap((i, c) => (fijos.includes(i) ? [] : [c]))
+  const { tomados, resto } = sacar(bolsa, rotan, casillas.length, anterior)
+  const nueva = [...anterior]
+  barajar(casillas)
+    .slice(0, tomados.length)
+    .forEach((c, k) => {
+      nueva[c] = tomados[k]
+    })
+  return { muestra: nueva, bolsa: resto }
+}
+
+/**
+ * Una muestra al azar de una lista que se renueva sola cada cierto tiempo (p. ej. 6 de los 79 pasos).
+ * Cada vez que alguien entra ve otros, y cada `cadaMs` cambian por otros. NO SE REPITEN: uno que ya salió no
+ * vuelve a salir hasta que salieron todos; entonces empieza otra vuelta, al azar (ver sacar).
  * Con `prioridad`, los más importantes se quedan siempre a la vista y solo cambian las demás casillas.
  *
  * Cambia siempre, aunque el mouse o el dedo estén encima o se esté desplazando la página: así invita
@@ -84,12 +112,17 @@ export function useMuestraRotativa<T>(
   const reparto = useMemo(() => repartir(todos.map((x) => prioridad?.(x) ?? 0), cantidad), [todos, prioridad, cantidad])
 
   // actual: lo que se ve; previa: lo que se veía (se va con una animación mientras entra lo nuevo)
-  const [{ actual, previa, ronda }, setMuestra] = useState(() => ({
-    actual: elegir(reparto, cantidad),
-    previa: [] as number[],
-    /** Cuántas veces cambió: 0 = la primera muestra (sin animación de cambio) */
-    ronda: 0,
-  }))
+  const [{ actual, previa, ronda, bolsa }, setMuestra] = useState(() => {
+    const primera = elegir(reparto, cantidad, [])
+    return {
+      actual: primera.muestra,
+      previa: [] as number[],
+      /** Cuántas veces cambió: 0 = la primera muestra (sin animación de cambio) */
+      ronda: 0,
+      /** Los que todavía no han salido en esta vuelta */
+      bolsa: primera.bolsa,
+    }
+  })
   const [pausada, setPausada] = useState(false)
   const reducirMovimiento = usePrefersReducedMotion()
 
@@ -98,11 +131,13 @@ export function useMuestraRotativa<T>(
   // Fuera de la pantalla no cambia (nadie lo ve): así no se descargan fotos ni se animan tarjetas por nada
   const girando = puedeGirar && !pausada && aLaVista
 
-  // Lo que se ve ahora, para elegir lo siguiente sin esperar a un nuevo render
+  // Lo que se ve ahora y lo que queda en la bolsa, para elegir lo siguiente sin esperar a un nuevo render
   const actualRef = useRef(actual)
+  const bolsaRef = useRef(bolsa)
   useEffect(() => {
     actualRef.current = actual
-  }, [actual])
+    bolsaRef.current = bolsa
+  }, [actual, bolsa])
 
   useEffect(() => {
     if (!girando) return
@@ -111,13 +146,13 @@ export function useMuestraRotativa<T>(
     // Cada `cadaMs`: se eligen los nuevos, se dejan listas sus fotos y recién ahí se voltean las tarjetas
     const cambiar = async () => {
       const antes = actualRef.current
-      const nueva = elegir(reparto, cantidad, antes)
+      const { muestra: nueva, bolsa: queda } = elegir(reparto, cantidad, bolsaRef.current, antes)
       if (precargar) {
         const llegan = nueva.filter((i) => !antes.includes(i)).map((i) => precargar(todos[i]))
         await Promise.race([Promise.allSettled(llegan), new Promise((r) => setTimeout(r, ESPERA_MAX_MS))])
       }
       if (!vigente) return
-      setMuestra((m) => ({ actual: nueva, previa: m.actual, ronda: m.ronda + 1 }))
+      setMuestra((m) => ({ actual: nueva, previa: m.actual, ronda: m.ronda + 1, bolsa: queda }))
       espera = window.setTimeout(cambiar, cadaMs)
     }
     espera = window.setTimeout(cambiar, cadaMs)

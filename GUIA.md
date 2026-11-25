@@ -105,7 +105,7 @@ La página de inicio es un recorrido de arriba hacia abajo. Cada bloque vive en 
 |---|---|---|---|
 | 1 | **Portada** oscura con el video, el título y el botón rojo | `sections/Inicio/` | `data/sitio.ts` → `sitio` y `portada` |
 | 2 | **Conoce la historia**: animación del mundo a Gualmatán, que termina en la foto del pueblo + tarjeta oscura | `sections/Historia/` | `data/sitio.ts` → `textos.historia` |
-| 3 | **Los pasos del desfile**: pasos **al azar**, solo de los que ya tienen foto, que cambian solos (6 en 2 filas de 3 en el computador, 4 en 2 × 2 en el celular) + botón "Ver los N pasos" | `sections/Pasos/` | `data/pasos.ts` |
+| 3 | **Los pasos del desfile**: pasos **al azar y sin repetir**, solo de los que ya tienen foto, que cambian solos (6 en 2 filas de 3 en el computador, 4 en 2 × 2 en el celular) + botón "Ver los N pasos" | `sections/Pasos/` | `data/pasos.ts` |
 | 4 | **Quienes lo hicieron posible**: vitrina giratoria 3D con los retratos y un panel con quién es cada uno | `sections/Creadores/` | `data/creadores.ts` |
 | 5 | **La colección**: un **libro** (catálogo de museo) con una pieza 3D por página (se gira y se acerca ahí mismo) y su texto breve; las hojas se pasan de verdad + botón "Ver las N piezas" | `sections/Objetos/` | `data/objetos.ts` |
 | 6 | **Cada año, el pueblo vuelve a contarla** + la **regla del tiempo** (un año en grande y una regla que se arrastra) | `sections/Versiones/` | `data/versiones.ts` |
@@ -118,11 +118,13 @@ Para **cambiar el orden** o **quitar un bloque**, edita `src/pages/Recorrido/Rec
 En el computador siguen siendo carruseles con flechas. Las tarjetas son las mismas en el inicio y en esas páginas:
 están en `src/components/tarjetas/` (cambiar una cambia las dos).
 
-🎲 **Pasos y piezas al azar.** Cada vez que alguien entra ve otros, y cambian solos por otros (**los pasos cada 3 segundos, las piezas cada 6**)
-(las tarjetas se voltean como cartas). Cambian **siempre**, aunque el mouse o el dedo estén encima o se esté
-desplazando la página: así invitan a entrar. Solo se detienen si la persona pulsa el botón de pausa (❚❚) o si su
-teléfono o computador tiene activado "reducir movimiento".
-- Para cambiar el tiempo: `CADA_MS` (en milisegundos: 3000 = 3 s) en `src/sections/Pasos/Pasos.tsx` y `src/sections/Objetos/Objetos.tsx`.
+🎲 **Pasos al azar, sin repetir.** Cada vez que alguien entra ve otros, y cambian solos por otros **cada 3 segundos**
+(las tarjetas se voltean como cartas). **Un paso que ya salió no vuelve a salir hasta que salieron todos**; entonces
+empieza otra vuelta, al azar (los que se están viendo en ese momento quedan de últimos en la vuelta nueva).
+Cambian **siempre**, aunque el mouse o el dedo estén encima o se esté desplazando la página: así invitan a entrar.
+Solo se detienen si la persona pulsa el botón de pausa (❚❚), si la sección no está en pantalla o si su teléfono o
+computador tiene activado "reducir movimiento". (Está en `src/hooks/useMuestraRotativa.ts`.)
+- Para cambiar el tiempo: `CADA_MS` (en milisegundos: 3000 = 3 s) en `src/sections/Pasos/Pasos.tsx`.
 - 📷 En el inicio solo salen **los pasos que ya tienen foto** (su `principal`). Los demás están en `/pasos`.
   Si ninguno tiene foto todavía, salen todos.
 - En la página `/pasos` salen todos **en orden**; en `/objetos`, en un orden al azar distinto cada vez.
