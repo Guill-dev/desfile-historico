@@ -18,7 +18,7 @@ export default function Inicio() {
   return (
     <section
       id="inicio"
-      className={cx('tema-papel', styles.inicio, tieneFondo && styles.conFondo)}
+      className={cx('tema-verde', styles.inicio, tieneFondo && styles.conFondo)}
       aria-labelledby="inicio-titulo"
       style={{ '--proporcion': proporcion, '--oscuridad': portada.oscuridad }}
     >

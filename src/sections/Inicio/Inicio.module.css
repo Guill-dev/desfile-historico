@@ -198,7 +198,8 @@
     right: auto;
     transform: none;
     margin-top: 12px;
-    padding: 0 0 var(--e-5);
+    /* Poco espacio abajo: la historia empieza enseguida (sin franjas vacías) */
+    padding: 0 0 12px;
   }
 
   .conFondo .panel {
