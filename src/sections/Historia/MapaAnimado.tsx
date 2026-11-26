@@ -87,18 +87,59 @@ interface Capas {
   anillo: HTMLElement
 }
 
+/**
+ * En celulares y tabletas (pantalla táctil) el mapa se dibuja un poco menos fino: con menos puntos al curvar las
+ * líneas sobre el globo y con el lienzo a 1.5× (en vez de 2×). A ese tamaño no se nota y cada cuadro sale mucho
+ * más rápido, así la animación va fluida.
+ */
+const tactil = () => window.matchMedia('(hover: none)').matches
+
 /** Prepara el dibujo y devuelve la función que pinta el instante t (en segundos) */
 function crearDibujo(d3: D3, datos: DatosMapa, capas: Capas) {
   const { lienzo, escena } = capas
   const ctx = lienzo.getContext('2d')!
   // Los rótulos (América, Colombia…) se buscan por su data-rotulo
   const rotulos = new Map([...escena.querySelectorAll<HTMLElement>('[data-rotulo]')].map((el) => [el.dataset.rotulo ?? '', el]))
-  const proyeccion = d3.geoOrthographic().clipAngle(90).precision(0.5)
+  const proyeccion = d3
+    .geoOrthographic()
+    .clipAngle(90)
+    .precision(tactil() ? 1.2 : 0.5)
   const camino = d3.geoPath(proyeccion, ctx)
   const esfera: GeoPermissibleObjects = { type: 'Sphere' }
   // Colombia entera = los otros 32 departamentos + Nariño, en un solo relleno (sin costura entre ellos)
   const colombiaEntera = { type: 'GeometryCollection', geometries: [datos.colombia, datos.narino] } as GeoPermissibleObjects
   const reticula = d3.geoGraticule10()
+
+  /*
+   * SOLO LO QUE SE VE. Colombia (32 departamentos y Nariño), los vecinos (5 países) y los 64 municipios son muchas
+   * piezas con miles de puntos. Cuando el mapa está acercado, casi todas quedan fuera del recuadro: se guarda la
+   * caja de cada una (de dónde a dónde va en longitud y latitud) y en cada cuadro solo se dibujan las que tocan lo
+   * que se ve. Es lo que más alivia al celular en la parte de Colombia y Nariño.
+   */
+  type Caja = [[number, number], [number, number]]
+  const conCaja = (g: GeoPermissibleObjects) => ({ g, caja: d3.geoBounds(g) as Caja })
+  const partes = (grupo: GeoPermissibleObjects) =>
+    ((grupo as { geometries?: GeoPermissibleObjects[] }).geometries ?? [grupo]).map(conCaja)
+  const piezasColombia = [...partes(datos.colombia), conCaja(datos.narino)]
+  const piezasVecinos = partes(datos.vecinos)
+  const piezasMunicipios = partes(datos.municipios)
+  // Los continentes vienen en una sola forma: se parten en sus pedazos (cada isla, cada continente)
+  const piezasTierra = ((datos.tierra as { coordinates?: unknown[] }).coordinates ?? []).map((c) =>
+    conCaja({ type: 'Polygon', coordinates: c } as GeoPermissibleObjects),
+  )
+  /** Lo que se ve en este cuadro (longitud y latitud), con margen; null = el globo entero */
+  let ventana: Caja | null = null
+  const visibles = (piezas: { g: GeoPermissibleObjects; caja: Caja }[]) =>
+    ({
+      type: 'GeometryCollection',
+      geometries: (ventana
+        ? piezas.filter(({ caja: [[o, s], [e, n]] }) => {
+            const [[vo, vs], [ve, vn]] = ventana as Caja
+            return e >= vo && o <= ve && n >= vs && s <= vn
+          })
+        : piezas
+      ).map((p) => p.g),
+    }) as GeoPermissibleObjects
   const gualmatan = datos.cabeceras.gualmatan
   const interpolar = CAMARA.slice(1).map((b, i) => d3.geoInterpolate([...CAMARA[i].centro], [...b.centro]))
 
@@ -106,7 +147,7 @@ function crearDibujo(d3: D3, datos: DatosMapa, capas: Capas) {
   let alto = 0
   const medir = () => {
     const r = escena.getBoundingClientRect()
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    const dpr = Math.min(window.devicePixelRatio || 1, tactil() ? 1.5 : 2)
     ancho = r.width
     alto = r.height
     lienzo.width = Math.round(ancho * dpr)
@@ -126,7 +167,12 @@ function crearDibujo(d3: D3, datos: DatosMapa, capas: Capas) {
     return { centro: interpolar[i](e), k: Math.exp(Math.log(a.k) + (Math.log(b.k) - Math.log(a.k)) * e) }
   }
 
+  /**
+   * Dibuja una forma. Lo que en ese momento está apagado (transparente) NO se dibuja: es de lo que más trabajo
+   * ahorra, porque cada capa tiene miles de puntos (los continentes no hacen falta cuando ya se está en Nariño).
+   */
   const trazar = (forma: GeoPermissibleObjects, relleno: string | null, linea: string | null, grosor = 1) => {
+    if (ctx.globalAlpha < 0.005) return
     ctx.beginPath()
     camino(forma)
     if (relleno) {
@@ -136,6 +182,42 @@ function crearDibujo(d3: D3, datos: DatosMapa, capas: Capas) {
     if (linea) {
       ctx.strokeStyle = linea
       ctx.lineWidth = grosor
+      ctx.stroke()
+    }
+  }
+
+  /** Una forma con relleno y varias líneas encima, calculando su camino una sola vez */
+  const trazarVarias = (forma: GeoPermissibleObjects, relleno: string | null, lineas: [string, number][]) => {
+    if (ctx.globalAlpha < 0.005) return
+    ctx.beginPath()
+    camino(forma)
+    if (relleno) {
+      ctx.fillStyle = relleno
+      ctx.fill()
+    }
+    for (const [color, grosor] of lineas) {
+      ctx.strokeStyle = color
+      ctx.lineWidth = grosor
+      ctx.stroke()
+    }
+  }
+
+  /**
+   * Un resplandor alrededor de una forma, hecho con líneas cada vez más anchas y más tenues (y no con el
+   * desenfoque del lienzo, shadowBlur, que es de lo más pesado de dibujar en un celular)
+   */
+  const resplandor = (forma: GeoPermissibleObjects, color: (a: number) => string, grosor: number) => {
+    const base = ctx.globalAlpha
+    if (base < 0.005) return
+    ctx.beginPath()
+    camino(forma)
+    for (const [ancho, a] of [
+      [grosor * 9, 0.06],
+      [grosor * 5, 0.12],
+      [grosor * 2.5, 0.22],
+    ] as const) {
+      ctx.strokeStyle = color(a)
+      ctx.lineWidth = ancho
       ctx.stroke()
     }
   }
@@ -155,35 +237,45 @@ function crearDibujo(d3: D3, datos: DatosMapa, capas: Capas) {
         [ancho + 2, alto + 2],
       ])
 
+    // Cuando ya no se ve el globo entero: la ventana de lo que se ve (en grados, con margen), para dibujar solo eso.
+    // En el globo, un punto a d píxeles del centro está a asin(d / radio) del centro
+    const radioGlobo = k * alto
+    const distancia = Math.max(ancho, alto) * 0.85
+    if (distancia < radioGlobo * 0.95) {
+      const medio = (Math.asin(distancia / radioGlobo) * 180) / Math.PI
+      const medioAncho = Math.min(180, medio / Math.max(0.2, Math.cos((centro[1] * Math.PI) / 180)))
+      ventana = [
+        [centro[0] - medioAncho, centro[1] - medio],
+        [centro[0] + medioAncho, centro[1] + medio],
+      ]
+    } else ventana = null
+
     ctx.clearRect(0, 0, ancho, alto)
     ctx.lineJoin = 'round'
 
     // Mar y borde del globo (el borde brilla mientras se ve el globo entero)
     const entrada = rampa(t, 0, 0.7)
     ctx.globalAlpha = entrada
+    if (k < 1.2) resplandor(esfera, (a) => `rgba(143, 211, 164, ${a})`, 1.5)
     trazar(esfera, '#0f2b1c', null)
-    if (k < 1.2) {
-      ctx.save()
-      ctx.shadowColor = 'rgba(143, 211, 164, 0.6)'
-      ctx.shadowBlur = 24
-      trazar(esfera, null, 'rgba(143, 211, 164, 0.55)', 1.5)
-      ctx.restore()
-    }
+    if (k < 1.2) trazar(esfera, null, 'rgba(143, 211, 164, 0.55)', 1.5)
     ctx.globalAlpha = entrada * (1 - rampa(t, 2.4, 3.3))
     trazar(reticula, null, 'rgba(255, 255, 255, 0.07)', 0.8)
 
     // Continentes (detalle bajo) → al acercarse, Colombia y sus vecinos (más detalle)
     ctx.globalAlpha = entrada * (1 - rampa(t, 2.5, 3.3))
-    trazar(datos.tierra, 'rgba(143, 211, 164, 0.16)', 'rgba(143, 211, 164, 0.55)', 0.8)
+    trazar(ventana ? visibles(piezasTierra) : datos.tierra, 'rgba(143, 211, 164, 0.16)', 'rgba(143, 211, 164, 0.55)', 0.8)
     ctx.globalAlpha = rampa(t, 2.5, 3.3) * (1 - rampa(t, 5.6, 6.4))
     // Los vecinos (Ecuador…) vienen de otro mapa: su borde se ensancha en su mismo color (#244632, el verde suave
     // sobre el mar, sin transparencia) para tapar cualquier rendija con la frontera del DANE
-    trazar(datos.vecinos, '#244632', '#244632', 6)
-    trazar(datos.vecinos, null, 'rgba(143, 211, 164, 0.5)', 1)
+    trazarVarias(visibles(piezasVecinos), '#244632', [
+      ['#244632', 6],
+      ['rgba(143, 211, 164, 0.5)', 1],
+    ])
 
     // Colombia se enciende en blanco; al llegar a Nariño se apaga
     ctx.globalAlpha = rampa(t, 1.9, 2.9) * (1 - 0.8 * rampa(t, 4.7, 5.5))
-    trazar(colombiaEntera, 'rgba(255, 255, 255, 0.92)', '#ffffff', 1.2)
+    trazar(ventana ? visibles(piezasColombia) : colombiaEntera, 'rgba(255, 255, 255, 0.92)', '#ffffff', 1.2)
 
     // Nariño: rojo (desde Colombia) → verde con las líneas de sus municipios (ya adentro).
     // Se rellena con su contorno entero, y encima van solo las divisiones: no quedan partes sin pintar
@@ -196,18 +288,15 @@ function crearDibujo(d3: D3, datos: DatosMapa, capas: Capas) {
     if (verde > 0) {
       ctx.globalAlpha = verde
       trazar(datos.narino, '#0a6e2b', 'rgba(255, 255, 255, 0.7)', 1.4)
-      trazar(datos.municipios, null, 'rgba(255, 255, 255, 0.42)', 1)
+      trazar(visibles(piezasMunicipios), null, 'rgba(255, 255, 255, 0.42)', 1)
     }
 
     // Gualmatán, en rojo y brillando
     const pueblo = rampa(t, 5.4, 5.9)
     if (pueblo > 0) {
-      ctx.save()
       ctx.globalAlpha = pueblo
-      ctx.shadowColor = 'rgba(218, 18, 26, 0.9)'
-      ctx.shadowBlur = 22
+      resplandor(datos.gualmatan, (a) => `rgba(218, 18, 26, ${a * 2})`, 1.6)
       trazar(datos.gualmatan, '#da121a', '#ffffff', 1.6)
-      ctx.restore()
     }
     ctx.globalAlpha = 1
 
@@ -306,6 +395,12 @@ export default function MapaAnimado({ final }: { final: ReactNode }) {
       let antes = performance.now()
       let quieto = false
       const paso = (ahora: number) => {
+        // Como mucho ~60 cuadros por segundo: en las pantallas de 120 Hz no se dibuja el doble (no se nota y
+        // al celular le cuesta el doble)
+        if (ahora - antes < 14) {
+          cuadro.current = requestAnimationFrame(paso)
+          return
+        }
         // Un salto grande (otra pestaña, celular bloqueado) no adelanta la animación
         tiempo.current += Math.min((ahora - antes) / 1000, 0.1)
         antes = ahora
@@ -422,6 +517,14 @@ export default function MapaAnimado({ final }: { final: ReactNode }) {
         setFase('animando')
         d?.medir()
         d?.dibujar(t, repetida)
+      },
+      /** Cuántos milisegundos tarda en dibujar el segundo t (promedio de n veces), para medir la fluidez */
+      tiempo: async (t: number, n = 20) => {
+        const d = await preparar()
+        if (!d) return 0
+        const a = performance.now()
+        for (let i = 0; i < n; i++) d.dibujar(t)
+        return (performance.now() - a) / n
       },
       reproducir,
     }

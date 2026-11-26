@@ -340,6 +340,11 @@ el globo gira hasta **América**, se acerca a **Colombia** (en blanco), a **Nari
 y, *¡tin!*, cae un punto rojo sobre **Gualmatán**. Al final, la **foto del pueblo** se abre en círculo desde el punto,
 se queda **3.5 segundos** y la animación **vuelve a empezar, siempre** (la foto se desvanece sobre el globo).
 - Si la sección sale de la pantalla, la animación se detiene (no gasta batería) y sigue donde iba al volver.
+- **Para que vaya fluido en el celular:** solo se dibuja lo que se ve (las capas apagadas no se dibujan y, ya
+  acercado, solo los departamentos, municipios y países que caen en el recuadro); los brillos se hacen con líneas
+  y no con desenfoque; como mucho ~60 cuadros por segundo (en pantallas de 120 Hz no dibuja el doble); y en
+  pantallas táctiles el lienzo va a 1.5× y las curvas con un poco menos de detalle (no se nota). En desarrollo,
+  `window.__mapa.tiempo(5)` dice cuántos milisegundos tarda en dibujar el segundo 5.
 - Un botón pequeño y redondo (❚❚) abajo a la izquierda la pausa: las animaciones que se repiten solas deben poder
   detenerse (accesibilidad). Los tiempos se cambian en `MapaAnimado.tsx` (`FOTO_QUIETA`, `TERMINA`…).
 - La foto es **`src/assets/fotos/gualmatan-principal.jpg`**. Para cambiarla, reemplaza ese archivo por otro con el

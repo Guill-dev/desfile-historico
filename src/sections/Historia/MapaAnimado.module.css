@@ -263,3 +263,16 @@
     animation: none;
   }
 }
+
+/*
+ * En celulares y tabletas, los botones que van sobre el mapa no desenfocan lo de atrás: el mapa cambia en cada
+ * cuadro y desenfocarlo cada vez le cuesta mucho al teléfono. Un fondo más oscuro se ve casi igual.
+ */
+@media (hover: none) {
+  .pausa,
+  .otraVez {
+    background: rgb(12 31 20 / 0.82);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
