@@ -201,6 +201,10 @@ Cada paso tiene su carpeta en **`public/media/pasos/`**: `paso-01`, `paso-02` �
   `public/media/miniaturas/` (p. ej. `miniaturas/pasos/paso-03.jpg`), para mostrar muchas fotos a la vez sin que
   el celular se trabe (en el código: `media[0].miniatura`). Se crean al encender o publicar el sitio y se rehacen
   si cambias la foto: no hay que hacer nada. Si se borra la carpeta `miniaturas`, se vuelve a crear.
+  - **El navegador escoge solo** entre la miniatura y la foto completa según qué tan grande se ve y la pantalla
+    (atributo `sizes`, ver `juegoDeFoto` en `src/utils/media.ts`): en las tarjetas de pasos del inicio y en el
+    celular casi siempre la miniatura (unas 5 veces más liviana); en recuadros grandes o pantallas muy nítidas, la
+    completa. En el inicio, en el celular, solo se eligen los 4 pasos que se ven.
 - 🔒 **Por ahora las fotos no se suben a GitHub** (están en `.git/info/exclude`; las carpetas vacías sí).
   Para publicarlas, borra de ese archivo las líneas de `public/media/pasos/` y haz el commit.
 

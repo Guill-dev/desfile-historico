@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Media } from '@/types/contenido'
 import { cx } from '@/utils/cx'
 import { barajar } from '@/utils/azar'
+import { juegoDeFoto } from '@/utils/media'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import styles from './FotosRotativas.module.css'
 
@@ -24,7 +25,7 @@ interface Props {
 const fuente = (m: Media) => m.miniatura ?? m.src ?? undefined
 
 /** Las dos versiones de la foto para el navegador: la miniatura (640 px) y la completa (hasta 1600 px) */
-const juego = (m: Media) => (m.miniatura && m.src ? `${m.miniatura} 640w, ${m.src} 1600w` : undefined)
+const juego = juegoDeFoto
 
 /**
  * Una foto que cambia sola cada `cadaMs`, AL AZAR Y SIN REPETIR: las fotos salen de una "bolsa" barajada y no

@@ -4,7 +4,7 @@ import { capitulo, interludios, rotulo } from '@/data/sitio'
 import { primerAnio, versiones } from '@/data/versiones'
 import { cx } from '@/utils/cx'
 import { barajar } from '@/utils/azar'
-import { tieneArchivo } from '@/utils/media'
+import { juegoDeFoto, precargarFoto, tieneArchivo } from '@/utils/media'
 import { useInView } from '@/hooks/useInView'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
@@ -76,20 +76,10 @@ function sacarFoto(v: Version): Recurso {
 }
 
 /** La miniatura (640 px) y la completa (hasta 1600 px): el navegador escoge según el tamaño y la pantalla */
-const juego = (m: Recurso) => (m.miniatura && m.src ? `${m.miniatura} 640w, ${m.src} 1600w` : undefined)
+const juego = juegoDeFoto
 
 /** Deja la foto descargada y lista antes de mostrarla (la misma versión que va a escoger la página) */
-function precargar(m: Recurso): Promise<void> {
-  if (!tieneArchivo(m)) return Promise.resolve()
-  const img = new Image()
-  const srcset = juego(m)
-  if (srcset) {
-    img.sizes = TAMANO
-    img.srcset = srcset
-  }
-  img.src = m.miniatura ?? m.src
-  return img.decode().catch(() => {})
-}
+const precargar = (m: Recurso) => precargarFoto(m, TAMANO) ?? Promise.resolve()
 
 /**
  * VIAJE EN EL TIEMPO: una regla de años, desde el primer desfile hasta hoy.

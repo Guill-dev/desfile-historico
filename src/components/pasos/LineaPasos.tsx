@@ -6,6 +6,9 @@ import Boton from '@/components/ui/Boton'
 import Media from '@/components/media/Media'
 import styles from './LineaPasos.module.css'
 
+/** Qué tan ancha se ve la foto de cada paso: con esto, donde alcanza, se usa su miniatura (mucho más liviana) */
+const TAMANO_FOTO = '(max-width: 767px) calc(100vw - 64px), 620px'
+
 /**
  * Lista completa de pasos. Cada paso tiene ancla propia (/pasos#paso-3).
  * En el celular: número, texto y foto uno debajo del otro. En pantallas anchas: número y texto
@@ -26,7 +29,7 @@ export default function LineaPasos({ pasos, className }: { pasos: Paso[]; classN
             </div>
           </div>
           {tieneArchivo(paso.media[0]) ? (
-            <Media media={paso.media[0]} ratio="3 / 2" className={styles.foto} />
+            <Media media={paso.media[0]} ratio="3 / 2" sizes={TAMANO_FOTO} className={styles.foto} />
           ) : (
             <PideFoto numero={paso.numero} />
           )}

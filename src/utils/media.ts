@@ -24,13 +24,29 @@ export function esPendiente(media: Media | undefined): boolean {
 }
 
 /**
- * Descarga y decodifica una foto antes de mostrarla: cuando la etiqueta <img> la pida, ya está lista y aparece
- * de una (sin verse en blanco ni a pedazos). Devuelve una promesa que se cumple cuando está lista (o si falla).
+ * Las dos versiones de una foto para el navegador (atributo srcset): la miniatura (640 px) y la completa (hasta
+ * 1600 px). Con `sizes` (qué tan ancha se ve), el navegador escoge sola la que alcanza: en una tarjeta pequeña o
+ * en el celular, la miniatura (mucho más liviana); en un recuadro grande o una pantalla muy nítida, la completa.
+ * Sin miniatura, undefined (se usa la foto tal cual).
  */
-export function precargarFoto(media: Media | undefined): Promise<void> | undefined {
+export function juegoDeFoto(media: Media | undefined): string | undefined {
+  return media?.miniatura && media.src ? `${media.miniatura} 640w, ${media.src} 1600w` : undefined
+}
+
+/**
+ * Descarga y decodifica una foto antes de mostrarla: cuando la etiqueta <img> la pida, ya está lista y aparece
+ * de una (sin verse en blanco ni a pedazos). Con `sizes`, escoge la misma versión que va a escoger la página
+ * (ver juegoDeFoto). Devuelve una promesa que se cumple cuando está lista (o si falla).
+ */
+export function precargarFoto(media: Media | undefined, sizes?: string): Promise<void> | undefined {
   if (!tieneArchivo(media) || media.tipo !== 'imagen') return undefined
   const img = new Image()
   img.decoding = 'async'
+  const juego = sizes ? juegoDeFoto(media) : undefined
+  if (sizes && juego) {
+    img.sizes = sizes
+    img.srcset = juego
+  }
   img.src = media.src
   return img.decode().catch(() => {})
 }

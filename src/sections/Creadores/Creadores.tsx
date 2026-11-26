@@ -186,7 +186,16 @@ export default function Creadores() {
 function Retrato({ creador }: { creador: Creador }) {
   const { retrato } = creador
   if (tieneArchivo(retrato)) {
-    return <img src={retrato.miniatura ?? retrato.src} alt={retrato.alt} className={styles.foto} draggable={false} decoding="async" />
+    return (
+      <img
+        src={retrato.miniatura ?? retrato.src}
+        alt={retrato.alt}
+        className={styles.foto}
+        draggable={false}
+        loading="lazy"
+        decoding="async"
+      />
+    )
   }
   return (
     <span className={styles.sinFoto} aria-hidden="true">

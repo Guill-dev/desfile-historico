@@ -7,6 +7,7 @@ import { cx } from '@/utils/cx'
 import { precargarFoto, tieneArchivo } from '@/utils/media'
 import { useMuestraRotativa } from '@/hooks/useMuestraRotativa'
 import { useInView } from '@/hooks/useInView'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 import SectionHeader from '@/components/ui/SectionHeader'
 import Reveal from '@/components/ui/Reveal'
 import Boton from '@/components/ui/Boton'
@@ -16,8 +17,9 @@ import muestra from '@/components/ui/Muestra.module.css'
 import styles from './Pasos.module.css'
 
 const cap = capitulo('pasos')
-/** Cuántos pasos se muestran: 6 en 2 filas de 3 en el computador; en el celular, los 4 primeros en 2 × 2 */
+/** Cuántos pasos se muestran: 6 en 2 filas de 3 en el computador; en el celular, 4 en 2 × 2 */
 const MUESTRA = 6
+const MUESTRA_CELULAR = 4
 /** Cada cuánto cambian por otros al azar */
 const CADA_MS = 3000
 
@@ -27,8 +29,11 @@ const CADA_MS = 3000
  */
 const conFoto = pasos.filter((p) => tieneArchivo(p.media[0]))
 const candidatos = conFoto.length > 0 ? conFoto : pasos
-/** Antes de voltear las tarjetas se deja lista la foto de cada paso que entra */
-const precargarPaso = (p: Paso) => precargarFoto(p.media[0])
+/** Qué tan ancha se ve cada tarjeta: con esto se usa la miniatura de la foto (mucho más liviana) donde alcanza */
+const TAMANO_TARJETA = '(max-width: 899px) 46vw, 400px'
+
+/** Antes de voltear las tarjetas se deja lista la foto de cada paso que entra (la misma versión que se mostrará) */
+const precargarPaso = (p: Paso) => precargarFoto(p.media[0], TAMANO_TARJETA)
 
 /**
  * Entrada a los Pasos dentro del recorrido: unos pocos pasos al azar (de los que tienen foto) que
@@ -37,8 +42,10 @@ const precargarPaso = (p: Paso) => precargarFoto(p.media[0])
 export default function Pasos() {
   // Cerca de la pantalla (o en ella): los pasos cambian. Lejos: se quedan quietos hasta que se vuelva
   const [ref, aLaVista] = useInView<HTMLElement>({ once: false, threshold: 0, rootMargin: '200px 0px' })
+  // En el celular se eligen solo los 4 que se ven: así no se descargan fotos de tarjetas escondidas
+  const celular = useMediaQuery('(max-width: 899px)')
   const { visibles, anteriores, ronda, puedeGirar, pausada, alternarPausa } = useMuestraRotativa(candidatos, {
-    cantidad: MUESTRA,
+    cantidad: celular ? MUESTRA_CELULAR : MUESTRA,
     cadaMs: CADA_MS,
     aLaVista,
     precargar: precargarPaso,
@@ -98,7 +105,7 @@ function TarjetaPaso({ paso, className, style, fantasma }: TarjetaPasoProps) {
       inert={fantasma}
       aria-hidden={fantasma || undefined}
     >
-      <Media media={paso.media[0]} ratio="4 / 5" className={styles.foto} />
+      <Media media={paso.media[0]} ratio="4 / 5" sizes={TAMANO_TARJETA} className={styles.foto} />
       {/* Recuadro de vidrio sobre la foto: el título, el número y "Ver" */}
       <div className={styles.info}>
         <h3 className={styles.titulo}>{paso.titulo}</h3>

@@ -481,6 +481,7 @@ function Figura({ objeto, vivo }: { objeto: Objeto; vivo: boolean }) {
             ratio="auto"
             aviso={false}
             girarYa
+            sombra={false}
             className={cx(styles.modelo, styles.vivo)}
           />
         )}

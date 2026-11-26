@@ -23,6 +23,11 @@ interface Props {
    * Después de que la persona lo gira con la mano, sí espera 2.5 s antes de seguir solo.
    */
   girarYa?: boolean
+  /**
+   * La sombra que calcula el visor bajo la pieza (por defecto sí). En el libro va en false: el escenario ya dibuja
+   * su sombrita, y calcularla en cada vuelta le cuesta al celular.
+   */
+  sombra?: boolean
 }
 
 let visor: Promise<unknown> | null = null
@@ -52,6 +57,7 @@ export default function ModelViewer({
   interactivo = true,
   aviso = interactivo,
   girarYa = false,
+  sombra = true,
 }: Props) {
   const elemento = useRef<HTMLElement>(null)
   const reducirMovimiento = usePrefersReducedMotion()
@@ -123,7 +129,7 @@ export default function ModelViewer({
       rotation-per-second={interactivo && !girarYa ? '18deg' : '24deg'}
       interaction-prompt={interactivo && aviso ? 'auto' : 'none'}
       touch-action="pan-y"
-      shadow-intensity="1"
+      shadow-intensity={sombra ? '1' : '0'}
       exposure="1.05"
     />
   )
